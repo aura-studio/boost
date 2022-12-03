@@ -21,6 +21,10 @@ func Do(a any) (err error) {
 		f()
 	case func() error:
 		err = f()
+	case func(context.Context):
+		f(context.Background())
+	case func(context.Context) error:
+		err = f(context.Background())
 	default:
 		panic(fmt.Errorf("invalid function type: %T", f))
 	}
@@ -32,7 +36,28 @@ func DoWithContext(ctx context.Context, a any) (err error) {
 	errCh := make(chan error, 1)
 
 	go func() {
-		errCh <- Do(a)
+		errCh <- func() (err error) {
+			defer func() {
+				if v := recover(); v != nil {
+					err = fmt.Errorf("panic: %w", cast.ToError(v))
+				}
+			}()
+
+			switch f := a.(type) {
+			case func():
+				f()
+			case func() error:
+				err = f()
+			case func(context.Context):
+				f(ctx)
+			case func(context.Context) error:
+				err = f(ctx)
+			default:
+				panic(fmt.Errorf("invalid function type: %T", f))
+			}
+
+			return
+		}()
 	}()
 
 	select {
