@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log"
+	"reflect"
 	"time"
 
 	"github.com/aura-studio/boost/device"
@@ -16,20 +17,45 @@ import (
 
 type Service struct {
 	Options
+	target any
 	client *device.Client
 	router *device.Router
+	init   func()
+	close  func()
 }
 
-func New(a any, opts ...Option) *Service {
+func New(target any, opts ...Option) *Service {
+	t := reflect.TypeOf(target)
+	if !(t.Kind() == reflect.Ptr && t.Elem().Kind() == reflect.Struct) {
+		log.Panic("service must be a pointer to struct")
+	}
+
 	client := device.NewClient("Client")
 	device.Bus().Integrate(client)
-	router := device.NewRouter(ref.TypeName(a)).Integrate(a)
+	router := device.NewRouter(ref.TypeName(target)).Integrate(target)
 	device.Bus().Integrate(router)
 
 	s := &Service{
+		Options: defaultOptions,
+		target:  target,
 		client:  client,
 		router:  router,
-		Options: defaultOptions,
+	}
+
+	if init, ok := t.MethodByName("Init"); ok {
+		if init.Type.NumIn() == 1 && init.Type.NumOut() == 0 {
+			s.init = func() {
+				init.Func.Call([]reflect.Value{reflect.ValueOf(target)})
+			}
+		}
+	}
+
+	if close, ok := t.MethodByName("Close"); ok {
+		if close.Type.NumIn() == 1 && close.Type.NumOut() == 0 {
+			s.close = func() {
+				close.Func.Call([]reflect.Value{reflect.ValueOf(target)})
+			}
+		}
 	}
 
 	for _, opt := range opts {
@@ -39,7 +65,9 @@ func New(a any, opts ...Option) *Service {
 	return s
 }
 
-func (s *Service) Init() {}
+func (s *Service) Init() {
+	s.init()
+}
 
 func (s *Service) Invoke(routePath string, req string) (rsp string) {
 	if err := safe.DoWithTimeout(10*time.Second, func(ctx context.Context) error {
@@ -57,4 +85,6 @@ func (s *Service) Invoke(routePath string, req string) (rsp string) {
 	return
 }
 
-func (s *Service) Close() {}
+func (s *Service) Close() {
+	s.close()
+}
