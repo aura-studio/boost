@@ -46,6 +46,8 @@ func (h *Handler) localProcess(ctx context.Context, reqMsg *message.Message) err
 }
 
 func (h *Handler) do(ctx context.Context, reqMsg *message.Message) (*message.Message, error) {
+	ctx = context.WithValue(ctx, ContextRequest, reqMsg)
+
 	mt := h.method.Type
 	var req interface{}
 	if mt.In(2) == magic.TypeOfBytes {

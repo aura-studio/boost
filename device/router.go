@@ -3,6 +3,7 @@ package device
 import (
 	"context"
 
+	"github.com/aura-studio/boost/magic"
 	"github.com/aura-studio/boost/message"
 )
 
@@ -22,7 +23,7 @@ func NewRouter(name string) *Router {
 }
 
 func NewBus() *Router {
-	return NewRouter("Bus").AsBus()
+	return NewRouter(magic.Bus).AsBus()
 }
 
 var bus *Router = NewBus()

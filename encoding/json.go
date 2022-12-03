@@ -30,11 +30,31 @@ func (json JSON) Style() EncodingStyleType {
 }
 
 func (JSON) Marshal(v interface{}) ([]byte, error) {
-	return json.Marshal(v)
+	switch v := v.(type) {
+	case []byte:
+		return v, nil
+	case string:
+		return []byte(v), nil
+	case *[]byte:
+		return *v, nil
+	case *string:
+		return []byte(*v), nil
+	default:
+		return json.Marshal(v)
+	}
 }
 
 func (JSON) Unmarshal(data []byte, v interface{}) error {
-	return json.Unmarshal(data, v)
+	switch v := v.(type) {
+	case *[]byte:
+		*v = data
+		return nil
+	case *string:
+		*v = string(data)
+		return nil
+	default:
+		return json.Unmarshal(data, v)
+	}
 }
 
 func (json JSON) Reverse() Encoding {

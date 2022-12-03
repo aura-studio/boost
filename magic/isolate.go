@@ -7,4 +7,7 @@ const (
 	OK        = "OK"
 	Error     = "error"
 	Request   = "Request"
+	Server    = "Server"
+	Client    = "Client"
+	Bus       = "Bus"
 )

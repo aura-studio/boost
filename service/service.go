@@ -4,12 +4,13 @@ import (
 	"context"
 	"log"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/aura-studio/boost/device"
 	"github.com/aura-studio/boost/encoding"
+	"github.com/aura-studio/boost/magic"
 	"github.com/aura-studio/boost/message"
-	"github.com/aura-studio/boost/ref"
 	"github.com/aura-studio/boost/route"
 	"github.com/aura-studio/boost/safe"
 	"github.com/aura-studio/boost/style"
@@ -21,8 +22,9 @@ type Service struct {
 	bus    *device.Router
 	client *device.Client
 	router *device.Router
-	init   func()
-	close  func()
+
+	init  func()
+	close func()
 }
 
 func New(target any, opts ...Option) *Service {
@@ -32,9 +34,9 @@ func New(target any, opts ...Option) *Service {
 	}
 
 	bus := device.NewBus()
-	client := device.NewClient("Client")
+	client := device.NewClient(magic.Client)
 	bus.Integrate(client)
-	router := device.NewRouter(ref.TypeName(target)).Integrate(target)
+	router := device.NewRouter(magic.Server).Integrate(target)
 	bus.Integrate(router)
 
 	s := &Service{
@@ -44,12 +46,19 @@ func New(target any, opts ...Option) *Service {
 		router:  router,
 	}
 
+	for _, opt := range opts {
+		opt(s)
+	}
+
 	if init, ok := t.MethodByName("Init"); ok {
 		if init.Type.NumIn() == 1 && init.Type.NumOut() == 0 {
 			s.init = func() {
 				init.Func.Call([]reflect.Value{reflect.ValueOf(target)})
 			}
 		}
+	}
+	if s.init == nil {
+		s.init = func() {}
 	}
 
 	if close, ok := t.MethodByName("Close"); ok {
@@ -59,9 +68,8 @@ func New(target any, opts ...Option) *Service {
 			}
 		}
 	}
-
-	for _, opt := range opts {
-		opt(s)
+	if s.close == nil {
+		s.close = func() {}
 	}
 
 	return s
@@ -72,9 +80,15 @@ func (s *Service) Init() {
 }
 
 func (s *Service) Invoke(routePath string, req string) (rsp string) {
-	if err := safe.DoWithTimeout(10*time.Second, func(ctx context.Context) error {
+	strs := strings.Split(routePath, "/")
+	if len(strs) < 2 {
+		log.Panic("invalid route path")
+	}
+
+	if err := safe.DoWithTimeout(60*time.Second, func(ctx context.Context) error {
 		return s.client.Invoke(ctx, &message.Message{
-			Route:    route.NewChainRoute(device.Addr(s.client), style.GoogleChain(routePath)),
+			Route: route.NewChainRoute(device.Addr(s.client),
+				append([]string{"", magic.Server, style.Standardize(strs[1], magic.SeparatorHyphen)}, strs[2:]...)),
 			Encoding: encoding.NewJSON(),
 			Data:     []byte(req),
 		}, device.NewFuncProcessor(func(ctx context.Context, msg *message.Message) error {
@@ -91,6 +105,14 @@ func (s *Service) Close() {
 	s.close()
 }
 
-func (s *Service) Bus() device.Device {
+func (s *Service) Bus() *device.Router {
 	return s.bus
+}
+
+func (s *Service) Client() *device.Client {
+	return s.client
+}
+
+func (s *Service) Router() *device.Router {
+	return s.router
 }

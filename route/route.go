@@ -33,7 +33,11 @@ func (r ChainRoute) String() string {
 	var builder strings.Builder
 	builder.WriteString(magic.SeparatorBracketLeft)
 	for index, name := range r.src {
-		builder.WriteString(name)
+		if index == 0 {
+			builder.WriteString(magic.Bus)
+		} else {
+			builder.WriteString(name)
+		}
 		if index != len(r.src)-1 {
 			builder.WriteString(magic.SeparatorColon)
 		}
@@ -47,7 +51,11 @@ func (r ChainRoute) String() string {
 	for index, name := range r.dst {
 		if index == r.index {
 			builder.WriteString(magic.SeparatorLess)
-			builder.WriteString(name)
+			if index == 0 {
+				builder.WriteString(magic.Bus)
+			} else {
+				builder.WriteString(name)
+			}
 			builder.WriteString(magic.SeparatorGreater)
 		} else {
 			builder.WriteString(name)

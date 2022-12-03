@@ -11,4 +11,3 @@ var (
 	TypeOfBytes   = reflect.TypeOf(([]byte)(nil))
 	TypeNil       = reflect.Type(nil)
 )
-
