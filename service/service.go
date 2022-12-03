@@ -18,6 +18,7 @@ import (
 type Service struct {
 	Options
 	target any
+	bus    *device.Router
 	client *device.Client
 	router *device.Router
 	init   func()
@@ -30,10 +31,11 @@ func New(target any, opts ...Option) *Service {
 		log.Panic("service must be a pointer to struct")
 	}
 
+	bus := device.NewBus()
 	client := device.NewClient("Client")
-	device.Bus().Integrate(client)
+	bus.Integrate(client)
 	router := device.NewRouter(ref.TypeName(target)).Integrate(target)
-	device.Bus().Integrate(router)
+	bus.Integrate(router)
 
 	s := &Service{
 		Options: defaultOptions,
@@ -87,4 +89,8 @@ func (s *Service) Invoke(routePath string, req string) (rsp string) {
 
 func (s *Service) Close() {
 	s.close()
+}
+
+func (s *Service) Bus() device.Device {
+	return s.bus
 }
