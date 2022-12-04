@@ -33,12 +33,10 @@ func (JSON) Marshal(v interface{}) ([]byte, error) {
 	switch v := v.(type) {
 	case []byte:
 		return v, nil
-	case string:
-		return []byte(v), nil
-	case *[]byte:
-		return *v, nil
-	case *string:
-		return []byte(*v), nil
+	case Bytes:
+		return v.Data, nil
+	case *Bytes:
+		return v.Data, nil
 	default:
 		return json.Marshal(v)
 	}
@@ -46,11 +44,8 @@ func (JSON) Marshal(v interface{}) ([]byte, error) {
 
 func (JSON) Unmarshal(data []byte, v interface{}) error {
 	switch v := v.(type) {
-	case *[]byte:
-		*v = data
-		return nil
-	case *string:
-		*v = string(data)
+	case *Bytes:
+		v.Data = data
 		return nil
 	default:
 		return json.Unmarshal(data, v)
