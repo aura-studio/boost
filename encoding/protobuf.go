@@ -5,7 +5,7 @@ import (
 
 	"github.com/aura-studio/boost/ref"
 
-	"github.com/golang/protobuf/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
