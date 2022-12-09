@@ -26,3 +26,4 @@ func TestRadix(t *testing.T) {
 		t.Error("radix decode error")
 	}
 }
+
