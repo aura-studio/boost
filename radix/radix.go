@@ -7,7 +7,7 @@ import (
 type Radix struct {
 	*Charset
 	base    int
-	maxSize int
+	maxSize int // -1 means no limit
 }
 
 func New(maxSize int, c *Charset) *Radix {
@@ -38,5 +38,8 @@ func (r *Radix) Decode(data []byte) uint64 {
 }
 
 func (r *Radix) validate(i uint64) uint64 {
-	return i % uint64(math.Pow(float64(r.base), float64(r.maxSize)))
+	if r.maxSize > 0 {
+		return i % uint64(math.Pow(float64(r.base), float64(r.maxSize)))
+	}
+	return i
 }
