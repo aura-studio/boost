@@ -12,9 +12,17 @@ func TestRadix(t *testing.T) {
 		t.Error("radix charset size error")
 	}
 
-	r := radix.New(8, c)
+	r := radix.New(radix.BigEndian, 8, c)
+	t.Log(r.Encode(123456789))
 
 	if r.Decode(r.Encode(123456789)) != 123456789 {
+		t.Error("radix decode error")
+	}
+
+	r2 := radix.New(radix.LittleEndian, 8, c)
+	t.Log(r2.Encode(123456789))
+
+	if r2.Decode(r2.Encode(123456789)) != 123456789 {
 		t.Error("radix decode error")
 	}
 }
