@@ -7,7 +7,7 @@ import (
 )
 
 func TestRadix(t *testing.T) {
-	c := radix.NewCharset(0, []byte("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_"))
+	c := radix.NewCharset([]byte("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_")).Shuffle(0)
 	if c.Size() != 64 {
 		t.Error("radix charset size error")
 	}
