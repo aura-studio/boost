@@ -13,9 +13,9 @@ type Radix struct {
 	reCharset map[byte]int
 }
 
-func New(base int, maxSize int, seed int64, charset []byte) *Radix {
+func New(maxSize int, seed int64, charset []byte) *Radix {
 	r := &Radix{
-		base:      base,
+		base:      len(charset),
 		maxSize:   maxSize,
 		seed:      seed,
 		charset:   charset,
