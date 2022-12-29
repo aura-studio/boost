@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"reflect"
 	"strings"
@@ -82,7 +83,7 @@ func (s *Service) Init() {
 func (s *Service) Invoke(routePath string, req string) (rsp string) {
 	strs := strings.Split(routePath, "/")
 	if len(strs) < 2 {
-		log.Panic("invalid route path")
+		return fmt.Errorf("invalid route path: %s", routePath).Error()
 	}
 
 	if err := safe.DoWithTimeout(60*time.Second, func(ctx context.Context) error {
@@ -96,7 +97,7 @@ func (s *Service) Invoke(routePath string, req string) (rsp string) {
 			return nil
 		}))
 	}); err != nil {
-		log.Panic(err)
+		return err.Error()
 	}
 	return
 }
