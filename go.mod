@@ -8,11 +8,8 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20221105105431-c8ef78125b99
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 	github.com/shopspring/decimal v1.3.1
-<<<<<<< Updated upstream
-	google.golang.org/protobuf v1.28.1
-=======
 	github.com/spf13/viper v1.14.0
->>>>>>> Stashed changes
+	google.golang.org/protobuf v1.28.1
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -27,8 +24,6 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
-<<<<<<< Updated upstream
-=======
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
@@ -36,8 +31,6 @@ require (
 	github.com/subosito/gotenv v1.4.1 // indirect
 	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
 	golang.org/x/text v0.4.0 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
->>>>>>> Stashed changes
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
