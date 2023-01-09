@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"math/big"
-	"strconv"
 )
 
 // ToInt casts an interface to an int type.
@@ -69,25 +68,25 @@ func ToIntE(a any) (int, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToInt(v)
 		if err == nil {
 			return int(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToInt(string(v))
 		if err == nil {
 			return int(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToInt(v.String())
 		if err == nil {
 			return int(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToInt(v.Error())
 		if err == nil {
 			return int(n), nil
 		}
@@ -161,25 +160,25 @@ func ToInt8E(a any) (int8, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToInt(v)
 		if err == nil {
 			return int8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int8", v, v)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToInt(string(v))
 		if err == nil {
 			return int8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int8", v, v)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToInt(v.String())
 		if err == nil {
 			return int8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int8", v, v)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToInt(v.Error())
 		if err == nil {
 			return int8(n), nil
 		}
@@ -253,25 +252,25 @@ func ToInt16E(a any) (int16, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToInt(v)
 		if err == nil {
 			return int16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int16", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToInt(string(v))
 		if err == nil {
 			return int16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int16", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToInt(v.String())
 		if err == nil {
 			return int16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int16", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToInt(v.Error())
 		if err == nil {
 			return int16(n), nil
 		}
@@ -345,25 +344,25 @@ func ToInt32E(a any) (int32, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToInt(v)
 		if err == nil {
 			return int32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int32", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToInt(string(v))
 		if err == nil {
 			return int32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int32", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToInt(v.String())
 		if err == nil {
 			return int32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int32", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToInt(v.Error())
 		if err == nil {
 			return int32(n), nil
 		}
@@ -437,25 +436,25 @@ func ToInt64E(a any) (int64, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToInt(v)
 		if err == nil {
 			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int64", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToInt(string(v))
 		if err == nil {
 			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int64", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToInt(v.String())
 		if err == nil {
 			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to int64", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToInt(v.Error())
 		if err == nil {
 			return n, nil
 		}
@@ -480,27 +479,27 @@ func ToUintE(a any) (uint, error) {
 	switch v := a.(type) {
 	case int:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(v), nil
 	case int8:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(v), nil
 	case int16:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(v), nil
 	case int32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(v), nil
 	case int64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(v), nil
 	case uint:
@@ -515,12 +514,12 @@ func ToUintE(a any) (uint, error) {
 		return uint(v), nil
 	case float32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(v), nil
 	case float64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(v), nil
 	case *big.Int:
@@ -528,7 +527,7 @@ func ToUintE(a any) (uint, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(v.Uint64()), nil
 	case *big.Float:
@@ -536,7 +535,7 @@ func ToUintE(a any) (uint, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		n, _ := v.Uint64()
 		return uint(n), nil
@@ -545,18 +544,18 @@ func ToUintE(a any) (uint, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		n, _ := v.Float64()
 		return uint(n), nil
 	case complex64:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(real(v)), nil
 	case complex128:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 		}
 		return uint(real(v)), nil
 	case bool:
@@ -565,37 +564,37 @@ func ToUintE(a any) (uint, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToUint(v)
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 			}
 			return uint(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToUint(string(v))
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 			}
 			return uint(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToUint(v.String())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 			}
 			return uint(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToUint(v.Error())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
 			}
 			return uint(n), nil
 		}
@@ -620,27 +619,27 @@ func ToUint8E(a any) (uint8, error) {
 	switch v := a.(type) {
 	case int:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(v), nil
 	case int8:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(v), nil
 	case int16:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(v), nil
 	case int32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(v), nil
 	case int64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(v), nil
 	case uint:
@@ -655,12 +654,12 @@ func ToUint8E(a any) (uint8, error) {
 		return uint8(v), nil
 	case float32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(v), nil
 	case float64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(v), nil
 	case *big.Int:
@@ -668,7 +667,7 @@ func ToUint8E(a any) (uint8, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(v.Uint64()), nil
 	case *big.Float:
@@ -676,7 +675,7 @@ func ToUint8E(a any) (uint8, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		n, _ := v.Uint64()
 		return uint8(n), nil
@@ -685,18 +684,18 @@ func ToUint8E(a any) (uint8, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		n, _ := v.Float64()
 		return uint8(n), nil
 	case complex64:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(real(v)), nil
 	case complex128:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 		}
 		return uint8(real(v)), nil
 	case bool:
@@ -705,37 +704,37 @@ func ToUint8E(a any) (uint8, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToUint(v)
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 			}
 			return uint8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToUint(string(v))
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 			}
 			return uint8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToUint(v.String())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 			}
 			return uint8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToUint(v.Error())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
 			}
 			return uint8(n), nil
 		}
@@ -760,27 +759,27 @@ func ToUint16E(a any) (uint16, error) {
 	switch v := a.(type) {
 	case int:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(v), nil
 	case int8:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(v), nil
 	case int16:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(v), nil
 	case int32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(v), nil
 	case int64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(v), nil
 	case uint:
@@ -795,12 +794,12 @@ func ToUint16E(a any) (uint16, error) {
 		return uint16(v), nil
 	case float32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(v), nil
 	case float64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(v), nil
 	case *big.Int:
@@ -808,7 +807,7 @@ func ToUint16E(a any) (uint16, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(v.Uint64()), nil
 	case *big.Float:
@@ -816,7 +815,7 @@ func ToUint16E(a any) (uint16, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		n, _ := v.Uint64()
 		return uint16(n), nil
@@ -825,18 +824,18 @@ func ToUint16E(a any) (uint16, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		n, _ := v.Float64()
 		return uint16(n), nil
 	case complex64:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(real(v)), nil
 	case complex128:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 		}
 		return uint16(real(v)), nil
 	case bool:
@@ -845,37 +844,37 @@ func ToUint16E(a any) (uint16, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToUint(v)
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 			}
 			return uint16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToUint(string(v))
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 			}
 			return uint16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToUint(v.String())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 			}
 			return uint16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToUint(v.Error())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
 			}
 			return uint16(n), nil
 		}
@@ -900,27 +899,27 @@ func ToUint32E(a any) (uint32, error) {
 	switch v := a.(type) {
 	case int:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(v), nil
 	case int8:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(v), nil
 	case int16:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(v), nil
 	case int32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(v), nil
 	case int64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(v), nil
 	case uint:
@@ -935,12 +934,12 @@ func ToUint32E(a any) (uint32, error) {
 		return uint32(v), nil
 	case float32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(v), nil
 	case float64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(v), nil
 	case *big.Int:
@@ -948,7 +947,7 @@ func ToUint32E(a any) (uint32, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(v.Uint64()), nil
 	case *big.Float:
@@ -956,7 +955,7 @@ func ToUint32E(a any) (uint32, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		n, _ := v.Uint64()
 		return uint32(n), nil
@@ -965,18 +964,18 @@ func ToUint32E(a any) (uint32, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		n, _ := v.Float64()
 		return uint32(n), nil
 	case complex64:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(real(v)), nil
 	case complex128:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 		}
 		return uint32(real(v)), nil
 	case bool:
@@ -985,37 +984,37 @@ func ToUint32E(a any) (uint32, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToUint(v)
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 			}
 			return uint32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToUint(string(v))
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 			}
 			return uint32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToUint(v.String())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 			}
 			return uint32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToUint(v.Error())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
 			}
 			return uint32(n), nil
 		}
@@ -1040,27 +1039,27 @@ func ToUint64E(a any) (uint64, error) {
 	switch v := a.(type) {
 	case int:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(v), nil
 	case int8:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(v), nil
 	case int16:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(v), nil
 	case int32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(v), nil
 	case int64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(v), nil
 	case uint:
@@ -1075,12 +1074,12 @@ func ToUint64E(a any) (uint64, error) {
 		return v, nil
 	case float32:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(v), nil
 	case float64:
 		if v < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(v), nil
 	case *big.Int:
@@ -1088,7 +1087,7 @@ func ToUint64E(a any) (uint64, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return v.Uint64(), nil
 	case *big.Float:
@@ -1096,7 +1095,7 @@ func ToUint64E(a any) (uint64, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		n, _ := v.Uint64()
 		return n, nil
@@ -1105,18 +1104,18 @@ func ToUint64E(a any) (uint64, error) {
 			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 		}
 		if v.Sign() < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		n, _ := v.Float64()
 		return uint64(n), nil
 	case complex64:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(real(v)), nil
 	case complex128:
 		if real(v) < 0 {
-			return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+			return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 		}
 		return uint64(real(v)), nil
 	case bool:
@@ -1125,37 +1124,37 @@ func ToUint64E(a any) (uint64, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := parseInt(v)
+		n, err := dec.ToUint(v)
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 			}
 			return uint64(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 	case []byte:
-		n, err := parseInt(string(v))
+		n, err := dec.ToUint(string(v))
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 			}
 			return uint64(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
+		n, err := dec.ToUint(v.String())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 			}
 			return uint64(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 	case error:
-		n, err := parseInt(v.Error())
+		n, err := dec.ToUint(v.Error())
 		if err == nil {
 			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to negative value", v, v)
+				return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
 			}
 			return uint64(n), nil
 		}
@@ -1230,25 +1229,25 @@ func ToFloat32E(a any) (float32, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := strconv.ParseFloat(v, 32)
+		n, err := dec.ToFloat32(v)
 		if err == nil {
 			return float32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float32", a, a)
 	case []byte:
-		n, err := strconv.ParseFloat(string(v), 32)
+		n, err := dec.ToFloat32(string(v))
 		if err == nil {
 			return float32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float32", a, a)
 	case fmt.Stringer:
-		n, err := strconv.ParseFloat(v.String(), 32)
+		n, err := dec.ToFloat32(v.String())
 		if err == nil {
 			return float32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float32", a, a)
 	case error:
-		n, err := strconv.ParseFloat(v.Error(), 32)
+		n, err := dec.ToFloat32(v.Error())
 		if err == nil {
 			return float32(n), nil
 		}
@@ -1323,25 +1322,25 @@ func ToFloat64E(a any) (float64, error) {
 		}
 		return 0, nil
 	case string:
-		n, err := strconv.ParseFloat(v, 64)
+		n, err := dec.ToFloat64(v)
 		if err == nil {
 			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float64", a, a)
 	case []byte:
-		n, err := strconv.ParseFloat(string(v), 64)
+		n, err := dec.ToFloat64(string(v))
 		if err == nil {
 			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float64", a, a)
 	case fmt.Stringer:
-		n, err := strconv.ParseFloat(v.String(), 64)
+		n, err := dec.ToFloat64(v.String())
 		if err == nil {
 			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float64", a, a)
 	case error:
-		n, err := strconv.ParseFloat(v.Error(), 64)
+		n, err := dec.ToFloat64(v.Error())
 		if err == nil {
 			return n, nil
 		}
@@ -1423,29 +1422,13 @@ func ToBigIntE(a any) (*big.Int, error) {
 		}
 		return big.NewInt(0), nil
 	case string:
-		n, ok := new(big.Int).SetString(v, 0)
-		if ok {
-			return n, nil
-		}
-		return big.NewInt(0), fmt.Errorf("unable to cast %#v of type %T to *big.Int", a, a)
+		return dec.ToBigInt(v)
 	case []byte:
-		n, ok := new(big.Int).SetString(string(v), 0)
-		if ok {
-			return n, nil
-		}
-		return big.NewInt(0), fmt.Errorf("unable to cast %#v of type %T to *big.Int", a, a)
+		return dec.ToBigInt(string(v))
 	case fmt.Stringer:
-		n, ok := new(big.Int).SetString(v.String(), 0)
-		if ok {
-			return n, nil
-		}
-		return big.NewInt(0), fmt.Errorf("unable to cast %#v of type %T to *big.Int", a, a)
+		return dec.ToBigInt(v.String())
 	case error:
-		n, ok := new(big.Int).SetString(v.Error(), 0)
-		if ok {
-			return n, nil
-		}
-		return big.NewInt(0), fmt.Errorf("unable to cast %#v of type %T to *big.Int", a, a)
+		return dec.ToBigInt(v.Error())
 	case nil:
 		return big.NewInt(0), nil
 	default:
@@ -1520,29 +1503,13 @@ func ToBigFloatE(a any) (*big.Float, error) {
 		}
 		return big.NewFloat(0), nil
 	case string:
-		n, ok := new(big.Float).SetString(v)
-		if ok {
-			return n, nil
-		}
-		return big.NewFloat(0), fmt.Errorf("unable to cast %#v of type %T to *big.Float", a, a)
+		return dec.ToBigFloat(v)
 	case []byte:
-		n, ok := new(big.Float).SetString(string(v))
-		if ok {
-			return n, nil
-		}
-		return big.NewFloat(0), fmt.Errorf("unable to cast %#v of type %T to *big.Float", a, a)
+		return dec.ToBigFloat(string(v))
 	case fmt.Stringer:
-		n, ok := new(big.Float).SetString(v.String())
-		if ok {
-			return n, nil
-		}
-		return big.NewFloat(0), fmt.Errorf("unable to cast %#v of type %T to *big.Float", a, a)
+		return dec.ToBigFloat(v.String())
 	case error:
-		n, ok := new(big.Float).SetString(v.Error())
-		if ok {
-			return n, nil
-		}
-		return big.NewFloat(0), fmt.Errorf("unable to cast %#v of type %T to *big.Float", a, a)
+		return dec.ToBigFloat(v.Error())
 	case nil:
 		return big.NewFloat(0), nil
 	default:
@@ -1617,29 +1584,13 @@ func ToBigRatE(a any) (*big.Rat, error) {
 		}
 		return big.NewRat(0, 1), nil
 	case string:
-		n, ok := new(big.Rat).SetString(v)
-		if ok {
-			return n, nil
-		}
-		return big.NewRat(0, 1), fmt.Errorf("unable to cast %#v of type %T to *big.Rat", a, a)
+		return dec.ToBigRat(v)
 	case []byte:
-		n, ok := new(big.Rat).SetString(string(v))
-		if ok {
-			return n, nil
-		}
-		return big.NewRat(0, 1), fmt.Errorf("unable to cast %#v of type %T to *big.Rat", a, a)
+		return dec.ToBigRat(string(v))
 	case fmt.Stringer:
-		n, ok := new(big.Rat).SetString(v.String())
-		if ok {
-			return n, nil
-		}
-		return big.NewRat(0, 1), fmt.Errorf("unable to cast %#v of type %T to *big.Rat", a, a)
+		return dec.ToBigRat(v.String())
 	case error:
-		n, ok := new(big.Rat).SetString(v.Error())
-		if ok {
-			return n, nil
-		}
-		return big.NewRat(0, 1), fmt.Errorf("unable to cast %#v of type %T to *big.Rat", a, a)
+		return dec.ToBigRat(v.Error())
 	case nil:
 		return big.NewRat(0, 1), nil
 	default:
@@ -1710,29 +1661,13 @@ func ToComplex64E(a any) (complex64, error) {
 		}
 		return complex(0, 0), nil
 	case string:
-		n, err := strconv.ParseComplex(v, 64)
-		if err == nil {
-			return complex64(n), nil
-		}
-		return 0, fmt.Errorf("unable to cast %#v of type %T to complex64", a, a)
+		return dec.ToComplex64(v)
 	case []byte:
-		n, err := strconv.ParseComplex(string(v), 64)
-		if err == nil {
-			return complex64(n), nil
-		}
-		return 0, fmt.Errorf("unable to cast %#v of type %T to complex64", a, a)
+		return dec.ToComplex64(string(v))
 	case fmt.Stringer:
-		n, err := strconv.ParseComplex(v.String(), 64)
-		if err == nil {
-			return complex64(n), nil
-		}
-		return 0, fmt.Errorf("unable to cast %#v of type %T to complex64", a, a)
+		return dec.ToComplex64(v.String())
 	case error:
-		n, err := strconv.ParseComplex(v.Error(), 64)
-		if err == nil {
-			return complex64(n), nil
-		}
-		return 0, fmt.Errorf("unable to cast %#v of type %T to complex64", a, a)
+		return dec.ToComplex64(v.Error())
 	case nil:
 		return complex(0, 0), nil
 	default:
@@ -1805,29 +1740,13 @@ func ToComplex128E(a any) (complex128, error) {
 		}
 		return complex(0, 0), nil
 	case string:
-		n, err := strconv.ParseComplex(v, 128)
-		if err == nil {
-			return n, nil
-		}
-		return 0, fmt.Errorf("unable to cast %#v of type %T to complex128", a, a)
+		return dec.ToComplex128(v)
 	case []byte:
-		n, err := strconv.ParseComplex(string(v), 128)
-		if err == nil {
-			return n, nil
-		}
-		return 0, fmt.Errorf("unable to cast %#v of type %T to complex128", a, a)
+		return dec.ToComplex128(string(v))
 	case fmt.Stringer:
-		n, err := strconv.ParseComplex(v.String(), 128)
-		if err == nil {
-			return n, nil
-		}
-		return 0, fmt.Errorf("unable to cast %#v of type %T to complex128", a, a)
+		return dec.ToComplex128(v.String())
 	case error:
-		n, err := strconv.ParseComplex(v.Error(), 128)
-		if err == nil {
-			return n, nil
-		}
-		return 0, fmt.Errorf("unable to cast %#v of type %T to complex128", a, a)
+		return dec.ToComplex128(v.Error())
 	case nil:
 		return complex(0, 0), nil
 	default:
@@ -1892,45 +1811,13 @@ func ToBoolE(a any) (bool, error) {
 	case bool:
 		return v, nil
 	case string:
-		n, err := parseInt(v)
-		if err == nil {
-			return n != 0, nil
-		}
-		t, err := strconv.ParseBool(v)
-		if err == nil {
-			return t, nil
-		}
-		return false, fmt.Errorf("unable to cast %#v of type %T to bool", a, a)
+		return dec.ToBool(v)
 	case []byte:
-		n, err := parseInt(string(v))
-		if err == nil {
-			return n != 0, nil
-		}
-		t, err := strconv.ParseBool(string(v))
-		if err == nil {
-			return t, nil
-		}
-		return false, fmt.Errorf("unable to cast %#v of type %T to bool", a, a)
+		return dec.ToBool(string(v))
 	case fmt.Stringer:
-		n, err := parseInt(v.String())
-		if err == nil {
-			return n != 0, nil
-		}
-		t, err := strconv.ParseBool(v.String())
-		if err == nil {
-			return t, nil
-		}
-		return false, fmt.Errorf("unable to cast %#v of type %T to bool", a, a)
+		return dec.ToBool(v.String())
 	case error:
-		n, err := parseInt(v.Error())
-		if err == nil {
-			return n != 0, nil
-		}
-		t, err := strconv.ParseBool(v.Error())
-		if err == nil {
-			return t, nil
-		}
-		return false, fmt.Errorf("unable to cast %#v of type %T to bool", a, a)
+		return dec.ToBool(v.Error())
 	case nil:
 		return false, nil
 	default:

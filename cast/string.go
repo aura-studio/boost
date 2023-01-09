@@ -280,28 +280,3 @@ func ToErrorE(a any) (error, error) {
 		return nil, fmt.Errorf("unable to cast %#v of type %T to error", a, a)
 	}
 }
-
-type stringer struct{ string }
-
-func (s stringer) String() string {
-	return s.string
-}
-
-func parseInt(s string) (int64, error) {
-	var foundZero bool
-loop:
-	for i := len(s); i > 0; i-- {
-		switch s[i-1] {
-		case '.':
-			if foundZero {
-				s = s[:i-1]
-				break loop
-			}
-		case '0':
-			foundZero = true
-		default:
-			break loop
-		}
-	}
-	return strconv.ParseInt(s, 0, 0)
-}
