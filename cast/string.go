@@ -280,3 +280,9 @@ func ToErrorE(a any) (error, error) {
 		return nil, fmt.Errorf("unable to cast %#v of type %T to error", a, a)
 	}
 }
+
+type stringer struct{ string }
+
+func (s stringer) String() string {
+	return s.string
+}
