@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/aura-studio/boost/cast"
 	. "github.com/frankban/quicktest"
 )
 

@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/aura-studio/boost/cast"
 	. "github.com/frankban/quicktest"
 )
 
