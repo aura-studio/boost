@@ -261,9 +261,9 @@ func ToErrorE(a any) (error, error) {
 	case *big.Rat:
 		return errors.New(v.String()), nil
 	case complex64:
-		return errors.New(fmt.Sprintf("(%v+%vi)", real(v), imag(v))), nil
+		return fmt.Errorf("(%v+%vi)", real(v), imag(v)), nil
 	case complex128:
-		return errors.New(fmt.Sprintf("(%v+%vi)", real(v), imag(v))), nil
+		return fmt.Errorf(fmt.Sprintf("(%v+%vi)", real(v), imag(v))), nil
 	case bool:
 		return errors.New(strconv.FormatBool(v)), nil
 	case string:

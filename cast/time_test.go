@@ -1,8 +1,10 @@
 package cast_test
 
-// func TestToDurationE(t *testing.T) {
-// 	t.Error("Not implemented")
-// }
+import "testing"
+
+func TestToDurationE(t *testing.T) {
+	t.Error("Not implemented")
+}
 
 // func TestToDurationE(t *testing.T) {
 // 	c := New(t)

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"regexp"
-	"sync"
 	"time"
 )
 
@@ -40,7 +39,6 @@ var (
 		`<minutes>[\+|\-]?\d+m`,
 		`<seconds>[\+|\-]?\d+[S|s]`,
 	}
-	durationNumsCache sync.Map
 )
 
 func init() {
