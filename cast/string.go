@@ -39,7 +39,7 @@ func ToStringE(a any) (string, error) {
 	case uint32:
 		return strconv.FormatUint(uint64(v), 10), nil
 	case uint64:
-		return strconv.FormatUint(uint64(v), 10), nil
+		return strconv.FormatUint(v, 10), nil
 	case float32:
 		// Use decimal to fix precision issue, FormatFloat is unstable.
 		// Optional:
@@ -107,7 +107,7 @@ func ToBytesE(a any) ([]byte, error) {
 	case uint32:
 		return []byte(strconv.FormatUint(uint64(v), 10)), nil
 	case uint64:
-		return []byte(strconv.FormatUint(uint64(v), 10)), nil
+		return []byte(strconv.FormatUint(v, 10)), nil
 	case float32:
 		// Use decimal to fix precision issue, FormatFloat is unstable.
 		// Optional:
@@ -175,7 +175,7 @@ func ToStringerE(a any) (fmt.Stringer, error) {
 	case uint32:
 		return stringer{strconv.FormatUint(uint64(v), 10)}, nil
 	case uint64:
-		return stringer{strconv.FormatUint(uint64(v), 10)}, nil
+		return stringer{strconv.FormatUint(v, 10)}, nil
 	case float32:
 		// Use decimal to fix precision issue, FormatFloat is unstable.
 		// Optional:
@@ -243,7 +243,7 @@ func ToErrorE(a any) (error, error) {
 	case uint32:
 		return errors.New(strconv.FormatUint(uint64(v), 10)), nil
 	case uint64:
-		return errors.New(strconv.FormatUint(uint64(v), 10)), nil
+		return errors.New(strconv.FormatUint(v, 10)), nil
 	case float32:
 		// Use decimal to fix precision issue, FormatFloat is unstable.
 		// Optional:

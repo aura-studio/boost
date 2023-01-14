@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ToInt casts an interface to an int type.
@@ -69,6 +70,11 @@ func ToIntE(a any) (int, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return int(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return int(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -161,6 +167,11 @@ func ToInt8E(a any) (int8, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return int8(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return int8(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -253,6 +264,11 @@ func ToInt16E(a any) (int16, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return int16(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return int16(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -345,6 +361,11 @@ func ToInt32E(a any) (int32, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return int32(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return int32(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -437,6 +458,11 @@ func ToInt64E(a any) (int64, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return int64(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return int64(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -565,39 +591,32 @@ func ToUintE(a any) (uint, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return uint(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return uint(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
-			}
 			return uint(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 	case []byte:
 		n, err := dec.ToUint(string(v))
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
-			}
 			return uint(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 	case fmt.Stringer:
 		n, err := dec.ToUint(v.String())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
-			}
 			return uint(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
 	case error:
 		n, err := dec.ToUint(v.Error())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint", v, v)
-			}
 			return uint(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint", a, a)
@@ -705,39 +724,32 @@ func ToUint8E(a any) (uint8, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return uint8(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return uint8(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
-			}
 			return uint8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 	case []byte:
 		n, err := dec.ToUint(string(v))
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
-			}
 			return uint8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 	case fmt.Stringer:
 		n, err := dec.ToUint(v.String())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
-			}
 			return uint8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
 	case error:
 		n, err := dec.ToUint(v.Error())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", v, v)
-			}
 			return uint8(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint8", a, a)
@@ -845,39 +857,32 @@ func ToUint16E(a any) (uint16, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return uint16(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return uint16(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
-			}
 			return uint16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 	case []byte:
 		n, err := dec.ToUint(string(v))
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
-			}
 			return uint16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 	case fmt.Stringer:
 		n, err := dec.ToUint(v.String())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
-			}
 			return uint16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
 	case error:
 		n, err := dec.ToUint(v.Error())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", v, v)
-			}
 			return uint16(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint16", a, a)
@@ -985,39 +990,32 @@ func ToUint32E(a any) (uint32, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return uint32(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return uint32(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
-			}
 			return uint32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 	case []byte:
 		n, err := dec.ToUint(string(v))
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
-			}
 			return uint32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 	case fmt.Stringer:
 		n, err := dec.ToUint(v.String())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
-			}
 			return uint32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
 	case error:
 		n, err := dec.ToUint(v.Error())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", v, v)
-			}
 			return uint32(n), nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint32", a, a)
@@ -1125,40 +1123,33 @@ func ToUint64E(a any) (uint64, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return uint64(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return uint64(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
-			}
-			return uint64(n), nil
+			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 	case []byte:
 		n, err := dec.ToUint(string(v))
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
-			}
-			return uint64(n), nil
+			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 	case fmt.Stringer:
 		n, err := dec.ToUint(v.String())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
-			}
-			return uint64(n), nil
+			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 	case error:
 		n, err := dec.ToUint(v.Error())
 		if err == nil {
-			if n < 0 {
-				return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", v, v)
-			}
-			return uint64(n), nil
+			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to uint64", a, a)
 	case nil:
@@ -1222,7 +1213,7 @@ func ToFloat32E(a any) (float32, error) {
 		n, _ := v.Float32()
 		return n, nil
 	case complex64:
-		return float32(real(v)), nil
+		return real(v), nil
 	case complex128:
 		return float32(real(v)), nil
 	case bool:
@@ -1230,28 +1221,33 @@ func ToFloat32E(a any) (float32, error) {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return float32(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return float32(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToFloat32(v)
 		if err == nil {
-			return float32(n), nil
+			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float32", a, a)
 	case []byte:
 		n, err := dec.ToFloat32(string(v))
 		if err == nil {
-			return float32(n), nil
+			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float32", a, a)
 	case fmt.Stringer:
 		n, err := dec.ToFloat32(v.String())
 		if err == nil {
-			return float32(n), nil
+			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float32", a, a)
 	case error:
 		n, err := dec.ToFloat32(v.Error())
 		if err == nil {
-			return float32(n), nil
+			return n, nil
 		}
 		return 0, fmt.Errorf("unable to cast %#v of type %T to float32", a, a)
 	case nil:
@@ -1317,12 +1313,17 @@ func ToFloat64E(a any) (float64, error) {
 	case complex64:
 		return float64(real(v)), nil
 	case complex128:
-		return float64(real(v)), nil
+		return real(v), nil
 	case bool:
 		if v {
 			return 1, nil
 		}
 		return 0, nil
+	case time.Duration:
+		return float64(v), nil
+	case time.Location:
+		tm := time.Time{}
+		return float64(tm.In(&v).Sub(tm)), nil
 	case string:
 		n, err := dec.ToFloat64(v)
 		if err == nil {
@@ -1423,6 +1424,11 @@ func ToBigIntE(a any) (*big.Int, error) {
 			return big.NewInt(1), nil
 		}
 		return big.NewInt(0), nil
+	case time.Duration:
+		return big.NewInt(0).SetInt64(int64(v)), nil
+	case time.Location:
+		tm := time.Time{}
+		return big.NewInt(0).SetInt64(int64((tm.In(&v).Sub(tm)))), nil
 	case string:
 		return dec.ToBigInt(v)
 	case []byte:
@@ -1504,6 +1510,11 @@ func ToBigFloatE(a any) (*big.Float, error) {
 			return big.NewFloat(1), nil
 		}
 		return big.NewFloat(0), nil
+	case time.Duration:
+		return big.NewFloat(0).SetInt64(int64(v)), nil
+	case time.Location:
+		tm := time.Time{}
+		return big.NewFloat(0).SetInt64(int64((tm.In(&v).Sub(tm)))), nil
 	case string:
 		return dec.ToBigFloat(v)
 	case []byte:
@@ -1585,6 +1596,11 @@ func ToBigRatE(a any) (*big.Rat, error) {
 			return big.NewRat(1, 1), nil
 		}
 		return big.NewRat(0, 1), nil
+	case time.Duration:
+		return big.NewRat(0, 1).SetInt64(int64(v)), nil
+	case time.Location:
+		tm := time.Time{}
+		return big.NewRat(0, 1).SetInt64(int64((tm.In(&v).Sub(tm)))), nil
 	case string:
 		return dec.ToBigRat(v)
 	case []byte:
@@ -1662,6 +1678,11 @@ func ToComplex64E(a any) (complex64, error) {
 			return complex(1, 0), nil
 		}
 		return complex(0, 0), nil
+	case time.Duration:
+		return complex(float32(v), 0), nil
+	case time.Location:
+		tm := time.Time{}
+		return complex(float32((tm.In(&v).Sub(tm))), 0), nil
 	case string:
 		return dec.ToComplex64(v)
 	case []byte:
@@ -1741,6 +1762,11 @@ func ToComplex128E(a any) (complex128, error) {
 			return complex(1, 0), nil
 		}
 		return complex(0, 0), nil
+	case time.Duration:
+		return complex(float64(v), 0), nil
+	case time.Location:
+		tm := time.Time{}
+		return complex(float64((tm.In(&v).Sub(tm))), 0), nil
 	case string:
 		return dec.ToComplex128(v)
 	case []byte:
@@ -1812,6 +1838,11 @@ func ToBoolE(a any) (bool, error) {
 		return real(v) != 0 || imag(v) != 0, nil
 	case bool:
 		return v, nil
+	case time.Duration:
+		return int64(v) != 0, nil
+	case time.Location:
+		tm := time.Time{}
+		return tm.In(&v).Sub(tm) != 0, nil
 	case string:
 		return dec.ToBool(v)
 	case []byte:
@@ -2039,15 +2070,6 @@ func (p decimalParser) ToBigFloat(s string) (*big.Float, error) {
 
 func (p decimalParser) ToBigRat(s string) (*big.Rat, error) {
 	switch {
-	case strings.ContainsAny(s, "tf"):
-		b, err := strconv.ParseBool(s)
-		if err != nil {
-			return nil, err
-		}
-		if b {
-			return big.NewRat(1, 1), nil
-		}
-		return big.NewRat(0, 1), nil
 	case strings.ContainsAny(s, "tf"):
 		b, err := strconv.ParseBool(s)
 		if err != nil {
