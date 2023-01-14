@@ -3,11 +3,11 @@ module github.com/aura-studio/boost
 go 1.18
 
 require (
-	github.com/aura-studio/boost/cast v0.0.0-20230108075548-b218392f27bf
 	github.com/disiqueira/gotree v1.0.0
 	github.com/frankban/quicktest v1.14.4
 	github.com/gocarina/gocsv v0.0.0-20221105105431-c8ef78125b99
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
+	github.com/shopspring/decimal v1.3.1
 	github.com/spf13/viper v1.14.0
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/yaml.v2 v2.4.0
@@ -24,7 +24,6 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
-	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

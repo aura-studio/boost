@@ -1,5 +1,137 @@
 package cast
 
+import (
+	"bytes"
+	"fmt"
+	"regexp"
+	"sync"
+	"time"
+)
+
+func ToDurationE(a any) (*time.Location, error) {
+	a = indirectToStringerOrError(a)
+
+	switch v := a.(type) {
+	case string:
+		return stringToDurationE(v)
+	default:
+		return nil, fmt.Errorf("invalid duration type: %T", a)
+	}
+}
+
+func ToTimeZoneE(a any) (*time.Location, error) {
+	a = indirectToStringerOrError(a)
+
+	switch v := a.(type) {
+	case string:
+		return stringToTimeZoneE(v)
+	default:
+		return nil, fmt.Errorf("invalid time zone type: %T", a)
+	}
+}
+
+var (
+	durationRegExp       *regexp.Regexp
+	durationRegExpGroups = []string{
+		`<years>[\+|\-]?\d+[Y|y]`,
+		`<months>[\+|\-]?\d+M`,
+		`<days>[\+|\-]?\d+[D|d]`,
+		`<hours>[\+|\-]?\d+[H|h]`,
+		`<minutes>[\+|\-]?\d+m`,
+		`<seconds>[\+|\-]?\d+[S|s]`,
+	}
+	durationNumsCache sync.Map
+)
+
+func init() {
+	var buf = new(bytes.Buffer)
+	for _, group := range durationRegExpGroups {
+		buf.WriteString(`(?P`)
+		buf.WriteString(group)
+		buf.WriteString(`)?`)
+	}
+	durationRegExp = regexp.MustCompile(buf.String())
+}
+
+func stringToDurationE(str string) (time.Duration, error) {
+	lastChar := str[len(str)-1]
+	if lastChar >= '0' && lastChar <= '9' {
+		str += "s"
+	}
+
+	matches := durationRegExp.FindStringSubmatch(str)
+
+	if len(matches) == 0 {
+		return 0, fmt.Errorf("parse duration `%s` failed, empty match", str)
+	}
+
+	nums := []int{}
+	for index := 1; index < len(matches); index++ {
+		s := matches[index]
+		if len(s) == 0 {
+			nums = append(nums, 0)
+			continue
+		}
+		for s[len(s)-1] < '0' || s[len(s)-1] > '9' {
+			s = s[:len(s)-1]
+		}
+		n, err := ToInt64E(s)
+		if err != nil {
+			return 0, fmt.Errorf("parse duration `%s` failed, %v", str, err)
+		}
+		nums = append(nums, int(n))
+	}
+
+	// TOOD: to support time format str as tm value
+	tm := time.Now()
+	duration := tm.AddDate(nums[0], nums[1], nums[2]).Add(
+		time.Duration(nums[3]) * time.Hour,
+	).Add(
+		time.Duration(nums[4]) * time.Minute,
+	).Add(
+		time.Duration(nums[5]) * time.Second,
+	).Sub(tm)
+
+	return duration, nil
+}
+
+func stringToTimeZoneE(s string) (*time.Location, error) {
+	// Check first char is + or -, or is digit
+	if s[0] == '+' || s[0] == '-' || (s[0] >= '0' && s[0] <= '9') {
+		duration, err := stringToDurationE(s)
+		if err != nil {
+			return nil, err
+		}
+		return time.FixedZone("System", int(duration.Seconds())), nil
+	} else {
+		// Check timezone is valid
+		if loc, err := time.LoadLocation(s); err != nil {
+			return nil, err
+		} else {
+			// get time zone offset
+			_, offset := time.Now().In(loc).Zone()
+			return time.FixedZone("System", offset), nil
+		}
+	}
+}
+
+// func ParseTimeZone(s string) int64 {
+// 	// Check first char is + or -, or is digit
+// 	if s[0] == '+' || s[0] == '-' || (s[0] >= '0' && s[0] <= '9') {
+// 		duration := ParseDuration(s, time.Now())
+// 		return ToInt64(duration.Seconds())
+// 	} else {
+// 		// Check timezone is valid
+// 		if loc, err := time.LoadLocation(s); err != nil {
+// 			panic(err)
+// 		} else {
+// 			// get time zone offset
+// 			_, offset := time.Now().In(loc).Zone()
+// 			return ToInt64(offset)
+// 		}
+// 	}
+// }
+
 // TODO support time & duration
 
 // // ToTime casts an interface to a time.Time type.
