@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+func ToDuration(a any) time.Duration {
+	v, _ := ToDurationE(a)
+	return v
+}
+
 func ToDurationE(a any) (time.Duration, error) {
 	a = indirectToStringerOrError(a)
 
@@ -16,6 +21,11 @@ func ToDurationE(a any) (time.Duration, error) {
 	default:
 		return 0, fmt.Errorf("invalid duration type: %T", a)
 	}
+}
+
+func ToTimeZone(a any) *time.Location {
+	v, _ := ToTimeZoneE(a)
+	return v
 }
 
 func ToTimeZoneE(a any) (*time.Location, error) {
