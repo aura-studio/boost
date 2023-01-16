@@ -9,7 +9,6 @@ import (
 )
 
 type Reader interface {
-	RuntimeEnv() string
 	Names() []string
 	Bytes(name string) ([]byte, error)
 }
@@ -26,10 +25,6 @@ func NewBinaryReader(names func() []string, bytes func(string) ([]byte, error)) 
 	}
 }
 
-func (b *BinaryReader) RuntimeEnv() string {
-	return ""
-}
-
 func (b *BinaryReader) Names() []string {
 	return b.names()
 }
@@ -38,35 +33,12 @@ func (b *BinaryReader) Bytes(name string) ([]byte, error) {
 	return b.bytes(name)
 }
 
-type RuntimeBinaryReader struct {
-	*BinaryReader
-	runtimeEnv string
-}
-
-func NewRuntimeBinaryReader(runtimeEnv string, names func() []string, bytes func(string) ([]byte, error)) *RuntimeBinaryReader {
-	return &RuntimeBinaryReader{
-		BinaryReader: &BinaryReader{
-			names: names,
-			bytes: bytes,
-		},
-		runtimeEnv: runtimeEnv,
-	}
-}
-
-func (r *RuntimeBinaryReader) RuntimeEnv() string {
-	return r.runtimeEnv
-}
-
 type Config struct {
 	*viper.Viper
 	runtimeEnv string
 }
 
 var c *Config = New()
-
-func Default() *Config {
-	return c
-}
 
 func New() *Config {
 	c := &Config{
@@ -90,7 +62,6 @@ func Read(b Reader) *Config {
 
 func (c *Config) Read(b Reader) *Config {
 	v := viper.New()
-
 	for _, name := range b.Names() {
 		extWithPoint := filepath.Ext(name)
 		if extWithPoint == "" {
@@ -111,33 +82,24 @@ func (c *Config) Read(b Reader) *Config {
 		}
 	}
 
-	// runtime sub
-	var subSettings map[string]interface{}
-	subViper := v.Sub(fmt.Sprintf("<%s>", c.runtimeEnv))
-	if subViper != nil {
-		subSettings = subViper.AllSettings()
+	// merge runtime config
+	if c.runtimeEnv != "" {
+		runtimeViper := v.Sub(fmt.Sprintf("<%s>", c.runtimeEnv))
+		if runtimeViper != nil {
+			if err := v.MergeConfigMap(runtimeViper.AllSettings()); err != nil {
+				panic(err)
+			}
+		}
 	}
 
-	// settings
 	settings := v.AllSettings()
 	for k := range settings {
 		if k[0] == '<' && k[len(k)-1] == '>' {
 			delete(settings, k)
 		}
 	}
-
-	if b.RuntimeEnv() == "" || b.RuntimeEnv() == c.runtimeEnv {
-		if err := c.MergeConfigMap(settings); err != nil {
-			panic(err)
-		}
-		return c
-	}
-
-	// merge runtime config
-	if c.runtimeEnv != "" {
-		if err := c.MergeConfigMap(subSettings); err != nil {
-			panic(err)
-		}
+	if err := c.MergeConfigMap(settings); err != nil {
+		panic(err)
 	}
 
 	return c
@@ -158,14 +120,5 @@ func ReadBinary(names func() []string, bytes func(string) ([]byte, error)) *Conf
 
 func (c *Config) ReadBinary(names func() []string, bytes func(string) ([]byte, error)) *Config {
 	c.Read(NewBinaryReader(names, bytes))
-	return c
-}
-
-func ReadRuntimeBinary(runtimeEnv string, names func() []string, bytes func(string) ([]byte, error)) *Config {
-	return c.ReadRuntimeBinary(runtimeEnv, names, bytes)
-}
-
-func (c *Config) ReadRuntimeBinary(runtimeEnv string, names func() []string, bytes func(string) ([]byte, error)) *Config {
-	c.Read(NewRuntimeBinaryReader(runtimeEnv, names, bytes))
 	return c
 }
