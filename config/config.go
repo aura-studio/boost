@@ -160,3 +160,12 @@ func (c *Config) ReadBinary(names func() []string, bytes func(string) ([]byte, e
 	c.Read(NewBinaryReader(names, bytes))
 	return c
 }
+
+func ReadRuntimeBinary(runtimeEnv string, names func() []string, bytes func(string) ([]byte, error)) *Config {
+	return c.ReadRuntimeBinary(runtimeEnv, names, bytes)
+}
+
+func (c *Config) ReadRuntimeBinary(runtimeEnv string, names func() []string, bytes func(string) ([]byte, error)) *Config {
+	c.Read(NewRuntimeBinaryReader(runtimeEnv, names, bytes))
+	return c
+}
