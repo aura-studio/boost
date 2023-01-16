@@ -9,6 +9,7 @@ import (
 )
 
 type Reader interface {
+	RuntimeEnv() string
 	Names() []string
 	Bytes(name string) ([]byte, error)
 }
@@ -25,12 +26,35 @@ func NewBinaryReader(names func() []string, bytes func(string) ([]byte, error)) 
 	}
 }
 
+func (b *BinaryReader) RuntimeEnv() string {
+	return ""
+}
+
 func (b *BinaryReader) Names() []string {
 	return b.names()
 }
 
 func (b *BinaryReader) Bytes(name string) ([]byte, error) {
 	return b.bytes(name)
+}
+
+type RuntimeBinaryReader struct {
+	*BinaryReader
+	runtimeEnv string
+}
+
+func NewRuntimeBinaryReader(runtimeEnv string, names func() []string, bytes func(string) ([]byte, error)) *RuntimeBinaryReader {
+	return &RuntimeBinaryReader{
+		BinaryReader: &BinaryReader{
+			names: names,
+			bytes: bytes,
+		},
+		runtimeEnv: runtimeEnv,
+	}
+}
+
+func (r *RuntimeBinaryReader) RuntimeEnv() string {
+	return r.runtimeEnv
 }
 
 type Config struct {
@@ -62,23 +86,26 @@ func Read(b Reader) *Config {
 
 func (c *Config) Read(b Reader) *Config {
 	v := viper.New()
-	for _, name := range b.Names() {
-		extWithPoint := filepath.Ext(name)
-		if extWithPoint == "" {
-			continue
-		}
-		ext := extWithPoint[1:]
-		if !c.isExtValid(ext) {
-			continue
-		}
-		v.SetConfigType(ext)
-		data, err := b.Bytes(name)
-		if err != nil {
-			panic(err)
-		}
-		reader := bytes.NewReader(data)
-		if err := v.MergeConfig(reader); err != nil {
-			panic(err)
+
+	if b.RuntimeEnv() == "" || b.RuntimeEnv() == c.runtimeEnv {
+		for _, name := range b.Names() {
+			extWithPoint := filepath.Ext(name)
+			if extWithPoint == "" {
+				continue
+			}
+			ext := extWithPoint[1:]
+			if !c.isExtValid(ext) {
+				continue
+			}
+			v.SetConfigType(ext)
+			data, err := b.Bytes(name)
+			if err != nil {
+				panic(err)
+			}
+			reader := bytes.NewReader(data)
+			if err := v.MergeConfig(reader); err != nil {
+				panic(err)
+			}
 		}
 	}
 
