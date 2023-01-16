@@ -135,7 +135,7 @@ func (c *Config) Read(b Reader) *Config {
 
 	// merge runtime config
 	if c.runtimeEnv != "" {
-		if err := v.MergeConfigMap(subSettings); err != nil {
+		if err := c.MergeConfigMap(subSettings); err != nil {
 			panic(err)
 		}
 	}
