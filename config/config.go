@@ -87,46 +87,53 @@ func Read(b Reader) *Config {
 func (c *Config) Read(b Reader) *Config {
 	v := viper.New()
 
-	if b.RuntimeEnv() == "" || b.RuntimeEnv() == c.runtimeEnv {
-		for _, name := range b.Names() {
-			extWithPoint := filepath.Ext(name)
-			if extWithPoint == "" {
-				continue
-			}
-			ext := extWithPoint[1:]
-			if !c.isExtValid(ext) {
-				continue
-			}
-			v.SetConfigType(ext)
-			data, err := b.Bytes(name)
-			if err != nil {
-				panic(err)
-			}
-			reader := bytes.NewReader(data)
-			if err := v.MergeConfig(reader); err != nil {
-				panic(err)
-			}
+	for _, name := range b.Names() {
+		extWithPoint := filepath.Ext(name)
+		if extWithPoint == "" {
+			continue
+		}
+		ext := extWithPoint[1:]
+		if !c.isExtValid(ext) {
+			continue
+		}
+		v.SetConfigType(ext)
+		data, err := b.Bytes(name)
+		if err != nil {
+			panic(err)
+		}
+		reader := bytes.NewReader(data)
+		if err := v.MergeConfig(reader); err != nil {
+			panic(err)
 		}
 	}
 
-	// merge runtime config
-	if c.runtimeEnv != "" {
-		runtimeViper := v.Sub(fmt.Sprintf("<%s>", c.runtimeEnv))
-		if runtimeViper != nil {
-			if err := v.MergeConfigMap(runtimeViper.AllSettings()); err != nil {
-				panic(err)
-			}
-		}
+	// runtime sub
+	var subSettings map[string]interface{}
+	subViper := v.Sub(fmt.Sprintf("<%s>", c.runtimeEnv))
+	if subViper != nil {
+		subSettings = subViper.AllSettings()
 	}
 
+	// settings
 	settings := v.AllSettings()
 	for k := range settings {
 		if k[0] == '<' && k[len(k)-1] == '>' {
 			delete(settings, k)
 		}
 	}
-	if err := c.MergeConfigMap(settings); err != nil {
-		panic(err)
+
+	if b.RuntimeEnv() == "" || b.RuntimeEnv() == c.runtimeEnv {
+		if err := c.MergeConfigMap(settings); err != nil {
+			panic(err)
+		}
+		return c
+	}
+
+	// merge runtime config
+	if c.runtimeEnv != "" {
+		if err := v.MergeConfigMap(subSettings); err != nil {
+			panic(err)
+		}
 	}
 
 	return c
