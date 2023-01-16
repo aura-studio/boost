@@ -64,6 +64,10 @@ type Config struct {
 
 var c *Config = New()
 
+func Default() *Config {
+	return c
+}
+
 func New() *Config {
 	c := &Config{
 		Viper: viper.New(),
