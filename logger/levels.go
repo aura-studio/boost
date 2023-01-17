@@ -96,8 +96,6 @@ func NewLogLevels(i interface{}) *LogLevels {
 	default:
 		panic(fmt.Errorf("%w: %T", ErrUnknownLogLevel, i))
 	}
-
-	return nil
 }
 
 func (l *LogLevels) ToLogrus() []logrus.Level {
