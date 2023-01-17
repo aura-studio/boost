@@ -8,7 +8,9 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-func New(s string) (*logrus.Logger, error) {
+type Logger = logrus.Logger
+
+func New(s string) (*Logger, error) {
 	logger := logrus.New()
 
 	// Disable output.
