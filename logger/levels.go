@@ -73,8 +73,7 @@ func NewLogLevels(i interface{}) *LogLevels {
 		logLevels := make([]*LogLevel, 0, logLevel.ToLogrus()+1)
 
 		for i := logrus.Level(0); i <= logLevel.ToLogrus(); i++ {
-			s := logrus.Level(i).String()
-			logLevels = append(logLevels, NewLogLevel(s))
+			logLevels = append(logLevels, NewLogLevel(i.String()))
 		}
 
 		return &LogLevels{logLevels}
