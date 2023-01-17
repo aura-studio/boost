@@ -283,21 +283,21 @@ func NewFormatOptions(s string) *FormatOptions {
 		for _, v := range gjson.Get(s, "format").Array() {
 			option := v.String()
 			switch option {
-			case "level", "lvl", "lv":
+			case "level":
 				c.level = true
 			case "date":
 				c.date = true
-			case "time", "tm":
+			case "time":
 				c.time = true
-			case "nano-second", "nanosecond", "nano", "ns":
+			case "nanosecond":
 				c.nanosecond = true
-			case "timezone", "tz":
+			case "timezone":
 				c.timezone = true
-			case "file", "f":
+			case "file":
 				c.file = true
-			case "function", "func", "fn":
+			case "function":
 				c.function = true
-			case "message", "msg", "m":
+			case "message":
 				c.message = true
 			}
 		}
