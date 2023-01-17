@@ -18,8 +18,7 @@ func New(s string) (*logrus.Logger, error) {
 	logger.SetReportCaller(true)
 
 	// Set formatter.
-
-	formatter, err := NewFormatter(gjson.Get(s, "fomatter").Raw)
+	formatter, err := NewFormatter(gjson.Get(s, "formatter").Raw)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +37,8 @@ func New(s string) (*logrus.Logger, error) {
 	})
 
 	// Set Level
-	logger.SetLevel(NewLogLevel(gjson.Get(s, "level").Raw).ToLogrus())
+	logrusLevel := NewLogLevel(gjson.Get(s, "level").Raw).ToLogrus()
+	logger.SetLevel(logrusLevel)
 
 	return logger, nil
 }

@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -20,8 +19,13 @@ type LogLevel struct {
 }
 
 func NewLogLevel(s string) *LogLevel {
-	if json.Valid([]byte(s)) {
-		s = gjson.Get(s, "level").String()
+	if gjson.Valid(s) {
+		result := gjson.Parse(s)
+		if result.IsObject() {
+			s = gjson.Get(s, "level").String()
+		} else {
+			s = result.String()
+		}
 	}
 
 	var level logrus.Level
@@ -61,9 +65,11 @@ func NewLogLevels(i interface{}) *LogLevels {
 	case string:
 		s := i
 
-		if json.Valid([]byte(s)) {
+		if gjson.Valid(s) && gjson.Parse(s).IsObject() {
 			if gjson.Get(s, "level").IsArray() {
-				s = gjson.Get(s, "level").Raw
+				for _, str := range gjson.Get(s, "level").Array() {
+					return NewLogLevels(str.String())
+				}
 			} else {
 				s = gjson.Get(s, "level").String()
 			}
@@ -90,6 +96,8 @@ func NewLogLevels(i interface{}) *LogLevels {
 	default:
 		panic(fmt.Errorf("%w: %T", ErrUnknownLogLevel, i))
 	}
+
+	return nil
 }
 
 func (l *LogLevels) ToLogrus() []logrus.Level {

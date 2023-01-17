@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
 )
 
@@ -170,7 +169,7 @@ func (f *TextFormatter) generateFunction(frame *runtime.Frame) string {
 	return fmt.Sprintf(" (%s)", s[strings.LastIndex(s, "/")+1:])
 }
 
-func (*FormatterGenerator) Text(h *viper.Viper) (logrus.Formatter, error) {
+func (*FormatterGenerator) Text(s string) (logrus.Formatter, error) {
 	formatter := &TextFormatter{
 		TextFormatter: logrus.TextFormatter{
 			ForceColors:   true,
@@ -228,10 +227,11 @@ func (f *JSONFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	return bytes.([]byte), nil
 }
 
-func (*FormatterGenerator) JSON(v *viper.Viper) (logrus.Formatter, error) {
+func (*FormatterGenerator) JSON(s string) (logrus.Formatter, error) {
 	fieldMap := make(logrus.FieldMap)
 
-	for k, v := range v.GetStringMapString("fieldMap") {
+	gjson.Get(s, "fieldMap").ForEach(func(key, value gjson.Result) bool {
+		k, v := key.String(), value.String()
 		switch k {
 		case logrus.FieldKeyMsg:
 			fieldMap[logrus.FieldKeyMsg] = v
@@ -246,9 +246,10 @@ func (*FormatterGenerator) JSON(v *viper.Viper) (logrus.Formatter, error) {
 		case logrus.FieldKeyFile:
 			fieldMap[logrus.FieldKeyFile] = v
 		default:
-			return nil, fmt.Errorf("%w: %s", ErrUnexpectedFieldKey, k)
+			panic(fmt.Errorf("%w: %s", ErrUnexpectedFieldKey, k))
 		}
-	}
+		return true
+	})
 
 	formatter := &JSONFormatter{
 		JSONFormatter: logrus.JSONFormatter{
@@ -302,7 +303,7 @@ func NewFormatOptions(s string) *FormatOptions {
 		}
 	} else {
 		switch format := gjson.Get(s, "format").String(); format {
-		case "all":
+		case "verbose":
 			c.level = true
 			c.date = true
 			c.time = true
@@ -311,7 +312,7 @@ func NewFormatOptions(s string) *FormatOptions {
 			c.file = true
 			c.function = true
 			c.message = true
-		case "default":
+		case "normal":
 			c.level = true
 			c.date = true
 			c.time = true
