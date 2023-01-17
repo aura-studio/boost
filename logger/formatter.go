@@ -62,13 +62,13 @@ type TextFormatter struct {
 }
 
 func (f *TextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-	if entry.Context == nil || entry.Context.Value("formatOptions") == nil {
+	if entry.Context == nil || entry.Context.Value(ContextFormatOptions) == nil {
 		return f.TextFormatter.Format(entry)
 	}
 
-	c, ok := entry.Context.Value("formatOptions").(*FormatOptions)
+	c, ok := entry.Context.Value(ContextFormatOptions).(*FormatOptions)
 	if !ok {
-		return nil, fmt.Errorf("%w: %T", ErrFormatOptionsNotFound, entry.Context.Value("formatOptions"))
+		return nil, fmt.Errorf("%w: %T", ErrFormatOptionsNotFound, entry.Context.Value(ContextFormatOptions))
 	}
 
 	if !c.date && !c.time && !c.nanosecond && !c.timezone {

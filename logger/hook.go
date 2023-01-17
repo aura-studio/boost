@@ -16,6 +16,12 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+type HookContextKey string
+
+const (
+	ContextFormatOptions HookContextKey = "FormatOptions"
+)
+
 var ErrHookNotFound = errors.New("hook not found")
 
 type (
@@ -71,9 +77,9 @@ func (h *FileHook) Fire(entry *logrus.Entry) error {
 	)
 
 	if entry.Context == nil {
-		entry.Context = context.WithValue(context.Background(), "formatOptions", h.formatOptions)
+		entry.Context = context.WithValue(context.Background(), ContextFormatOptions, h.formatOptions)
 	} else {
-		entry.Context = context.WithValue(entry.Context, "formatOptions", h.formatOptions)
+		entry.Context = context.WithValue(entry.Context, ContextFormatOptions, h.formatOptions)
 	}
 
 	line, err = entry.Bytes()
@@ -125,9 +131,9 @@ func (h *StderrHook) Fire(entry *logrus.Entry) error {
 	)
 
 	if entry.Context == nil {
-		entry.Context = context.WithValue(context.Background(), "formatOptions", h.formatOptions)
+		entry.Context = context.WithValue(context.Background(), ContextFormatOptions, h.formatOptions)
 	} else {
-		entry.Context = context.WithValue(entry.Context, "formatOptions", h.formatOptions)
+		entry.Context = context.WithValue(entry.Context, ContextFormatOptions, h.formatOptions)
 	}
 
 	line, err = entry.Bytes()
@@ -179,9 +185,9 @@ func (h *StdoutHook) Fire(entry *logrus.Entry) error {
 	)
 
 	if entry.Context == nil {
-		entry.Context = context.WithValue(context.Background(), "formatOptions", h.formatOptions)
+		entry.Context = context.WithValue(context.Background(), ContextFormatOptions, h.formatOptions)
 	} else {
-		entry.Context = context.WithValue(entry.Context, "formatOptions", h.formatOptions)
+		entry.Context = context.WithValue(entry.Context, ContextFormatOptions, h.formatOptions)
 	}
 
 	line, err = entry.Bytes()
@@ -219,9 +225,9 @@ func (h *TelegramHook) Fire(entry *logrus.Entry) error {
 	)
 
 	if entry.Context == nil {
-		entry.Context = context.WithValue(context.Background(), "formatOptions", h.formatOptions)
+		entry.Context = context.WithValue(context.Background(), ContextFormatOptions, h.formatOptions)
 	} else {
-		entry.Context = context.WithValue(entry.Context, "formatOptions", h.formatOptions)
+		entry.Context = context.WithValue(entry.Context, ContextFormatOptions, h.formatOptions)
 	}
 
 	line, err = entry.Bytes()
