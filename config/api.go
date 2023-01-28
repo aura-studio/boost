@@ -15,7 +15,7 @@ func Assert(condition bool, v interface{}, args ...string) {
 
 func JSON(args ...string) string {
 	s := strings.Join(args, ".")
-	data, err := json.Marshal(Config.Sub(s).AllSettings())
+	data, err := json.Marshal(c.Sub(s).AllSettings())
 	if err != nil {
 		panic(err)
 	}
