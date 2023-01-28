@@ -3,6 +3,8 @@ package config
 import (
 	"strings"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 // Get joins args as config key and replies config value
@@ -98,4 +100,8 @@ func GetSizeInBytes(args ...string) uint {
 // Unmarshal joins args as config key and replies config value
 func Unmarshal(rawVal interface{}, args ...string) error {
 	return c.UnmarshalKey(strings.Join(args, "."), rawVal)
+}
+
+func Sub(args ...string) *viper.Viper {
+	return c.Sub(strings.Join(args, "."))
 }
