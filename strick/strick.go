@@ -47,3 +47,12 @@ func PruneFirst(s string, sep string) string {
 	}
 	return s[firstIndex+len(sep):]
 }
+
+// Mod returns the remainder of s divided by n
+func Mod(s string, n int) int {
+	var sum int
+	for _, b := range []byte(s) {
+		sum += int(b)
+	}
+	return sum % n
+}
