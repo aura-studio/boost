@@ -57,7 +57,7 @@ func (h *Handler) do(ctx context.Context, reqMsg *message.Message) (*message.Mes
 			return nil, err
 		}
 		req = bytes.Data
-	} else { // TODO: support array of struct
+	} else {
 		req = reflect.New(mt.In(2).Elem()).Interface()
 		err := reqMsg.Encoding.Unmarshal(reqMsg.Data, req)
 		if err != nil {
