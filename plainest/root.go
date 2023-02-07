@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 	"unsafe"
 )
 
 // Root is the root node for hashtree
 type Root struct {
+	rw    sync.RWMutex
 	_node interface{}
 	_mod  map[string]interface{}
 	_bak  map[string]interface{}
@@ -29,6 +31,14 @@ func (r *Root) Load(node interface{}, hash map[string]string) error {
 	return nil
 }
 
+// SafeLoad is a thread-safe version of Load
+func (r *Root) SafeLoad(node interface{}, hash map[string]string) error {
+	r.rw.Lock()
+	defer r.rw.Unlock()
+	
+	return r.Load(node, hash)
+}
+
 // Dump gets data from mod map that was modified recently,
 // and this action will clear mod map for next use.
 func (r *Root) Dump() (map[string]string, error) {
@@ -45,6 +55,14 @@ func (r *Root) Dump() (map[string]string, error) {
 	return hash, nil
 }
 
+// SafeDump is a thread-safe version of Dump
+func (r *Root) SafeDump() (map[string]string, error) {
+	r.rw.Lock()
+	defer r.rw.Unlock()
+
+	return r.Dump()
+}
+
 // Revert recover data from bak map to modified fields.
 func (r *Root) Revert() error {
 	for key, value := range r._bak {
@@ -55,6 +73,14 @@ func (r *Root) Revert() error {
 	return nil
 }
 
+// SafeRevert is a thread-safe version of Revert
+func (r *Root) SafeRevert() error {
+	r.rw.Lock()
+	defer r.rw.Unlock()
+
+	return r.Revert()
+}
+
 // Field returns field pointer by path
 func (r *Root) Field(fields ...string) unsafe.Pointer {
 	nodeValue := reflect.Indirect(reflect.ValueOf(r._node))
@@ -63,6 +89,14 @@ func (r *Root) Field(fields ...string) unsafe.Pointer {
 		return nil
 	}
 	return getValuePtr(value)
+}
+
+// SafeField is a thread-safe version of Field
+func (r *Root) SafeField(fields ...string) unsafe.Pointer {
+	r.rw.RLock()
+	defer r.rw.RUnlock()
+
+	return r.Field(fields...)
 }
 
 func (r *Root) setStructValue(v reflect.Value, key string,

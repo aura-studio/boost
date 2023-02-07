@@ -24,6 +24,14 @@ func (f *Int) Get() int {
 	return f._value
 }
 
+// SafeGet is a safe getter for Int
+func (f *Int) SafeGet() int {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Int
 func (f *Int) Set(value int) {
 	_, ok := f._root._bak[f._key]
@@ -32,6 +40,14 @@ func (f *Int) Set(value int) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Int
+func (f *Int) SafeSet(value int) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -56,6 +72,14 @@ func (f *Int8) Get() int8 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Int8
+func (f *Int8) SafeGet() int8 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Int8
 func (f *Int8) Set(value int8) {
 	_, ok := f._root._bak[f._key]
@@ -64,6 +88,14 @@ func (f *Int8) Set(value int8) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Int8
+func (f *Int8) SafeSet(value int8) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -88,6 +120,14 @@ func (f *Int16) Get() int16 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Int16
+func (f *Int16) SafeGet() int16 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Int16
 func (f *Int16) Set(value int16) {
 	_, ok := f._root._bak[f._key]
@@ -96,6 +136,14 @@ func (f *Int16) Set(value int16) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Int16
+func (f *Int16) SafeSet(value int16) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -120,6 +168,14 @@ func (f *Int32) Get() int32 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Int32
+func (f *Int32) SafeGet() int32 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Int32
 func (f *Int32) Set(value int32) {
 	_, ok := f._root._bak[f._key]
@@ -128,6 +184,14 @@ func (f *Int32) Set(value int32) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Int32
+func (f *Int32) SafeSet(value int32) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -152,6 +216,14 @@ func (f *Int64) Get() int64 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Int64
+func (f *Int64) SafeGet() int64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Int64
 func (f *Int64) Set(value int64) {
 	_, ok := f._root._bak[f._key]
@@ -160,6 +232,14 @@ func (f *Int64) Set(value int64) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Int64
+func (f *Int64) SafeSet(value int64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -184,6 +264,14 @@ func (f *Uint) Get() uint {
 	return f._value
 }
 
+// SafeGet is a safe getter for Uint
+func (f *Uint) SafeGet() uint {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Uint
 func (f *Uint) Set(value uint) {
 	_, ok := f._root._bak[f._key]
@@ -192,6 +280,14 @@ func (f *Uint) Set(value uint) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Uint
+func (f *Uint) SafeSet(value uint) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -216,6 +312,14 @@ func (f *Uint8) Get() uint8 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Uint8
+func (f *Uint8) SafeGet() uint8 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a getter for Uint8
 func (f *Uint8) Set(value uint8) {
 	_, ok := f._root._bak[f._key]
@@ -224,6 +328,14 @@ func (f *Uint8) Set(value uint8) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Uint8
+func (f *Uint8) SafeSet(value uint8) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -248,6 +360,14 @@ func (f *Uint16) Get() uint16 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Uint16
+func (f *Uint16) SafeGet() uint16 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Uint16
 func (f *Uint16) Set(value uint16) {
 	_, ok := f._root._bak[f._key]
@@ -256,6 +376,14 @@ func (f *Uint16) Set(value uint16) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Uint16
+func (f *Uint16) SafeSet(value uint16) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -280,6 +408,14 @@ func (f *Uint32) Get() uint32 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Uint32
+func (f *Uint32) SafeGet() uint32 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Uint32
 func (f *Uint32) Set(value uint32) {
 	_, ok := f._root._bak[f._key]
@@ -288,6 +424,14 @@ func (f *Uint32) Set(value uint32) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Uint32
+func (f *Uint32) SafeSet(value uint32) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -312,6 +456,14 @@ func (f *Uint64) Get() uint64 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Uint64
+func (f *Uint64) SafeGet() uint64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Uint64
 func (f *Uint64) Set(value uint64) {
 	_, ok := f._root._bak[f._key]
@@ -320,6 +472,14 @@ func (f *Uint64) Set(value uint64) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Uint64
+func (f *Uint64) SafeSet(value uint64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -344,6 +504,14 @@ func (f *Float32) Get() float32 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Float32
+func (f *Float32) SafeGet() float32 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Float32
 func (f *Float32) Set(value float32) {
 	_, ok := f._root._bak[f._key]
@@ -352,6 +520,14 @@ func (f *Float32) Set(value float32) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Float32
+func (f *Float32) SafeSet(value float32) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -376,6 +552,14 @@ func (f *Float64) Get() float64 {
 	return f._value
 }
 
+// SafeGet is a safe getter for Float64
+func (f *Float64) SafeGet() float64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Float64
 func (f *Float64) Set(value float64) {
 	_, ok := f._root._bak[f._key]
@@ -384,6 +568,14 @@ func (f *Float64) Set(value float64) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Float64
+func (f *Float64) SafeSet(value float64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -416,6 +608,14 @@ func (f *BigInt) Get() int64 {
 	return n.Int64()
 }
 
+// SafeGet is a safe getter for BigInt
+func (f *BigInt) SafeGet() int64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for BigInt
 func (f *BigInt) Set(value int64) {
 	_, ok := f._root._bak[f._key]
@@ -424,6 +624,14 @@ func (f *BigInt) Set(value int64) {
 	}
 	f._value = big.NewInt(value).String()
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for BigInt
+func (f *BigInt) SafeSet(value int64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // GetBig is a getter for BigInt
@@ -439,6 +647,14 @@ func (f *BigInt) GetBig() *big.Int {
 	return n
 }
 
+// SafeGetBig is a safe getter for BigInt
+func (f *BigInt) SafeGetBig() *big.Int {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.GetBig()
+}
+
 // SetBig is a setter for BigInt
 func (f *BigInt) SetBig(n *big.Int) {
 	_, ok := f._root._bak[f._key]
@@ -451,6 +667,14 @@ func (f *BigInt) SetBig(n *big.Int) {
 		f._value = n.String()
 	}
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSetBig is a safe setter for BigInt
+func (f *BigInt) SafeSetBig(n *big.Int) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.SetBig(n)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -484,6 +708,14 @@ func (f *BigRat) Get() float64 {
 	return v
 }
 
+// SafeGet is a safe getter for BigRat
+func (f *BigRat) SafeGet() float64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for BigFloat
 func (f *BigRat) Set(v float64) {
 	rat, _ := big.NewFloat(v).Rat(nil)
@@ -493,6 +725,14 @@ func (f *BigRat) Set(v float64) {
 	}
 	f._value = rat.String()
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for BigRat
+func (f *BigRat) SafeSet(v float64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(v)
 }
 
 // GetBig is a getter for BigRat
@@ -508,6 +748,14 @@ func (f *BigRat) GetBig() *big.Rat {
 	return n
 }
 
+// SafeGetBig is a safe getter for BigRat
+func (f *BigRat) SafeGetBig() *big.Rat {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.GetBig()
+}
+
 // SetBig is a setter for BigRat
 func (f *BigRat) SetBig(n *big.Rat) {
 	_, ok := f._root._bak[f._key]
@@ -520,6 +768,14 @@ func (f *BigRat) SetBig(n *big.Rat) {
 		f._value = n.String()
 	}
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSetBig is a safe setter for BigRat
+func (f *BigRat) SafeSetBig(n *big.Rat) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.SetBig(n)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -553,6 +809,14 @@ func (f *BigFloat) Get() float64 {
 	return f64
 }
 
+// SafeGet is a safe getter for BigFloat
+func (f *BigFloat) SafeGet() float64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for BigFloat
 func (f *BigFloat) Set(value float64) {
 	_, ok := f._root._bak[f._key]
@@ -561,6 +825,14 @@ func (f *BigFloat) Set(value float64) {
 	}
 	f._value = big.NewFloat(value).String()
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for BigFloat
+func (f *BigFloat) SafeSet(value float64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // GetBig is a getter for BigFloat
@@ -576,6 +848,14 @@ func (f *BigFloat) GetBig() *big.Float {
 	return n
 }
 
+// SafeGetBig is a safe getter for BigFloat
+func (f *BigFloat) SafeGetBig() *big.Float {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.GetBig()
+}
+
 // SetBig is a setter for BigFloat
 func (f *BigFloat) SetBig(n *big.Float) {
 	_, ok := f._root._bak[f._key]
@@ -588,6 +868,14 @@ func (f *BigFloat) SetBig(n *big.Float) {
 		f._value = n.String()
 	}
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSetBig is a safe setter for BigFloat
+func (f *BigFloat) SafeSetBig(n *big.Float) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.SetBig(n)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -612,6 +900,14 @@ func (f *Bool) Get() bool {
 	return f._value
 }
 
+// SafeGet is a safe getter for Bool
+func (f *Bool) SafeGet() bool {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Bool
 func (f *Bool) Set(value bool) {
 	_, ok := f._root._bak[f._key]
@@ -620,6 +916,14 @@ func (f *Bool) Set(value bool) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Bool
+func (f *Bool) SafeSet(value bool) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -644,6 +948,14 @@ func (f *String) Get() string {
 	return f._value
 }
 
+// SafeGet is a safe getter for String
+func (f *String) SafeGet() string {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for String
 func (f *String) Set(value string) {
 	_, ok := f._root._bak[f._key]
@@ -652,6 +964,14 @@ func (f *String) Set(value string) {
 	}
 	f._value = value
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for String
+func (f *String) SafeSet(value string) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -679,6 +999,14 @@ func (f *Time) Get() int64 {
 	return timeStringToStamp(f._value)
 }
 
+// SafeGet is a safe getter for Time
+func (f *Time) SafeGet() int64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for Time
 func (f *Time) Set(value int64) {
 	_, ok := f._root._bak[f._key]
@@ -692,6 +1020,14 @@ func (f *Time) Set(value int64) {
 	}
 
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for Time
+func (f *Time) SafeSet(value int64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -723,6 +1059,14 @@ func (f *JSON) Get(n interface{}) {
 	}
 }
 
+// SafeGet is a safe getter for String
+func (f *JSON) SafeGet(n interface{}) {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	f.Get(n)
+}
+
 // Set is a setter for String
 func (f *JSON) Set(value interface{}) {
 	b, err := json.Marshal(value)
@@ -736,6 +1080,14 @@ func (f *JSON) Set(value interface{}) {
 	}
 	f._value = string(b)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for String
+func (f *JSON) SafeSet(value interface{}) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -763,6 +1115,14 @@ func (f *Proto) Get(n interface{}) {
 	}
 }
 
+// SafeGet is a safe getter for String
+func (f *Proto) SafeGet(n interface{}) {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	f.Get(n)
+}
+
 // Set is a setter for String
 func (f *Proto) Set(value interface{}) {
 	b, err := proto.Marshal(value)
@@ -776,6 +1136,14 @@ func (f *Proto) Set(value interface{}) {
 	}
 	f._value = string(b)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for String
+func (f *Proto) SafeSet(value interface{}) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -802,6 +1170,14 @@ func (f *SliceInt) Get() []int {
 	return value
 }
 
+// SafeGet is a safe getter for SliceInt
+func (f *SliceInt) SafeGet() []int {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceInt
 func (f *SliceInt) Set(value []int) {
 	_, ok := f._root._bak[f._key]
@@ -811,6 +1187,14 @@ func (f *SliceInt) Set(value []int) {
 	f._value = make([]int, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceInt
+func (f *SliceInt) SafeSet(value []int) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -837,6 +1221,14 @@ func (f *SliceInt8) Get() []int8 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceInt8
+func (f *SliceInt8) SafeGet() []int8 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceInt8
 func (f *SliceInt8) Set(value []int8) {
 	_, ok := f._root._bak[f._key]
@@ -846,6 +1238,14 @@ func (f *SliceInt8) Set(value []int8) {
 	f._value = make([]int8, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceInt8
+func (f *SliceInt8) SafeSet(value []int8) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -872,6 +1272,14 @@ func (f *SliceInt16) Get() []int16 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceInt16
+func (f *SliceInt16) SafeGet() []int16 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceInt16
 func (f *SliceInt16) Set(value []int16) {
 	_, ok := f._root._bak[f._key]
@@ -881,6 +1289,14 @@ func (f *SliceInt16) Set(value []int16) {
 	f._value = make([]int16, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceInt16
+func (f *SliceInt16) SafeSet(value []int16) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -907,6 +1323,14 @@ func (f *SliceInt32) Get() []int32 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceInt32
+func (f *SliceInt32) SafeGet() []int32 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceInt32
 func (f *SliceInt32) Set(value []int32) {
 	_, ok := f._root._bak[f._key]
@@ -916,6 +1340,14 @@ func (f *SliceInt32) Set(value []int32) {
 	f._value = make([]int32, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceInt32
+func (f *SliceInt32) SafeSet(value []int32) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -942,6 +1374,14 @@ func (f *SliceInt64) Get() []int64 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceInt64
+func (f *SliceInt64) SafeGet() []int64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceInt64
 func (f *SliceInt64) Set(value []int64) {
 	_, ok := f._root._bak[f._key]
@@ -951,6 +1391,14 @@ func (f *SliceInt64) Set(value []int64) {
 	f._value = make([]int64, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceInt64
+func (f *SliceInt64) SafeSet(value []int64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -977,6 +1425,14 @@ func (f *SliceUint) Get() []uint {
 	return value
 }
 
+// SafeGet is a safe getter for SliceUint
+func (f *SliceUint) SafeGet() []uint {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceUint
 func (f *SliceUint) Set(value []uint) {
 	_, ok := f._root._bak[f._key]
@@ -986,6 +1442,14 @@ func (f *SliceUint) Set(value []uint) {
 	f._value = make([]uint, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceUint
+func (f *SliceUint) SafeSet(value []uint) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1012,6 +1476,14 @@ func (f *SliceUint8) Get() []uint8 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceUint8
+func (f *SliceUint8) SafeGet() []uint8 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceUint8
 func (f *SliceUint8) Set(value []uint8) {
 	_, ok := f._root._bak[f._key]
@@ -1021,6 +1493,14 @@ func (f *SliceUint8) Set(value []uint8) {
 	f._value = make([]uint8, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceUint8
+func (f *SliceUint8) SafeSet(value []uint8) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1047,6 +1527,14 @@ func (f *SliceUint16) Get() []uint16 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceUint16
+func (f *SliceUint16) SafeGet() []uint16 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceUint16
 func (f *SliceUint16) Set(value []uint16) {
 	_, ok := f._root._bak[f._key]
@@ -1056,6 +1544,14 @@ func (f *SliceUint16) Set(value []uint16) {
 	f._value = make([]uint16, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceUint16
+func (f *SliceUint16) SafeSet(value []uint16) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1082,6 +1578,14 @@ func (f *SliceUint32) Get() []uint32 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceUint32
+func (f *SliceUint32) SafeGet() []uint32 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceUint32
 func (f *SliceUint32) Set(value []uint32) {
 	_, ok := f._root._bak[f._key]
@@ -1091,6 +1595,14 @@ func (f *SliceUint32) Set(value []uint32) {
 	f._value = make([]uint32, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceUint32
+func (f *SliceUint32) SafeSet(value []uint32) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1117,6 +1629,14 @@ func (f *SliceUint64) Get() []uint64 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceUint64
+func (f *SliceUint64) SafeGet() []uint64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceUint64
 func (f *SliceUint64) Set(value []uint64) {
 	_, ok := f._root._bak[f._key]
@@ -1126,6 +1646,14 @@ func (f *SliceUint64) Set(value []uint64) {
 	f._value = make([]uint64, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceUint64
+func (f *SliceUint64) SafeSet(value []uint64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1152,6 +1680,14 @@ func (f *SliceFloat32) Get() []float32 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceFloat32
+func (f *SliceFloat32) SafeGet() []float32 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceFloat32
 func (f *SliceFloat32) Set(value []float32) {
 	_, ok := f._root._bak[f._key]
@@ -1161,6 +1697,14 @@ func (f *SliceFloat32) Set(value []float32) {
 	f._value = make([]float32, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceFloat32
+func (f *SliceFloat32) SafeSet(value []float32) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1187,6 +1731,14 @@ func (f *SliceFloat64) Get() []float64 {
 	return value
 }
 
+// SafeGet is a safe getter for SliceFloat64
+func (f *SliceFloat64) SafeGet() []float64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceFloat64
 func (f *SliceFloat64) Set(value []float64) {
 	_, ok := f._root._bak[f._key]
@@ -1196,6 +1748,14 @@ func (f *SliceFloat64) Set(value []float64) {
 	f._value = make([]float64, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceFloat64
+func (f *SliceFloat64) SafeSet(value []float64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1225,6 +1785,14 @@ func (f *SliceBigInt) Get() []*big.Int {
 	return value
 }
 
+// SafeGet is a safe getter for SliceBigInt
+func (f *SliceBigInt) SafeGet() []*big.Int {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceBigInt
 func (f *SliceBigInt) Set(value []*big.Int) {
 	_, ok := f._root._bak[f._key]
@@ -1237,6 +1805,14 @@ func (f *SliceBigInt) Set(value []*big.Int) {
 		f._value[i] = n.Add(v, n)
 	}
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceBigInt
+func (f *SliceBigInt) SafeSet(value []*big.Int) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1266,6 +1842,14 @@ func (f *SliceBigRat) Get() []*big.Rat {
 	return value
 }
 
+// SafeGet is a safe getter for SliceBigRat
+func (f *SliceBigRat) SafeGet() []*big.Rat {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceBigRat
 func (f *SliceBigRat) Set(value []*big.Rat) {
 	_, ok := f._root._bak[f._key]
@@ -1278,6 +1862,14 @@ func (f *SliceBigRat) Set(value []*big.Rat) {
 		f._value[i] = n.Add(v, n)
 	}
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceBigRat
+func (f *SliceBigRat) SafeSet(value []*big.Rat) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1307,6 +1899,14 @@ func (f *SliceBigFloat) Get() []*big.Float {
 	return value
 }
 
+// SafeGet is a safe getter for SliceBigFloat
+func (f *SliceBigFloat) SafeGet() []*big.Float {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceBigFloat
 func (f *SliceBigFloat) Set(value []*big.Float) {
 	_, ok := f._root._bak[f._key]
@@ -1319,6 +1919,14 @@ func (f *SliceBigFloat) Set(value []*big.Float) {
 		f._value[i] = n.Add(v, n)
 	}
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceBigFloat
+func (f *SliceBigFloat) SafeSet(value []*big.Float) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1352,6 +1960,14 @@ func (f *SliceTime) Get() []int64 {
 	return ns
 }
 
+// SafeGet is a safe getter for SliceTime
+func (f *SliceTime) SafeGet() []int64 {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceTime
 func (f *SliceTime) Set(ns []int64) {
 	_, ok := f._root._bak[f._key]
@@ -1369,6 +1985,14 @@ func (f *SliceTime) Set(ns []int64) {
 	f._value = ss
 
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceTime
+func (f *SliceTime) SafeSet(ns []int64) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(ns)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1395,6 +2019,14 @@ func (f *SliceBool) Get() []bool {
 	return value
 }
 
+// SafeGet is a safe getter for SliceBool
+func (f *SliceBool) SafeGet() []bool {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceBool
 func (f *SliceBool) Set(value []bool) {
 	_, ok := f._root._bak[f._key]
@@ -1404,6 +2036,14 @@ func (f *SliceBool) Set(value []bool) {
 	f._value = make([]bool, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceBool
+func (f *SliceBool) SafeSet(value []bool) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1430,6 +2070,14 @@ func (f *SliceString) Get() []string {
 	return value
 }
 
+// SafeGet is a safe getter for SliceString
+func (f *SliceString) SafeGet() []string {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.Get()
+}
+
 // Set is a setter for SliceString
 func (f *SliceString) Set(value []string) {
 	_, ok := f._root._bak[f._key]
@@ -1439,6 +2087,14 @@ func (f *SliceString) Set(value []string) {
 	f._value = make([]string, len(value))
 	copy(f._value, value)
 	f._root._mod[f._key] = f._value
+}
+
+// SafeSet is a safe setter for SliceString
+func (f *SliceString) SafeSet(value []string) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.Set(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal

@@ -1,3 +1,0 @@
-package plainest
-
-// func SetTimeLocation(
