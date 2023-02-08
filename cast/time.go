@@ -91,7 +91,7 @@ func stringToDurationE(str string) (time.Duration, error) {
 	}
 
 	// TODO: to support time format str as tm value
-	tm := time.Now()
+	tm := time.Now().UTC()
 	duration := tm.AddDate(nums[0], nums[1], nums[2]).Add(
 		time.Duration(nums[3]) * time.Hour,
 	).Add(
