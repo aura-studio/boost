@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 )
 
@@ -111,6 +112,8 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 			return nil, err
 		}
 		return time.FixedZone("System", int(duration.Seconds())), nil
+	} else if strings.HasPrefix(s, "UTC") && len(s) > 3 {
+		return stringToTimeZoneE(fmt.Sprintf("%sh", strings.TrimLeft(s, "UTC")))
 	} else {
 		// Check timezone is valid
 		if loc, err := time.LoadLocation(s); err != nil {
