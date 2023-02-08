@@ -7,7 +7,9 @@ import (
 	"reflect"
 	"runtime"
 	"strings"
+	"time"
 
+	"github.com/aura-studio/boost/cast"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 )
@@ -58,6 +60,7 @@ var _ logrus.Formatter = (*TextFormatter)(nil)
 
 type TextFormatter struct {
 	logrus.TextFormatter
+	TimeLocation *time.Location
 }
 
 func (f *TextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
@@ -79,6 +82,7 @@ func (f *TextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 	f.TextFormatter.CallerPrettyfier = f.generateCallerPrettierfier(c.file, c.function)
 
+	entry.Logger.WithTime(entry.Time.In(f.TimeLocation))
 	data, err := f.TextFormatter.Format(entry)
 	if err != nil {
 		return nil, err
@@ -170,6 +174,14 @@ func (f *TextFormatter) generateFunction(frame *runtime.Frame) string {
 }
 
 func (*FormatterGenerator) Text(s string) (logrus.Formatter, error) {
+	var timeLocation *time.Location
+	timezone := gjson.Get(s, "timezone")
+	if timezone.Type == gjson.Null {
+		timeLocation = time.Local
+	} else {
+		timeLocation = cast.ToTimeZone(timezone.String())
+	}
+
 	formatter := &TextFormatter{
 		TextFormatter: logrus.TextFormatter{
 			ForceColors:   true,
@@ -198,6 +210,7 @@ func (*FormatterGenerator) Text(s string) (logrus.Formatter, error) {
 				return fmt.Sprintf("%s:", function), fmt.Sprintf(" %s:%d", packageFile, f.Line)
 			},
 		},
+		TimeLocation: timeLocation,
 	}
 
 	return formatter, nil
