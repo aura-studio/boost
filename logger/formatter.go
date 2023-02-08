@@ -82,7 +82,7 @@ func (f *TextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 	f.TextFormatter.CallerPrettyfier = f.generateCallerPrettierfier(c.file, c.function)
 
-	entry.Logger.WithTime(entry.Time.In(f.TimeLocation))
+	entry.Time = entry.Time.In(f.TimeLocation)
 	data, err := f.TextFormatter.Format(entry)
 	if err != nil {
 		return nil, err
