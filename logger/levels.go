@@ -65,13 +65,19 @@ func NewLogLevels(i interface{}) *LogLevels {
 	case string:
 		s := i
 
-		if gjson.Valid(s) && gjson.Parse(s).IsObject() {
-			if gjson.Get(s, "level").IsArray() {
+		if gjson.Valid(s) {
+			r := gjson.Get(s, "level")
+			switch {
+			case r.IsArray():
+				strs := make([]string, 0, len(r.Array()))
 				for _, str := range gjson.Get(s, "level").Array() {
-					return NewLogLevels(str.String())
+					strs = append(strs, str.String())
 				}
-			} else {
-				s = gjson.Get(s, "level").String()
+				return NewLogLevels(strs)
+			case r.Type == gjson.String:
+				s = r.String()
+			default:
+				panic(fmt.Errorf("%w: %s", ErrUnknownLogLevel, s))
 			}
 		}
 
@@ -80,12 +86,14 @@ func NewLogLevels(i interface{}) *LogLevels {
 
 		for i := logrus.Level(0); i <= logLevel.ToLogrus(); i++ {
 			logLevels = append(logLevels, NewLogLevel(i.String()))
+			fmt.Println(i.String())
 		}
 
 		return &LogLevels{logLevels}
 
 	case []string:
 		strs := i
+		fmt.Println(strs)
 
 		logLevels := make([]*LogLevel, 0, len(strs))
 		for _, str := range strs {
