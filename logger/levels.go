@@ -86,14 +86,12 @@ func NewLogLevels(i interface{}) *LogLevels {
 
 		for i := logrus.Level(0); i <= logLevel.ToLogrus(); i++ {
 			logLevels = append(logLevels, NewLogLevel(i.String()))
-			fmt.Println(i.String())
 		}
 
 		return &LogLevels{logLevels}
 
 	case []string:
 		strs := i
-		fmt.Println(strs)
 
 		logLevels := make([]*LogLevel, 0, len(strs))
 		for _, str := range strs {
