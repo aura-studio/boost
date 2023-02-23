@@ -29,6 +29,20 @@ func DivE[T1 Number, T2 Number](a T1, b T2) (T1, error) {
 	return T1(float64(a) / float64(b)), nil
 }
 
+func DivFloat[T1 Float, T2 Number](a T1, b T2) float64 {
+	if b == 0 {
+		return 0
+	}
+	return float64(a) / float64(b)
+}
+
+func DivFloatE[T1 Float, T2 Number](a T1, b T2) (float64, error) {
+	if b == 0 {
+		return 0, errors.New("denominator is 0")
+	}
+	return float64(a) / float64(b), nil
+}
+
 func Precision[T1 Float, T2 Integer](target T1, prec T2) float64 {
 	fmtStr := "%." + strconv.FormatInt(int64(prec), 10) + "f"
 	result, err := strconv.ParseFloat(fmt.Sprintf(fmtStr, target), 64)
