@@ -154,6 +154,36 @@ func RandUnrepeated[T Number](s []T, count int) []int {
 	return result
 }
 
+func Positions[T comparable](v T, s []T) []int {
+	pos := make([]int, 0)
+	for p, n := range s {
+		if n == v {
+			pos = append(pos, p)
+		}
+	}
+	return pos
+}
+
+func ContinuousPositions[T comparable](v T, s []T) [][]int {
+	rt := make([][]int, 0)
+	for index := 0; index < len(s); {
+		if s[index] == v {
+			rtt := make([]int, 0)
+			rtt = append(rtt, index)
+			tmp := index + 1
+			for tmp < len(s) && s[tmp] == v {
+				rtt = append(rtt, tmp)
+				tmp++
+			}
+			index = tmp
+			rt = append(rt, rtt)
+		} else {
+			index++
+		}
+	}
+	return rt
+}
+
 // MaxContinuousCount returns max continuous count in slice  [start end) index
 func MaxContinuousCount[T comparable](v T, s []T) (int, int, int) {
 	maxCount := 0
@@ -176,24 +206,4 @@ func MaxContinuousCount[T comparable](v T, s []T) (int, int, int) {
 		}
 	}
 	return maxCount, start, end
-}
-
-func ContinuousPositions[T comparable](v T, s []T) [][]int {
-	rt := make([][]int, 0)
-	for index := 0; index < len(s); {
-		if s[index] == v {
-			rtt := make([]int, 0)
-			rtt = append(rtt, index)
-			tmp := index + 1
-			for tmp < len(s) && s[tmp] == v {
-				rtt = append(rtt, tmp)
-				tmp++
-			}
-			index = tmp
-			rt = append(rt, rtt)
-		} else {
-			index++
-		}
-	}
-	return rt
 }
