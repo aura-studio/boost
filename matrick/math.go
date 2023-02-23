@@ -15,28 +15,23 @@ func Min[T Number](x, y T) T {
 	return T(math.Min(float64(x), float64(y)))
 }
 
-func Div[T1 Number, T2 Number](a T1, b T2) T1 {
-	if b == 0 {
+func Div[T1 Number, T2 Number](a T1, b T2) float64 {
+	r, err := DivE(a, b)
+	if err != nil {
+		panic(err)
+	}
+	return r
+}
+
+func SafeDiv[T1 Number, T2 Number](a T1, b T2) float64 {
+	r, err := DivE(a, b)
+	if err != nil {
 		return 0
 	}
-	return T1(float64(a) / float64(b))
+	return r
 }
 
-func DivE[T1 Number, T2 Number](a T1, b T2) (T1, error) {
-	if b == 0 {
-		return 0, errors.New("denominator is 0")
-	}
-	return T1(float64(a) / float64(b)), nil
-}
-
-func DivFloat[T1 Float, T2 Number](a T1, b T2) float64 {
-	if b == 0 {
-		return 0
-	}
-	return float64(a) / float64(b)
-}
-
-func DivFloatE[T1 Float, T2 Number](a T1, b T2) (float64, error) {
+func DivE[T1 Number, T2 Number](a T1, b T2) (float64, error) {
 	if b == 0 {
 		return 0, errors.New("denominator is 0")
 	}
