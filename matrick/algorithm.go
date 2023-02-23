@@ -130,6 +130,17 @@ func RandWeight[T Number](s []T) int {
 	return lastKey
 }
 
+func RandWeightMap[T1 comparable, T2 Number](m map[T1]T2) T1 {
+	var keys = make([]T1, 0, len(m))
+	var values = make([]T2, 0, len(m))
+	for k, v := range m {
+		keys = append(keys, k)
+		values = append(values, v)
+	}
+	i := RandWeight(values)
+	return keys[i]
+}
+
 // RandUnrepeated 以s为权重随机count个不重复的 返回索引的切片
 func RandUnrepeated[T Number](s []T, count int) []int {
 	result := make([]int, 0)
