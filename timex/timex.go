@@ -5,27 +5,27 @@ import (
 	"github.com/tidwall/gjson"
 )
 
-type SysTime struct {
+type Timex struct {
 	Zone  int64
 	Fake  int64
 	Delta int64
 }
 
 func Zone() int64 {
-	return systime.Zone
+	return timex.Zone
 }
 
 func Fake() int64 {
-	return systime.Fake
+	return timex.Fake
 }
 
 func Delta() int64 {
-	return systime.Delta
+	return timex.Delta
 }
 
-var systime = &SysTime{}
+var timex = &Timex{}
 
-func Init(s string) *SysTime {
+func Init(s string) *Timex {
 	if result := gjson.Get(s, "zone"); result.Type != gjson.Null {
 		WithTimeZone(result.String())
 	} else {
@@ -44,7 +44,7 @@ func Init(s string) *SysTime {
 		WithDeltaTime("0")
 	}
 
-	return systime
+	return timex
 }
 
 type Options struct{}
@@ -52,7 +52,7 @@ type Options struct{}
 var options = &Options{}
 
 func WithTimeZone(tz string) {
-	systime.Zone = options.parseTimeZone(tz)
+	timex.Zone = options.parseTimeZone(tz)
 }
 
 func (*Options) parseTimeZone(s string) int64 {
@@ -64,7 +64,7 @@ func (*Options) parseTimeZone(s string) int64 {
 }
 
 func WithFakeTime(s string) {
-	systime.Fake = options.parseFakeTime(s)
+	timex.Fake = options.parseFakeTime(s)
 }
 
 func (*Options) parseFakeTime(s string) int64 {
@@ -80,7 +80,7 @@ func (*Options) parseFakeTime(s string) int64 {
 }
 
 func WithDeltaTime(s string) {
-	systime.Delta = options.parseDeltaTime(s)
+	timex.Delta = options.parseDeltaTime(s)
 }
 
 func (*Options) parseDeltaTime(s string) int64 {

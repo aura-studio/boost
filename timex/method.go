@@ -11,7 +11,7 @@ func Time(ts int64) time.Time {
 }
 
 func TimeDelta(ts int64) time.Time {
-	return virtualTime.Time(ts - systime.Delta)
+	return virtualTime.Time(ts - timex.Delta)
 }
 
 func Now() time.Time {
@@ -19,7 +19,7 @@ func Now() time.Time {
 }
 
 func NowDelta() time.Time {
-	return Time(virtualTime.Now().Unix() - systime.Delta)
+	return Time(virtualTime.Now().Unix() - timex.Delta)
 }
 
 func ParseTime(s string) time.Time {

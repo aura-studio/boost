@@ -18,11 +18,11 @@ func NewFakeTime() *FakeTime {
 }
 
 func (v *FakeTime) initTimeLocation() {
-	v.location = time.FixedZone("SYS", int(systime.Zone))
+	v.location = time.FixedZone("SYS", int(timex.Zone))
 }
 
 func (v *FakeTime) initFakeTime() {
-	v.fakeDuration = time.Duration(systime.Fake)
+	v.fakeDuration = time.Duration(timex.Fake)
 }
 
 func (v *FakeTime) Time(ts int64) time.Time {
