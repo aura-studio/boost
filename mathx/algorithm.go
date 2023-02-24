@@ -1,4 +1,4 @@
-package matrick
+package mathx
 
 import (
 	"math/rand"

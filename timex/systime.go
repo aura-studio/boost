@@ -1,4 +1,4 @@
-package systime
+package timex
 
 import (
 	"github.com/aura-studio/boost/cast"

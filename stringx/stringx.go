@@ -1,4 +1,4 @@
-package strick
+package stringx
 
 import "strings"
 
