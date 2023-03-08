@@ -14,12 +14,13 @@ type Wire struct {
 	engine *gin.Engine
 }
 
-func New() *Wire {
-	return &Wire{}
+func New(engine *gin.Engine) *Wire {
+	return &Wire{
+		engine: engine,
+	}
 }
 
-func (s *Wire) Init(engine *gin.Engine) {
-	s.engine = engine
+func (s *Wire) Init() {
 }
 
 func (s *Wire) Invoke(_, wireReq string) (wireRsp string) {
