@@ -83,7 +83,7 @@ func (s *Service) Init() {
 func (s *Service) Invoke(routePath string, req string) (rsp string) {
 	strs := strings.Split(routePath, "/")
 	if len(strs) < 2 {
-		return fmt.Errorf("invalid route path: %s", routePath).Error()
+		return fmt.Errorf("error://invalid route path: %s", routePath).Error()
 	}
 
 	if err := safe.DoWithTimeout(60*time.Second, func(ctx context.Context) error {
@@ -97,7 +97,7 @@ func (s *Service) Invoke(routePath string, req string) (rsp string) {
 			return nil
 		}))
 	}); err != nil {
-		return err.Error()
+		return fmt.Errorf("error://%w", err).Error()
 	}
 	return
 }
