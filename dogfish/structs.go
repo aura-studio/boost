@@ -248,34 +248,94 @@ func (smc *stringMapConverter) fromMap(mapValue map[string]string, structValue i
 	return smc.recursiveFromMap(mapValue, value.Addr().Interface(), "")
 }
 
-func ToMap(structValue interface{}) (map[string]interface{}, error) {
+func ToMap(structValue interface{}) map[string]interface{} {
+	m, err := ToMapE(structValue)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+func ToMapE(structValue interface{}) (map[string]interface{}, error) {
 	return newMapConverter("").toMap(structValue)
 }
 
-func ToJSONMap(structValue interface{}) (map[string]interface{}, error) {
+func ToJSONMap(structValue interface{}) map[string]interface{} {
+	m, err := ToJSONMapE(structValue)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+func ToJSONMapE(structValue interface{}) (map[string]interface{}, error) {
 	return newMapConverter("json").toMap(structValue)
 }
 
-func FromMap(mapValue map[string]interface{}, structValue interface{}) error {
+func FromMap(mapValue map[string]interface{}, structValue interface{}) {
+	err := FromMapE(mapValue, structValue)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func FromMapE(mapValue map[string]interface{}, structValue interface{}) error {
 	return newMapConverter("").fromMap(mapValue, structValue)
 }
 
-func FromJSONMap(mapValue map[string]interface{}, structValue interface{}) error {
+func FromJSONMap(mapValue map[string]interface{}, structValue interface{}) {
+	err := FromJSONMapE(mapValue, structValue)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func FromJSONMapE(mapValue map[string]interface{}, structValue interface{}) error {
 	return newMapConverter("json").fromMap(mapValue, structValue)
 }
 
-func ToStringMap(structValue interface{}) (map[string]string, error) {
+func ToStringMap(structValue interface{}) map[string]string {
+	m, err := ToStringMapE(structValue)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+func ToStringMapE(structValue interface{}) (map[string]string, error) {
 	return newStringMapConverter("").toMap(structValue)
 }
 
-func ToStringJSONMap(structValue interface{}) (map[string]string, error) {
+func ToStringJSONMap(structValue interface{}) map[string]string {
+	m, err := ToStringJSONMapE(structValue)
+	if err != nil {
+		panic(err)
+	}
+	return m
+}
+
+func ToStringJSONMapE(structValue interface{}) (map[string]string, error) {
 	return newStringMapConverter("json").toMap(structValue)
 }
 
-func FromStringMap(mapValue map[string]string, structValue interface{}) error {
+func FromStringMap(mapValue map[string]string, structValue interface{}) {
+	err := FromStringMapE(mapValue, structValue)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func FromStringMapE(mapValue map[string]string, structValue interface{}) error {
 	return newStringMapConverter("").fromMap(mapValue, structValue)
 }
 
-func FromStringJSONMap(mapValue map[string]string, structValue interface{}) error {
+func FromStringJSONMap(mapValue map[string]string, structValue interface{}) {
+	err := FromStringJSONMapE(mapValue, structValue)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func FromStringJSONMapE(mapValue map[string]string, structValue interface{}) error {
 	return newStringMapConverter("json").fromMap(mapValue, structValue)
 }
