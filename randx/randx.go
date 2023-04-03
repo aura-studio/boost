@@ -1,4 +1,4 @@
-package mathx
+package randx
 
 import (
 	"math/rand"
