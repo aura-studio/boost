@@ -2,6 +2,7 @@ package mathx
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/aura-studio/boost/mathx"
 )
@@ -35,6 +36,8 @@ func NewRand(seed int64) *Rand {
 		Rand: rand.New(rand.NewSource(seed)),
 	}
 }
+
+var Global = NewRand(time.Now().UnixNano())
 
 // PR rands yes or no by probability
 func PR(rand *Rand, pr float64) bool {
