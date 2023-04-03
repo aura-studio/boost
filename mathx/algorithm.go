@@ -1,9 +1,5 @@
 package mathx
 
-import (
-	"math/rand"
-)
-
 func FastFind[T1 Number](n T1, s []T1) int {
 	var (
 		min    = 0
@@ -31,15 +27,6 @@ func FastFind[T1 Number](n T1, s []T1) int {
 			}
 		}
 	}
-}
-
-func Shuffle[T comparable](s []T) []T {
-	length := int64(len(s))
-	for i := length; i > 0; i-- {
-		pos := rand.Int63n(i)
-		s[i-1], s[pos] = s[pos], s[i-1]
-	}
-	return s
 }
 
 func Pos[T comparable](v T, s []T) []int {
@@ -90,68 +77,6 @@ func Sum[T Number](s []T) T {
 		sum += n
 	}
 	return sum
-}
-
-// RandPR rands yes or no by probability
-func RandPR(pr float64) bool {
-	return rand.Float64() <= pr
-}
-
-// RandIntn Picks a random value in the specified object [s, e]
-func RandIntn(s int, e int) int {
-	return rand.Intn(e-s+1) + s
-}
-
-// RandIntn Picks a random value in the specified object [s, e]
-func RandInt64n(s int64, e int64) int64 {
-	return rand.Int63n(e-s+1) + s
-}
-
-func RandFloat64(s float64, e float64) float64 {
-	r := s + rand.Float64()*(e-s)
-	return r
-}
-
-func RandWeight[T Number](s []T) int {
-	var weightSum float64
-	for _, r := range s {
-		weightSum += float64(r)
-	}
-	n := rand.Float64() * weightSum
-	var lastKey int
-	for i, r := range s {
-		nReach := float64(r)
-		if n <= nReach {
-			return i
-		}
-		n -= nReach
-		lastKey = i
-	}
-	return lastKey
-}
-
-func RandWeightMap[T1 comparable, T2 Number](m map[T1]T2) T1 {
-	var keys = make([]T1, 0, len(m))
-	var values = make([]T2, 0, len(m))
-	for k, v := range m {
-		keys = append(keys, k)
-		values = append(values, v)
-	}
-	i := RandWeight(values)
-	return keys[i]
-}
-
-// RandUnrepeated 以s为权重随机count个不重复的 返回索引的切片
-func RandUnrepeated[T Number](s []T, count int) []int {
-	result := make([]int, 0)
-	for len(result) < count {
-		var index int
-		for index = RandWeight(s); In(index, result); {
-			index = RandWeight(s)
-		}
-		result = append(result, index)
-	}
-	return result
 }
 
 func Positions[T comparable](v T, s []T) []int {
