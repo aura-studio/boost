@@ -11,9 +11,10 @@ type VectorPlayer struct {
 
 var _ rand.Source = (*VectorPlayer)(nil)
 
-func NewVectorPlayer(v Vector) *VectorPlayer {
+func NewVectorPlayer(v Vector, index int) *VectorPlayer {
 	return &VectorPlayer{
 		Vector: v,
+		Index:  index,
 	}
 }
 
