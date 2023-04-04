@@ -27,12 +27,12 @@ type Number interface {
 	Integer | Float
 }
 
-type Rand struct {
+type Randx struct {
 	*rand.Rand
 }
 
-func NewRand(seed int64) *Rand {
-	return &Rand{
+func New(seed int64) *Randx {
+	return &Randx{
 		Rand: rand.New(rand.NewSource(seed)),
 	}
 }
@@ -47,12 +47,12 @@ func PR(pr float64) bool {
 }
 
 // RandPR rands yes or no by probability
-func RandPR(rand *Rand, pr float64) bool {
+func RandPR(rand *Randx, pr float64) bool {
 	return rand.Float64() <= pr
 }
 
 // PR rands yes or no by probability
-func (rand *Rand) PR(pr float64) bool {
+func (rand *Randx) PR(pr float64) bool {
 	return rand.Float64() <= pr
 }
 
@@ -62,12 +62,12 @@ func Intn(n int) int {
 }
 
 // RandIntn picks a random value in the specified ramge [0, n)
-func RandIntn(rand *Rand, n int) int {
+func RandIntn(rand *Randx, n int) int {
 	return rand.Intn(n)
 }
 
 // Intn picks a random value in the specified ramge [0, n)
-func (rand *Rand) Intn(n int) int {
+func (rand *Randx) Intn(n int) int {
 	return rand.Rand.Intn(n)
 }
 
@@ -77,12 +77,12 @@ func RangeIntn(s int, e int) int {
 }
 
 // RandRangeIntn picks a random value in the specified ramge [s, e]
-func RandRangeIntn(rand *Rand, s int, e int) int {
+func RandRangeIntn(rand *Randx, s int, e int) int {
 	return rand.Intn(e-s+1) + s
 }
 
 // RangeIntn picks a random value in the specified ramge [s, e]
-func (rand *Rand) RangeIntn(s int, e int) int {
+func (rand *Randx) RangeIntn(s int, e int) int {
 	return rand.Intn(e-s+1) + s
 }
 
@@ -92,12 +92,12 @@ func Int63n(n int64) int64 {
 }
 
 // RandInt63n picks a random value in the specified ramge [0, n)
-func RandInt63n(rand *Rand, n int64) int64 {
+func RandInt63n(rand *Randx, n int64) int64 {
 	return rand.Int63n(n)
 }
 
 // Int63n picks a random value in the specified ramge [0, n)
-func (rand *Rand) Int63n(n int64) int64 {
+func (rand *Randx) Int63n(n int64) int64 {
 	return rand.Rand.Int63n(n)
 }
 
@@ -107,12 +107,12 @@ func RangeInt63n(s int64, e int64) int64 {
 }
 
 // RandRangeInt63n picks a random value in the specified ramge [s, e]
-func RandRangeInt63n(rand *Rand, s int64, e int64) int64 {
+func RandRangeInt63n(rand *Randx, s int64, e int64) int64 {
 	return rand.Int63n(e-s+1) + s
 }
 
 // RangeInt63n picks a random value in the specified ramge [s, e]
-func (rand *Rand) RangeInt63n(s int64, e int64) int64 {
+func (rand *Randx) RangeInt63n(s int64, e int64) int64 {
 	return rand.Int63n(e-s+1) + s
 }
 
@@ -122,12 +122,12 @@ func Float64() float64 {
 }
 
 // RandFloat64 picks a random value in the specified ramge [0, 1)
-func RandFloat64(rand *Rand) float64 {
+func RandFloat64(rand *Randx) float64 {
 	return rand.Float64()
 }
 
 // Float64 picks a random value in the specified ramge [0, 1)
-func (rand *Rand) Float64() float64 {
+func (rand *Randx) Float64() float64 {
 	return rand.Rand.Float64()
 }
 
@@ -137,13 +137,13 @@ func RangeFloat64(s float64, e float64) float64 {
 }
 
 // RandRangeFloat64 picks a random value in the specified range [s, e)
-func RandRangeFloat64(rand *Rand, s float64, e float64) float64 {
+func RandRangeFloat64(rand *Randx, s float64, e float64) float64 {
 	r := s + rand.Float64()*(e-s)
 	return r
 }
 
 // RangeFloat64 picks a random value in the specified range [s, e)
-func (rand *Rand) RangeFloat64(s float64, e float64) float64 {
+func (rand *Randx) RangeFloat64(s float64, e float64) float64 {
 	r := s + rand.Float64()*(e-s)
 	return r
 }
@@ -168,7 +168,7 @@ func Weight[T Number](s []T) int {
 }
 
 // RandWeight picks a random value in the specified slice by weight
-func RandWeight[T Number](rand *Rand, s []T) int {
+func RandWeight[T Number](rand *Randx, s []T) int {
 	var weightSum float64
 	for _, r := range s {
 		weightSum += float64(r)
@@ -199,7 +199,7 @@ func WeightMap[T1 comparable, T2 Number](m map[T1]T2) T1 {
 }
 
 // WeightMap picks a random value in the specified map by weight
-func RandWeightMap[T1 comparable, T2 Number](rand *Rand, m map[T1]T2) T1 {
+func RandWeightMap[T1 comparable, T2 Number](rand *Randx, m map[T1]T2) T1 {
 	var keys = make([]T1, 0, len(m))
 	var values = make([]T2, 0, len(m))
 	for k, v := range m {
@@ -224,7 +224,7 @@ func Unrepeated[T Number](s []T, count int) []int {
 }
 
 // RandUnrepeated picks unrepeated random values in the specified object by weight
-func RandUnrepeated[T Number](rand *Rand, s []T, count int) []int {
+func RandUnrepeated[T Number](rand *Randx, s []T, count int) []int {
 	result := make([]int, 0)
 	for len(result) < count {
 		var index int
@@ -247,7 +247,7 @@ func Shuffle[T comparable](s []T) []T {
 }
 
 // RandShuffle shuffles the specified slice
-func RandShuffle[T comparable](rand *Rand, s []T) []T {
+func RandShuffle[T comparable](rand *Randx, s []T) []T {
 	length := int64(len(s))
 	for i := length; i > 0; i-- {
 		pos := rand.Int63n(i)
