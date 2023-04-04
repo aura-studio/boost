@@ -31,10 +31,15 @@ type Randx struct {
 	*rand.Rand
 }
 
-func New(seed int64) *Randx {
-	return &Randx{
-		Rand: rand.New(rand.NewSource(seed)),
+func New(v any) *Randx {
+	var r *rand.Rand
+	switch v := v.(type) {
+	case int64:
+		r = rand.New(rand.NewSource(v))
+	case rand.Source:
+		r = rand.New(v)
 	}
+	return &Randx{r}
 }
 
 func init() {
