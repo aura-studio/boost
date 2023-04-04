@@ -11,6 +11,10 @@ type VectorPlayer struct {
 
 var _ rand.Source = (*VectorPlayer)(nil)
 
+func NewVectorPlayer() *VectorPlayer {
+	return &VectorPlayer{}
+}
+
 func (v VectorPlayer) Int63() int64 {
 	return v.Vector[v.Index%len(v.Vector)]
 }
