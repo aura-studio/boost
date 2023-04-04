@@ -1,10 +1,5 @@
 package mathx
 
-import (
-	"math/rand"
-	"time"
-)
-
 type Signed interface {
 	int | int8 | int16 | int32 | int64
 }
@@ -23,8 +18,4 @@ type Float interface {
 
 type Number interface {
 	Integer | Float
-}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
 }
