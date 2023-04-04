@@ -11,8 +11,10 @@ type VectorPlayer struct {
 
 var _ rand.Source = (*VectorPlayer)(nil)
 
-func NewVectorPlayer() *VectorPlayer {
-	return &VectorPlayer{}
+func NewVectorPlayer(v Vector) *VectorPlayer {
+	return &VectorPlayer{
+		Vector: v,
+	}
 }
 
 func (v VectorPlayer) Int63() int64 {
@@ -29,8 +31,10 @@ type VectorRecorder struct {
 
 var _ rand.Source = (*VectorRecorder)(nil)
 
-func NewVectorRecorder() *VectorRecorder {
-	return &VectorRecorder{}
+func NewVectorRecorder(seed int64) *VectorRecorder {
+	vr := &VectorRecorder{}
+	vr.Seed(seed)
+	return vr
 }
 
 func (r *VectorRecorder) Int63() int64 {
