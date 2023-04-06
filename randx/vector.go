@@ -18,11 +18,17 @@ func NewVectorPlayer(v Vector, index int) *VectorPlayer {
 	}
 }
 
-func (v VectorPlayer) Int63() int64 {
-	return v.Vector[v.Index%len(v.Vector)]
+func (p *VectorPlayer) Int63() int64 {
+	n := p.Vector[p.Index%len(p.Vector)]
+	p.Index++
+	return n
 }
 
-func (v *VectorPlayer) Seed(seed int64) {
+func (p *VectorPlayer) Seed(seed int64) {
+	if p.Index < len(p.Vector) {
+		p.Vector = p.Vector[:p.Index]
+		p.Index = 0
+	}
 }
 
 type VectorRecorder struct {
@@ -48,32 +54,9 @@ func (r *VectorRecorder) Seed(seed int64) {
 	r.Rand = rand.New(rand.NewSource(seed))
 }
 
-type ProvisionedVectorRecorder struct {
-	*VectorRecorder
-	Index int
-}
-
-var _ rand.Source = (*ProvisionedVectorRecorder)(nil)
-
-func NewProvisionedVectorRecorder(seed int64, maxSize int, index int64) *ProvisionedVectorRecorder {
-	r := &ProvisionedVectorRecorder{
-		VectorRecorder: NewVectorRecorder(seed),
-		Index:          int(index),
-	}
-
-	for i := 0; i < maxSize; i++ {
+func (r *VectorRecorder) Record(n int) Vector {
+	for i := 0; i < n; i++ {
 		r.Int63()
 	}
-
-	return r
-}
-
-func (r *ProvisionedVectorRecorder) Int63() int64 {
-	n := r.Vector[r.Index%len(r.Vector)]
-	r.Index++
-	return n
-}
-
-func (r *ProvisionedVectorRecorder) Seed(seed int64) {
-	r.VectorRecorder.Seed(seed)
+	return r.Vector
 }
