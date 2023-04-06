@@ -225,10 +225,11 @@ func RandWeightMap[T1 Number, T2 Number](rand *Randx, m map[T1]T2) T1 {
 
 	var keys = make([]T1, 0, len(s))
 	var values = make([]T2, 0, len(s))
-	for k, v := range m {
-		keys = append(keys, k)
-		values = append(values, v)
+	for _, v := range s {
+		keys = append(keys, v[0].(T1))
+		values = append(values, v[1].(T2))
 	}
+
 	i := RandWeight(rand, values)
 	return keys[i]
 }
