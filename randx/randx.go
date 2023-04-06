@@ -2,6 +2,7 @@ package randx
 
 import (
 	"math/rand"
+	"sort"
 	"time"
 
 	"github.com/aura-studio/boost/mathx"
@@ -192,21 +193,38 @@ func RandWeight[T Number](rand *Randx, s []T) int {
 }
 
 // WeightMap picks a random value in the specified map by weight
-func WeightMap[T1 comparable, T2 Number](m map[T1]T2) T1 {
-	var keys = make([]T1, 0, len(m))
-	var values = make([]T2, 0, len(m))
+func WeightMap[T1 Number, T2 Number](m map[T1]T2) T1 {
+	var s = make([][]interface{}, 0, len(m))
 	for k, v := range m {
-		keys = append(keys, k)
-		values = append(values, v)
+		s = append(s, []interface{}{k, v})
 	}
+	sort.Slice(s, func(i, j int) bool {
+		return s[i][0].(T1) < s[j][0].(T1)
+	})
+
+	var keys = make([]T1, 0, len(s))
+	var values = make([]T2, 0, len(s))
+	for _, v := range s {
+		keys = append(keys, v[0].(T1))
+		values = append(values, v[1].(T2))
+	}
+
 	i := Weight(values)
 	return keys[i]
 }
 
 // WeightMap picks a random value in the specified map by weight
-func RandWeightMap[T1 comparable, T2 Number](rand *Randx, m map[T1]T2) T1 {
-	var keys = make([]T1, 0, len(m))
-	var values = make([]T2, 0, len(m))
+func RandWeightMap[T1 Number, T2 Number](rand *Randx, m map[T1]T2) T1 {
+	var s = make([][]interface{}, 0, len(m))
+	for k, v := range m {
+		s = append(s, []interface{}{k, v})
+	}
+	sort.Slice(s, func(i, j int) bool {
+		return s[i][0].(T1) < s[j][0].(T1)
+	})
+
+	var keys = make([]T1, 0, len(s))
+	var values = make([]T2, 0, len(s))
 	for k, v := range m {
 		keys = append(keys, k)
 		values = append(values, v)
