@@ -2,16 +2,14 @@ package randx
 
 import "math/rand"
 
-type Vector []int64
-
 type VectorPlayer struct {
 	Index  int
-	Vector Vector
+	Vector []int64
 }
 
 var _ rand.Source = (*VectorPlayer)(nil)
 
-func NewVectorPlayer(v Vector, index int) *VectorPlayer {
+func NewVectorPlayer(v []int64, index int) *VectorPlayer {
 	return &VectorPlayer{
 		Vector: v,
 		Index:  index,
@@ -33,7 +31,7 @@ func (p *VectorPlayer) Seed(seed int64) {
 
 type VectorRecorder struct {
 	Rand   *rand.Rand
-	Vector Vector
+	Vector []int64
 }
 
 var _ rand.Source = (*VectorRecorder)(nil)
@@ -54,7 +52,7 @@ func (r *VectorRecorder) Seed(seed int64) {
 	r.Rand = rand.New(rand.NewSource(seed))
 }
 
-func (r *VectorRecorder) Record(n int) Vector {
+func (r *VectorRecorder) Record(n int) []int64 {
 	for i := 0; i < n; i++ {
 		r.Int63()
 	}
