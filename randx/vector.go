@@ -23,9 +23,12 @@ func (p *VectorPlayer) Int63() int64 {
 }
 
 func (p *VectorPlayer) Seed(seed int64) {
+	p.Index = 0
+}
+
+func (p *VectorPlayer) Shorten() {
 	if p.Index < len(p.Vector) {
 		p.Vector = p.Vector[:p.Index]
-		p.Index = 0
 	}
 }
 
