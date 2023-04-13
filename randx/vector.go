@@ -39,9 +39,9 @@ type VectorRecorder struct {
 
 var _ rand.Source = (*VectorRecorder)(nil)
 
-func NewVectorRecorder(seed int64) *VectorRecorder {
+func NewVectorRecorder(source rand.Source) *VectorRecorder {
 	vr := &VectorRecorder{}
-	vr.Seed(seed)
+	vr.Rand = rand.New(source)
 	return vr
 }
 
