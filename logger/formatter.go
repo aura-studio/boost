@@ -243,7 +243,7 @@ func (f *JSONFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 func (*FormatterGenerator) JSON(s string) (logrus.Formatter, error) {
 	fieldMap := make(logrus.FieldMap)
 
-	gjson.Get(s, "fieldMap").ForEach(func(key, value gjson.Result) bool {
+	gjson.Get(s, "fieldmap").ForEach(func(key, value gjson.Result) bool {
 		k, v := key.String(), value.String()
 		switch k {
 		case logrus.FieldKeyMsg:
@@ -269,7 +269,7 @@ func (*FormatterGenerator) JSON(s string) (logrus.Formatter, error) {
 			DisableTimestamp:  true,
 			DisableHTMLEscape: true,
 			FieldMap:          fieldMap,
-			PrettyPrint:       gjson.Get(s, "prettyPrint").Bool(),
+			PrettyPrint:       gjson.Get(s, "prettyprint").Bool(),
 		},
 	}
 
