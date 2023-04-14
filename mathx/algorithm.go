@@ -29,20 +29,6 @@ func FastFind[T1 Number](n T1, s []T1) int {
 	}
 }
 
-func Pos[T comparable](v T, s []T) []int {
-	pos := make([]int, 0)
-	for p, n := range s {
-		if n == v {
-			pos = append(pos, p)
-		}
-	}
-	return pos
-}
-
-func Count[T comparable](v T, s []T) int {
-	return len(Pos(v, s))
-}
-
 func In[T comparable](v T, s []T) bool {
 	for _, n := range s {
 		if v == n {
@@ -87,6 +73,10 @@ func Positions[T comparable](v T, s []T) []int {
 		}
 	}
 	return pos
+}
+
+func Count[T comparable](v T, s []T) int {
+	return len(Positions(v, s))
 }
 
 func ContinuousPositions[T comparable](v T, s []T) [][]int {
