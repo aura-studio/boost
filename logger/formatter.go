@@ -269,7 +269,7 @@ func (*FormatterGenerator) JSON(s string) (logrus.Formatter, error) {
 			DisableTimestamp:  true,
 			DisableHTMLEscape: true,
 			FieldMap:          fieldMap,
-			PrettyPrint:       false,
+			PrettyPrint:       gjson.Get(s, "prettyPrint").Bool(),
 		},
 	}
 
