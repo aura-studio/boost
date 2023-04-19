@@ -39,6 +39,8 @@ func New(v any) *Randx {
 		r = rand.New(rand.NewSource(v))
 	case rand.Source:
 		r = rand.New(v)
+	default:
+		return nil
 	}
 	return &Randx{r}
 }
