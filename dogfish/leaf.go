@@ -3,6 +3,7 @@ package dogfish
 import (
 	"fmt"
 	"math/big"
+	"reflect"
 
 	"github.com/aura-studio/boost/encoding"
 )
@@ -34,6 +35,9 @@ func (f *Int) SafeGet() int {
 
 // Set is a setter for Int
 func (f *Int) Set(value int) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -82,6 +86,9 @@ func (f *Int8) SafeGet() int8 {
 
 // Set is a setter for Int8
 func (f *Int8) Set(value int8) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -130,6 +137,9 @@ func (f *Int16) SafeGet() int16 {
 
 // Set is a setter for Int16
 func (f *Int16) Set(value int16) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -178,6 +188,9 @@ func (f *Int32) SafeGet() int32 {
 
 // Set is a setter for Int32
 func (f *Int32) Set(value int32) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -226,6 +239,9 @@ func (f *Int64) SafeGet() int64 {
 
 // Set is a setter for Int64
 func (f *Int64) Set(value int64) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -274,6 +290,9 @@ func (f *Uint) SafeGet() uint {
 
 // Set is a setter for Uint
 func (f *Uint) Set(value uint) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -322,6 +341,9 @@ func (f *Uint8) SafeGet() uint8 {
 
 // Set is a getter for Uint8
 func (f *Uint8) Set(value uint8) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -370,6 +392,9 @@ func (f *Uint16) SafeGet() uint16 {
 
 // Set is a setter for Uint16
 func (f *Uint16) Set(value uint16) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -418,6 +443,9 @@ func (f *Uint32) SafeGet() uint32 {
 
 // Set is a setter for Uint32
 func (f *Uint32) Set(value uint32) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -466,6 +494,9 @@ func (f *Uint64) SafeGet() uint64 {
 
 // Set is a setter for Uint64
 func (f *Uint64) Set(value uint64) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -514,6 +545,9 @@ func (f *Float32) SafeGet() float32 {
 
 // Set is a setter for Float32
 func (f *Float32) Set(value float32) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -562,6 +596,9 @@ func (f *Float64) SafeGet() float64 {
 
 // Set is a setter for Float64
 func (f *Float64) Set(value float64) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -618,11 +655,15 @@ func (f *BigInt) SafeGet() int64 {
 
 // Set is a setter for BigInt
 func (f *BigInt) Set(value int64) {
+	strValue := big.NewInt(value).String()
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	f._value = big.NewInt(value).String()
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -657,15 +698,18 @@ func (f *BigInt) SafeGetBig() *big.Int {
 
 // SetBig is a setter for BigInt
 func (f *BigInt) SetBig(n *big.Int) {
+	var strValue string
+	if n != nil {
+		strValue = n.String()
+	}
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	if n == nil {
-		f._value = ""
-	} else {
-		f._value = n.String()
-	}
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -719,11 +763,15 @@ func (f *BigRat) SafeGet() float64 {
 // Set is a setter for BigFloat
 func (f *BigRat) Set(v float64) {
 	rat, _ := big.NewFloat(v).Rat(nil)
+	strValue := rat.String()
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	f._value = rat.String()
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -758,15 +806,18 @@ func (f *BigRat) SafeGetBig() *big.Rat {
 
 // SetBig is a setter for BigRat
 func (f *BigRat) SetBig(n *big.Rat) {
+	var strValue string
+	if n != nil {
+		strValue = n.String()
+	}
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	if n == nil {
-		f._value = ""
-	} else {
-		f._value = n.String()
-	}
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -819,11 +870,15 @@ func (f *BigFloat) SafeGet() float64 {
 
 // Set is a setter for BigFloat
 func (f *BigFloat) Set(value float64) {
+	strValue := big.NewFloat(value).String()
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	f._value = big.NewFloat(value).String()
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -858,15 +913,18 @@ func (f *BigFloat) SafeGetBig() *big.Float {
 
 // SetBig is a setter for BigFloat
 func (f *BigFloat) SetBig(n *big.Float) {
+	var strValue string
+	if n != nil {
+		strValue = n.String()
+	}
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	if n == nil {
-		f._value = ""
-	} else {
-		f._value = n.String()
-	}
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -910,6 +968,9 @@ func (f *Bool) SafeGet() bool {
 
 // Set is a setter for Bool
 func (f *Bool) Set(value bool) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -958,6 +1019,9 @@ func (f *String) SafeGet() string {
 
 // Set is a setter for String
 func (f *String) Set(value string) {
+	if value == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1009,16 +1073,18 @@ func (f *Time) SafeGet() int64 {
 
 // Set is a setter for Time
 func (f *Time) Set(value int64) {
+	var strValue string
+	if value != 0 {
+		strValue = timeStampToString(value)
+	}
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	if value == 0 {
-		f._value = ""
-	} else {
-		f._value = timeStampToString(value)
-	}
-
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -1074,11 +1140,15 @@ func (f *JSON) Set(value interface{}) {
 		panic(fmt.Errorf("%s, Hashtree JSON Marshal failed, value=%#v",
 			err.Error(), value))
 	}
+	strValue := string(b)
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	f._value = string(b)
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -1130,11 +1200,15 @@ func (f *Proto) Set(value interface{}) {
 		panic(fmt.Errorf("%s, Hashtree Proto Marshal failed, value=%#v",
 			err.Error(), value))
 	}
+	strValue := string(b)
+	if strValue == f._value {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	f._value = string(b)
+	f._value = strValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -1180,6 +1254,9 @@ func (f *SliceInt) SafeGet() []int {
 
 // Set is a setter for SliceInt
 func (f *SliceInt) Set(value []int) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1231,6 +1308,9 @@ func (f *SliceInt8) SafeGet() []int8 {
 
 // Set is a setter for SliceInt8
 func (f *SliceInt8) Set(value []int8) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1282,6 +1362,9 @@ func (f *SliceInt16) SafeGet() []int16 {
 
 // Set is a setter for SliceInt16
 func (f *SliceInt16) Set(value []int16) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1333,6 +1416,9 @@ func (f *SliceInt32) SafeGet() []int32 {
 
 // Set is a setter for SliceInt32
 func (f *SliceInt32) Set(value []int32) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1384,6 +1470,9 @@ func (f *SliceInt64) SafeGet() []int64 {
 
 // Set is a setter for SliceInt64
 func (f *SliceInt64) Set(value []int64) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1435,6 +1524,9 @@ func (f *SliceUint) SafeGet() []uint {
 
 // Set is a setter for SliceUint
 func (f *SliceUint) Set(value []uint) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1486,6 +1578,9 @@ func (f *SliceUint8) SafeGet() []uint8 {
 
 // Set is a setter for SliceUint8
 func (f *SliceUint8) Set(value []uint8) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1537,6 +1632,9 @@ func (f *SliceUint16) SafeGet() []uint16 {
 
 // Set is a setter for SliceUint16
 func (f *SliceUint16) Set(value []uint16) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1588,6 +1686,9 @@ func (f *SliceUint32) SafeGet() []uint32 {
 
 // Set is a setter for SliceUint32
 func (f *SliceUint32) Set(value []uint32) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1639,6 +1740,9 @@ func (f *SliceUint64) SafeGet() []uint64 {
 
 // Set is a setter for SliceUint64
 func (f *SliceUint64) Set(value []uint64) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1690,6 +1794,9 @@ func (f *SliceFloat32) SafeGet() []float32 {
 
 // Set is a setter for SliceFloat32
 func (f *SliceFloat32) Set(value []float32) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1741,6 +1848,9 @@ func (f *SliceFloat64) SafeGet() []float64 {
 
 // Set is a setter for SliceFloat64
 func (f *SliceFloat64) Set(value []float64) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1795,6 +1905,9 @@ func (f *SliceBigInt) SafeGet() []*big.Int {
 
 // Set is a setter for SliceBigInt
 func (f *SliceBigInt) Set(value []*big.Int) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1852,6 +1965,9 @@ func (f *SliceBigRat) SafeGet() []*big.Rat {
 
 // Set is a setter for SliceBigRat
 func (f *SliceBigRat) Set(value []*big.Rat) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1909,6 +2025,9 @@ func (f *SliceBigFloat) SafeGet() []*big.Float {
 
 // Set is a setter for SliceBigFloat
 func (f *SliceBigFloat) Set(value []*big.Float) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -1969,21 +2088,23 @@ func (f *SliceTime) SafeGet() []int64 {
 }
 
 // Set is a setter for SliceTime
-func (f *SliceTime) Set(ns []int64) {
+func (f *SliceTime) Set(value []int64) {
+	var ssValue []string
+	for _, n := range value {
+		if n == 0 {
+			ssValue = append(ssValue, "")
+		} else {
+			ssValue = append(ssValue, timeStampToString(n))
+		}
+	}
+	if reflect.DeepEqual(ssValue, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	var ss []string
-	for _, n := range ns {
-		if n == 0 {
-			ss = append(ss, "")
-		} else {
-			ss = append(ss, timeStampToString(n))
-		}
-	}
-	f._value = ss
-
+	f._value = ssValue
 	f._root._mod[f._key] = f._value
 }
 
@@ -2029,6 +2150,9 @@ func (f *SliceBool) SafeGet() []bool {
 
 // Set is a setter for SliceBool
 func (f *SliceBool) Set(value []bool) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
@@ -2080,6 +2204,9 @@ func (f *SliceString) SafeGet() []string {
 
 // Set is a setter for SliceString
 func (f *SliceString) Set(value []string) {
+	if reflect.DeepEqual(value, f._value) {
+		return
+	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
