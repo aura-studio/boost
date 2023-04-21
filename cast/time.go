@@ -6,9 +6,9 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/spf13/cast"
 )
+
+const UTC = "UTC"
 
 func ToDuration(a any) time.Duration {
 	v, _ := ToDurationE(a)
@@ -114,7 +114,7 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 			return nil, err
 		}
 		return durationToLocation(duration), nil
-	} else if strings.HasPrefix(s, "UTC") {
+	} else if strings.HasPrefix(s, UTC) {
 		duration, err := stringUTCToDurationE(s)
 		if err != nil {
 			return nil, err
@@ -127,7 +127,7 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 		} else {
 			// get time zone offset
 			_, offset := time.Now().In(loc).Zone()
-			duration := cast.ToDuration(offset)
+			duration := ToDuration(offset)
 			return durationToLocation(duration), nil
 		}
 	}
@@ -139,7 +139,7 @@ func durationToStringUTC(duration time.Duration) string {
 		h := -seconds / 3600
 		m := -seconds % 3600 / 60
 		s := -seconds % 3600 % 60
-		str := "UTC"
+		str := UTC
 		if h != 0 {
 			str += fmt.Sprintf("-%02d", h)
 		}
@@ -154,7 +154,7 @@ func durationToStringUTC(duration time.Duration) string {
 		h := seconds / 3600
 		m := seconds % 3600 / 60
 		s := seconds % 3600 % 60
-		str := "UTC"
+		str := UTC
 		if h != 0 {
 			str += fmt.Sprintf("+%02d", h)
 		}
@@ -173,7 +173,7 @@ func durationToLocation(duration time.Duration) *time.Location {
 }
 
 func stringUTCToDurationE(name string) (time.Duration, error) {
-	if name == "UTC" {
+	if name == UTC {
 		return 0, nil
 	} else if strings.HasPrefix(name, "UTC+") {
 		name = name[4:]
@@ -185,28 +185,31 @@ func stringUTCToDurationE(name string) (time.Duration, error) {
 
 	parts := strings.Split(name, ":")
 	if len(parts) == 1 {
-		h, err := cast.ToInt64E(parts[0])
+		h, err := ToInt64E(parts[0])
 		if err != nil {
 			return 0, err
 		}
 		return time.Duration(h) * time.Hour, nil
 	} else if len(parts) == 2 {
-		h, err := cast.ToInt64E(parts[0])
+		h, err := ToInt64E(parts[0])
 		if err != nil {
 			return 0, err
 		}
-		m, err := cast.ToInt64E(parts[1])
+		m, err := ToInt64E(parts[1])
+		if err != nil {
+			return 0, err
+		}
 		return time.Duration(h)*time.Hour + time.Duration(m)*time.Minute, nil
 	} else if len(parts) == 3 {
-		h, err := cast.ToInt64E(parts[0])
+		h, err := ToInt64E(parts[0])
 		if err != nil {
 			return 0, err
 		}
-		m, err := cast.ToInt64E(parts[1])
+		m, err := ToInt64E(parts[1])
 		if err != nil {
 			return 0, err
 		}
-		s, err := cast.ToInt64E(parts[2])
+		s, err := ToInt64E(parts[2])
 		if err != nil {
 			return 0, err
 		}
