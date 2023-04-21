@@ -111,7 +111,7 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 		if err != nil {
 			return nil, err
 		}
-		return time.FixedZone("System", int(duration.Seconds())), nil
+		return time.FixedZone("SYS", int(duration.Seconds())), nil
 	} else if strings.HasPrefix(s, "UTC") && len(s) > 3 {
 		return stringToTimeZoneE(fmt.Sprintf("%sh", strings.TrimLeft(s, "UTC")))
 	} else {
@@ -121,7 +121,7 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 		} else {
 			// get time zone offset
 			_, offset := time.Now().In(loc).Zone()
-			return time.FixedZone("System", offset), nil
+			return time.FixedZone("SYS", offset), nil
 		}
 	}
 }

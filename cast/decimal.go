@@ -73,8 +73,11 @@ func ToIntE(a any) (int, error) {
 	case time.Duration:
 		return int(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return int(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return int(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return int(offset), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -170,8 +173,11 @@ func ToInt8E(a any) (int8, error) {
 	case time.Duration:
 		return int8(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return int8(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return int8(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return int8(offset), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -267,8 +273,11 @@ func ToInt16E(a any) (int16, error) {
 	case time.Duration:
 		return int16(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return int16(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return int16(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return int16(offset), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -364,8 +373,11 @@ func ToInt32E(a any) (int32, error) {
 	case time.Duration:
 		return int32(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return int32(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return int32(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return int32(offset), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -461,8 +473,11 @@ func ToInt64E(a any) (int64, error) {
 	case time.Duration:
 		return int64(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return int64(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return int64(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return int64(offset), nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {
@@ -594,8 +609,11 @@ func ToUintE(a any) (uint, error) {
 	case time.Duration:
 		return uint(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return uint(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return uint(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return uint(offset), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
@@ -727,8 +745,11 @@ func ToUint8E(a any) (uint8, error) {
 	case time.Duration:
 		return uint8(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return uint8(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return uint8(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return uint8(offset), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
@@ -860,8 +881,11 @@ func ToUint16E(a any) (uint16, error) {
 	case time.Duration:
 		return uint16(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return uint16(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return uint16(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return uint16(offset), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
@@ -993,8 +1017,11 @@ func ToUint32E(a any) (uint32, error) {
 	case time.Duration:
 		return uint32(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return uint32(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return uint32(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return uint32(offset), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
@@ -1126,8 +1153,11 @@ func ToUint64E(a any) (uint64, error) {
 	case time.Duration:
 		return uint64(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return uint64(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return uint64(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return uint64(offset), nil
 	case string:
 		n, err := dec.ToUint(v)
 		if err == nil {
@@ -1224,8 +1254,11 @@ func ToFloat32E(a any) (float32, error) {
 	case time.Duration:
 		return float32(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return float32(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return float32(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return float32(offset), nil
 	case string:
 		n, err := dec.ToFloat32(v)
 		if err == nil {
@@ -1322,8 +1355,11 @@ func ToFloat64E(a any) (float64, error) {
 	case time.Duration:
 		return float64(v), nil
 	case time.Location:
-		tm := time.Time{}
-		return float64(tm.In(&v).Sub(tm)), nil
+		_, offset := time.Now().In(&v).Zone()
+		return float64(offset), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return float64(offset), nil
 	case string:
 		n, err := dec.ToFloat64(v)
 		if err == nil {
@@ -1427,8 +1463,11 @@ func ToBigIntE(a any) (*big.Int, error) {
 	case time.Duration:
 		return big.NewInt(0).SetInt64(int64(v)), nil
 	case time.Location:
-		tm := time.Time{}
-		return big.NewInt(0).SetInt64(int64((tm.In(&v).Sub(tm)))), nil
+		_, offset := time.Now().In(&v).Zone()
+		return big.NewInt(0).SetInt64(int64(offset)), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return big.NewInt(0).SetInt64(int64(offset)), nil
 	case string:
 		return dec.ToBigInt(v)
 	case []byte:
@@ -1513,8 +1552,11 @@ func ToBigFloatE(a any) (*big.Float, error) {
 	case time.Duration:
 		return big.NewFloat(0).SetInt64(int64(v)), nil
 	case time.Location:
-		tm := time.Time{}
-		return big.NewFloat(0).SetInt64(int64((tm.In(&v).Sub(tm)))), nil
+		_, offset := time.Now().In(&v).Zone()
+		return big.NewFloat(0).SetInt64(int64(offset)), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return big.NewFloat(0).SetInt64(int64(offset)), nil
 	case string:
 		return dec.ToBigFloat(v)
 	case []byte:
@@ -1599,8 +1641,11 @@ func ToBigRatE(a any) (*big.Rat, error) {
 	case time.Duration:
 		return big.NewRat(0, 1).SetInt64(int64(v)), nil
 	case time.Location:
-		tm := time.Time{}
-		return big.NewRat(0, 1).SetInt64(int64((tm.In(&v).Sub(tm)))), nil
+		_, offset := time.Now().In(&v).Zone()
+		return big.NewRat(0, 1).SetInt64(int64(offset)), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return big.NewRat(0, 1).SetInt64(int64(offset)), nil
 	case string:
 		return dec.ToBigRat(v)
 	case []byte:
@@ -1681,8 +1726,11 @@ func ToComplex64E(a any) (complex64, error) {
 	case time.Duration:
 		return complex(float32(v), 0), nil
 	case time.Location:
-		tm := time.Time{}
-		return complex(float32((tm.In(&v).Sub(tm))), 0), nil
+		_, offset := time.Now().In(&v).Zone()
+		return complex(float32(offset), 0), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return complex(float32(offset), 0), nil
 	case string:
 		return dec.ToComplex64(v)
 	case []byte:
@@ -1765,8 +1813,11 @@ func ToComplex128E(a any) (complex128, error) {
 	case time.Duration:
 		return complex(float64(v), 0), nil
 	case time.Location:
-		tm := time.Time{}
-		return complex(float64((tm.In(&v).Sub(tm))), 0), nil
+		_, offset := time.Now().In(&v).Zone()
+		return complex(float64(offset), 0), nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return complex(float64(offset), 0), nil
 	case string:
 		return dec.ToComplex128(v)
 	case []byte:
@@ -1841,8 +1892,11 @@ func ToBoolE(a any) (bool, error) {
 	case time.Duration:
 		return int64(v) != 0, nil
 	case time.Location:
-		tm := time.Time{}
-		return tm.In(&v).Sub(tm) != 0, nil
+		_, offset := time.Now().In(&v).Zone()
+		return offset != 0, nil
+	case *time.Location:
+		_, offset := time.Now().In(v).Zone()
+		return offset != 0, nil
 	case string:
 		return dec.ToBool(v)
 	case []byte:
