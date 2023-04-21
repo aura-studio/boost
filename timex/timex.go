@@ -9,6 +9,7 @@ type Timex struct {
 	Zone  int64
 	Fake  int64
 	Delta int64
+	VirtualTime
 }
 
 func Zone() int64 {
@@ -23,7 +24,9 @@ func Delta() int64 {
 	return timex.Delta
 }
 
-var timex = &Timex{}
+var timex = &Timex{
+	VirtualTime: defaultVirtualTime,
+}
 
 func Init(s string) *Timex {
 	if result := gjson.Get(s, "zone"); result.Type != gjson.Null {
@@ -43,6 +46,8 @@ func Init(s string) *Timex {
 	} else {
 		WithDeltaTime("0")
 	}
+
+	timex.VirtualTime = NewFakeTime()
 
 	return timex
 }

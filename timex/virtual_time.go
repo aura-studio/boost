@@ -19,15 +19,11 @@ const (
 	datetimeFormat = "2006-01-02 15:04:05"
 )
 
-var virtualTime VirtualTime = NewFakeTime()
+type DefaultVirtualTime struct{}
 
-func SetVirtualTime(vt VirtualTime) {
-	virtualTime = vt
-}
+var defaultVirtualTime = &DefaultVirtualTime{}
 
-type defaultVirtualTime struct{}
-
-func (defaultVirtualTime) Parse(s string) (time.Time, error) {
+func (DefaultVirtualTime) Parse(s string) (time.Time, error) {
 	var format string
 	if len(s) > 10 {
 		format = datetimeParse
@@ -37,22 +33,22 @@ func (defaultVirtualTime) Parse(s string) (time.Time, error) {
 	return time.Parse(format, s)
 }
 
-func (defaultVirtualTime) Format(tm time.Time) string {
+func (DefaultVirtualTime) Format(tm time.Time) string {
 	return tm.Format(datetimeFormat)
 }
 
-func (defaultVirtualTime) Now() time.Time {
+func (DefaultVirtualTime) Now() time.Time {
 	return time.Now()
 }
 
-func (defaultVirtualTime) Time(ts int64) time.Time {
+func (DefaultVirtualTime) Time(ts int64) time.Time {
 	return time.Unix(ts, 0)
 }
 
-func (defaultVirtualTime) Location() *time.Location {
+func (DefaultVirtualTime) Location() *time.Location {
 	return time.Local
 }
 
-func (defaultVirtualTime) FakeDuration() time.Duration {
+func (DefaultVirtualTime) FakeDuration() time.Duration {
 	return 0
 }

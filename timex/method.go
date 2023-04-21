@@ -7,23 +7,23 @@ import (
 // TODO: upgrade all api
 
 func Time(ts int64) time.Time {
-	return virtualTime.Time(ts)
+	return timex.Time(ts)
 }
 
 func TimeDelta(ts int64) time.Time {
-	return virtualTime.Time(ts - timex.Delta)
+	return timex.Time(ts - timex.Delta)
 }
 
 func Now() time.Time {
-	return virtualTime.Now()
+	return timex.Now()
 }
 
 func NowDelta() time.Time {
-	return Time(virtualTime.Now().Unix() - timex.Delta)
+	return Time(timex.Now().Unix() - timex.Delta)
 }
 
 func ParseTime(s string) time.Time {
-	tm, err := virtualTime.Parse(s)
+	tm, err := timex.Parse(s)
 	if err != nil {
 		panic(err)
 	}
@@ -31,15 +31,15 @@ func ParseTime(s string) time.Time {
 }
 
 func FormatTime(tm time.Time) string {
-	return virtualTime.Format(tm)
+	return timex.Format(tm)
 }
 
 func TimeLocation() *time.Location {
-	return virtualTime.Location()
+	return timex.Location()
 }
 
 func FakeDuration() time.Duration {
-	return virtualTime.FakeDuration()
+	return timex.FakeDuration()
 }
 
 // IsSameDay returns true if timestamp ts1 & ts2 in same day
