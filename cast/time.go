@@ -119,6 +119,7 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println(duration)
 		return durationToLocation(duration), nil
 	} else {
 		// Check timezone is valid
@@ -173,12 +174,15 @@ func durationToLocation(duration time.Duration) *time.Location {
 }
 
 func stringUTCToDurationE(name string) (time.Duration, error) {
+	var sign = 1
+
 	if name == UTC {
 		return 0, nil
 	} else if strings.HasPrefix(name, "UTC+") {
 		name = name[4:]
 	} else if strings.HasPrefix(name, "UTC-") {
 		name = name[4:]
+		sign = -1
 	} else {
 		return 0, fmt.Errorf("invalid timezone name `%s`", name)
 	}
@@ -189,7 +193,7 @@ func stringUTCToDurationE(name string) (time.Duration, error) {
 		if err != nil {
 			return 0, err
 		}
-		return time.Duration(h) * time.Hour, nil
+		return time.Duration(sign) * time.Duration(h) * time.Hour, nil
 	} else if len(parts) == 2 {
 		h, err := ToInt64E(parts[0])
 		if err != nil {
@@ -199,7 +203,7 @@ func stringUTCToDurationE(name string) (time.Duration, error) {
 		if err != nil {
 			return 0, err
 		}
-		return time.Duration(h)*time.Hour + time.Duration(m)*time.Minute, nil
+		return time.Duration(sign) * (time.Duration(h)*time.Hour + time.Duration(m)*time.Minute), nil
 	} else if len(parts) == 3 {
 		h, err := ToInt64E(parts[0])
 		if err != nil {
@@ -213,7 +217,7 @@ func stringUTCToDurationE(name string) (time.Duration, error) {
 		if err != nil {
 			return 0, err
 		}
-		return time.Duration(h)*time.Hour + time.Duration(m)*time.Minute + time.Duration(s)*time.Second, nil
+		return time.Duration(sign) * (time.Duration(h)*time.Hour + time.Duration(m)*time.Minute + time.Duration(s)*time.Second), nil
 	} else {
 		return 0, fmt.Errorf("invalid time zone name `%s`", name)
 	}
