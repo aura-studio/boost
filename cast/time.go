@@ -119,7 +119,6 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(duration)
 		return durationToLocation(duration), nil
 	} else {
 		// Check timezone is valid
