@@ -21,7 +21,7 @@ const (
 
 var location *time.Location
 
-func SetLocation(l *time.Location) {
+func LocateAt(l *time.Location) {
 	location = l
 }
 
