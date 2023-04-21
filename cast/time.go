@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/spf13/cast"
 )
 
 func ToDuration(a any) time.Duration {
@@ -111,9 +113,13 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 		if err != nil {
 			return nil, err
 		}
-		return time.FixedZone("SYS", int(duration.Seconds())), nil
-	} else if strings.HasPrefix(s, "UTC") && len(s) > 3 {
-		return stringToTimeZoneE(fmt.Sprintf("%sh", strings.TrimLeft(s, "UTC")))
+		return durationToLocation(duration), nil
+	} else if strings.HasPrefix(s, "UTC") {
+		duration, err := stringUTCToDurationE(s)
+		if err != nil {
+			return nil, err
+		}
+		return durationToLocation(duration), nil
 	} else {
 		// Check timezone is valid
 		if loc, err := time.LoadLocation(s); err != nil {
@@ -121,8 +127,92 @@ func stringToTimeZoneE(s string) (*time.Location, error) {
 		} else {
 			// get time zone offset
 			_, offset := time.Now().In(loc).Zone()
-			return time.FixedZone("SYS", offset), nil
+			duration := cast.ToDuration(offset)
+			return durationToLocation(duration), nil
 		}
+	}
+}
+
+func durationToStringUTC(duration time.Duration) string {
+	seconds := int(duration.Seconds())
+	if seconds < 0 {
+		h := -seconds / 3600
+		m := -seconds % 3600 / 60
+		s := -seconds % 3600 % 60
+		str := "UTC"
+		if h != 0 {
+			str += fmt.Sprintf("-%02d", h)
+		}
+		if m != 0 {
+			str += fmt.Sprintf(":%02d", m)
+		}
+		if s != 0 {
+			str += fmt.Sprintf(":%02d", s)
+		}
+		return str
+	} else {
+		h := seconds / 3600
+		m := seconds % 3600 / 60
+		s := seconds % 3600 % 60
+		str := "UTC"
+		if h != 0 {
+			str += fmt.Sprintf("+%02d", h)
+		}
+		if m != 0 {
+			str += fmt.Sprintf(":%02d", m)
+		}
+		if s != 0 {
+			str += fmt.Sprintf(":%02d", s)
+		}
+		return str
+	}
+}
+
+func durationToLocation(duration time.Duration) *time.Location {
+	return time.FixedZone(durationToStringUTC(duration), int(duration.Seconds()))
+}
+
+func stringUTCToDurationE(name string) (time.Duration, error) {
+	if name == "UTC" {
+		return 0, nil
+	} else if strings.HasPrefix(name, "UTC+") {
+		name = name[4:]
+	} else if strings.HasPrefix(name, "UTC-") {
+		name = name[4:]
+	} else {
+		return 0, fmt.Errorf("invalid timezone name `%s`", name)
+	}
+
+	parts := strings.Split(name, ":")
+	if len(parts) == 1 {
+		h, err := cast.ToInt64E(parts[0])
+		if err != nil {
+			return 0, err
+		}
+		return time.Duration(h) * time.Hour, nil
+	} else if len(parts) == 2 {
+		h, err := cast.ToInt64E(parts[0])
+		if err != nil {
+			return 0, err
+		}
+		m, err := cast.ToInt64E(parts[1])
+		return time.Duration(h)*time.Hour + time.Duration(m)*time.Minute, nil
+	} else if len(parts) == 3 {
+		h, err := cast.ToInt64E(parts[0])
+		if err != nil {
+			return 0, err
+		}
+		m, err := cast.ToInt64E(parts[1])
+		if err != nil {
+			return 0, err
+		}
+		s, err := cast.ToInt64E(parts[2])
+		if err != nil {
+			return 0, err
+		}
+		return time.Duration(h)*time.Hour + time.Duration(m)*time.Minute + time.Duration(s)*time.Second, nil
+	} else {
+		return 0, fmt.Errorf("invalid time zone name `%s`", name)
 	}
 }
 
