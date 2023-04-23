@@ -1133,6 +1133,32 @@ func (f *JSON) SafeGet(n interface{}) {
 	f.Get(n)
 }
 
+// GetString is a getter for String
+func (f *JSON) GetString() string {
+	return f._value
+}
+
+// SafeGetString is a safe getter for String
+func (f *JSON) SafeGetString() string {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.GetString()
+}
+
+// GetBytes is a getter for String
+func (f *JSON) GetBytes() []byte {
+	return []byte(f._value)
+}
+
+// SafeGetBytes is a safe getter for String
+func (f *JSON) SafeGetBytes() []byte {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.GetBytes()
+}
+
 // Set is a setter for String
 func (f *JSON) Set(value interface{}) {
 	b, err := json.Marshal(value)
@@ -1158,6 +1184,40 @@ func (f *JSON) SafeSet(value interface{}) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
+}
+
+// SetString is a setter for String
+func (f *JSON) SetString(value string) {
+	if value == f._value {
+		return
+	}
+	_, ok := f._root._bak[f._key]
+	if !ok {
+		f._root._bak[f._key] = f._value
+	}
+	f._value = value
+	f._root._mod[f._key] = f._value
+}
+
+// SafeSetString is a safe setter for String
+func (f *JSON) SafeSetString(value string) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.SetString(value)
+}
+
+// SetBytes is a setter for String
+func (f *JSON) SetBytes(value []byte) {
+	f.SetString(string(value))
+}
+
+// SafeSetBytes is a safe setter for String
+func (f *JSON) SafeSetBytes(value []byte) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.SetBytes(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
@@ -1193,6 +1253,32 @@ func (f *Proto) SafeGet(n interface{}) {
 	f.Get(n)
 }
 
+// GetString is a getter for String
+func (f *Proto) GetString() string {
+	return f._value
+}
+
+// SafeGetString is a safe getter for String
+func (f *Proto) SafeGetString() string {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.GetString()
+}
+
+// GetBytes is a getter for String
+func (f *Proto) GetBytes() []byte {
+	return []byte(f._value)
+}
+
+// SafeGetBytes is a safe getter for String
+func (f *Proto) SafeGetBytes() []byte {
+	f._root.rw.RLock()
+	defer f._root.rw.RUnlock()
+
+	return f.GetBytes()
+}
+
 // Set is a setter for String
 func (f *Proto) Set(value interface{}) {
 	b, err := proto.Marshal(value)
@@ -1218,6 +1304,40 @@ func (f *Proto) SafeSet(value interface{}) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
+}
+
+// SetString is a setter for String
+func (f *Proto) SetString(value string) {
+	if value == f._value {
+		return
+	}
+	_, ok := f._root._bak[f._key]
+	if !ok {
+		f._root._bak[f._key] = f._value
+	}
+	f._value = value
+	f._root._mod[f._key] = f._value
+}
+
+// SafeSetString is a safe setter for String
+func (f *Proto) SafeSetString(value string) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.SetString(value)
+}
+
+// SetBytes is a setter for String
+func (f *Proto) SetBytes(value []byte) {
+	f.SetString(string(value))
+}
+
+// SafeSetBytes is a safe setter for String
+func (f *Proto) SafeSetBytes(value []byte) {
+	f._root.rw.Lock()
+	defer f._root.rw.Unlock()
+
+	f.SetBytes(value)
 }
 
 // UnmarshalJSON implements json.Unmarshal
