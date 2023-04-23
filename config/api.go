@@ -3,10 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"regexp"
 	"strings"
-
-	"github.com/aura-studio/boost/cast"
 )
 
 func Assert(condition bool, v interface{}, args ...string) {
@@ -30,14 +27,4 @@ func JSON(args ...string) string {
 		panic(err)
 	}
 	return string(data)
-}
-
-// regexp to match ${} or $()
-var re = regexp.MustCompile(`\$\{([^}]+)\}|\$\(([^\)]+)\)`)
-
-func Parse(s string) string {
-	return re.ReplaceAllStringFunc(s, func(v string) string {
-		k := v[2 : len(v)-1]
-		return cast.ToString(Get(k))
-	})
 }

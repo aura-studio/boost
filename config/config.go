@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"path/filepath"
+	"regexp"
 
+	"github.com/aura-studio/boost/cast"
 	"github.com/spf13/viper"
 )
 
@@ -35,7 +37,8 @@ func (b *BinaryReader) Bytes(name string) ([]byte, error) {
 
 type Config struct {
 	*viper.Viper
-	runtimeEnv string
+	runtimeEnv     string
+	autoParseDepth int // 0 closed, 1 only parse top level, 2 parse top level and sub level, < 0 parse all level
 }
 
 var c *Config = New()
@@ -58,6 +61,57 @@ func SetRuntimeEnv(s string) *Config {
 func (c *Config) SetRuntimeEnv(s string) *Config {
 	c.runtimeEnv = s
 	return c
+}
+
+// regexp to match ${} or $()
+var re = regexp.MustCompile(`\$\{([^}]+)\}|\$\(([^\)]+)\)`)
+
+func Parse(s string) string {
+	return c.Parse(s)
+}
+
+func (c *Config) Parse(s string) string {
+	return re.ReplaceAllStringFunc(s, func(v string) string {
+		k := v[2 : len(v)-1]
+		return cast.ToString(Get(k))
+	})
+}
+
+func AutoParse(depth int) *Config {
+	return c.AutoParse(depth)
+}
+
+func (c *Config) AutoParse(depth int) *Config {
+	c.autoParseDepth = depth
+	return c
+}
+
+func ParseDepth(depth int, str string) string {
+	return c.ParseDepth(depth, str)
+}
+
+func (c *Config) ParseDepth(depth int, str string) string {
+	switch {
+	case depth > 0:
+		for i := 0; i < depth; i++ {
+			newStr := c.Parse(str)
+			if newStr == str {
+				return str
+			}
+			str = newStr
+		}
+		return str
+	case depth < 0:
+		for {
+			newStr := c.Parse(str)
+			if newStr == str {
+				return str
+			}
+			str = newStr
+		}
+	default:
+		return str
+	}
 }
 
 func Read(b Reader) *Config {

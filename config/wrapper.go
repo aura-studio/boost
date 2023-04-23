@@ -14,7 +14,7 @@ func Get(args ...string) interface{} {
 
 // GetString joins args as config key and replies config value
 func GetString(args ...string) string {
-	return c.GetString(strings.Join(args, "."))
+	return c.ParseDepth(c.autoParseDepth, c.GetString(strings.Join(args, ".")))
 }
 
 // GetBool joins args as config key and replies config value
@@ -74,22 +74,43 @@ func GetIntSlice(args ...string) []int {
 
 // GetStringSlice joins args as config key and replies config value
 func GetStringSlice(args ...string) []string {
-	return c.GetStringSlice(strings.Join(args, "."))
+	strs := c.GetStringSlice(strings.Join(args, "."))
+	for i, s := range strs {
+		strs[i] = c.ParseDepth(c.autoParseDepth, s)
+	}
+	return strs
 }
 
 // GetStringMap joins args as config key and replies config value
 func GetStringMap(args ...string) map[string]interface{} {
-	return c.GetStringMap(strings.Join(args, "."))
+	m := c.GetStringMap(strings.Join(args, "."))
+	for k, v := range m {
+		if v, ok := v.(string); ok {
+			m[c.ParseDepth(c.autoParseDepth, k)] = c.ParseDepth(c.autoParseDepth, v)
+		}
+	}
+	return m
 }
 
 // GetStringMapString joins args as config key and replies config value
 func GetStringMapString(args ...string) map[string]string {
-	return c.GetStringMapString(strings.Join(args, "."))
+	m := c.GetStringMapString(strings.Join(args, "."))
+	for k, v := range m {
+		m[c.ParseDepth(c.autoParseDepth, k)] = c.ParseDepth(c.autoParseDepth, v)
+	}
+	return m
 }
 
 // GetStringMapStringSlice joins args as config key and replies config value
 func GetStringMapStringSlice(args ...string) map[string][]string {
-	return c.GetStringMapStringSlice(strings.Join(args, "."))
+	m := c.GetStringMapStringSlice(strings.Join(args, "."))
+	for k, v := range m {
+		for i, s := range v {
+			v[i] = c.ParseDepth(c.autoParseDepth, s)
+		}
+		m[c.ParseDepth(c.autoParseDepth, k)] = v
+	}
+	return m
 }
 
 // GetSizeInBytes joins args as config key and replies config value
