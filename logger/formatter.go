@@ -164,7 +164,7 @@ func (f *TextFormatter) generateFile(frame *runtime.Frame) string {
 		return fmt.Sprintf(" %s:%d", s[packageIndex+1:], frame.Line)
 	}
 
-	return fmt.Sprintf(" %s%s:%d", s[packageIndex+1 : fileIndex][atIndex+1:], s[fileIndex:], frame.Line)
+	return fmt.Sprintf(" %s%s:%d", s[packageIndex+1 : fileIndex][:atIndex], s[fileIndex:], frame.Line)
 }
 
 func (f *TextFormatter) generateFunction(frame *runtime.Frame) string {
