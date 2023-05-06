@@ -160,7 +160,7 @@ func (f *TextFormatter) generateFile(frame *runtime.Frame) string {
 	packageIndex := strings.LastIndex(s[:fileIndex], "/")
 	atIndex := strings.LastIndex(s[packageIndex+1:fileIndex], "@")
 
-	if atIndex >= 0 {
+	if atIndex < 0 {
 		return fmt.Sprintf(" %s:%d", s[packageIndex+1:], frame.Line)
 	}
 
