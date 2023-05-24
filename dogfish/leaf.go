@@ -1115,13 +1115,15 @@ type JSON struct {
 
 // Get is a getter for String
 func (f *JSON) Get(n interface{}) {
-	if len(f._value) == 0 {
+	value := Decompress(f._value)
+
+	if len(value) == 0 {
 		return
 	}
-	err := json.Unmarshal([]byte(f._value), n)
+	err := json.Unmarshal([]byte(value), n)
 	if err != nil {
 		panic(fmt.Errorf("%s, Hashtree JSON Unmarshal failed, value=%#v",
-			err.Error(), f._value))
+			err.Error(), value))
 	}
 }
 
@@ -1135,7 +1137,7 @@ func (f *JSON) SafeGet(n interface{}) {
 
 // GetString is a getter for String
 func (f *JSON) GetString() string {
-	return f._value
+	return Decompress(f._value)
 }
 
 // SafeGetString is a safe getter for String
@@ -1148,7 +1150,7 @@ func (f *JSON) SafeGetString() string {
 
 // GetBytes is a getter for String
 func (f *JSON) GetBytes() []byte {
-	return []byte(f._value)
+	return []byte(Decompress(f._value))
 }
 
 // SafeGetBytes is a safe getter for String
@@ -1167,14 +1169,11 @@ func (f *JSON) Set(value interface{}) {
 			err.Error(), value))
 	}
 	strValue := string(b)
-	if strValue == f._value {
-		return
-	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	f._value = strValue
+	f._value = Compress(strValue)
 	f._root._mod[f._key] = f._value
 }
 
@@ -1188,14 +1187,11 @@ func (f *JSON) SafeSet(value interface{}) {
 
 // SetString is a setter for String
 func (f *JSON) SetString(value string) {
-	if value == f._value {
-		return
-	}
 	_, ok := f._root._bak[f._key]
 	if !ok {
 		f._root._bak[f._key] = f._value
 	}
-	f._value = value
+	f._value = Compress(value)
 	f._root._mod[f._key] = f._value
 }
 
@@ -1222,12 +1218,17 @@ func (f *JSON) SafeSetBytes(value []byte) {
 
 // UnmarshalJSON implements json.Unmarshal
 func (f *JSON) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
+	var s string
+	defer func() {
+		f._value = Compress(s)
+	}()
+	return json.Unmarshal(data, &s)
 }
 
 // MarshalJSON implements json.Marshal
 func (f JSON) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
+	s := Decompress(f._value)
+	return json.Marshal(&s)
 }
 
 // Proto is a wrapper for json
