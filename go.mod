@@ -8,6 +8,7 @@ require (
 	github.com/frankban/quicktest v1.14.4
 	github.com/gin-gonic/gin v1.9.0
 	github.com/gocarina/gocsv v0.0.0-20221105105431-c8ef78125b99
+	github.com/golang/snappy v0.0.4
 	github.com/mattn/go-colorable v0.1.12
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 	github.com/shopspring/decimal v1.3.1
@@ -29,7 +30,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.11.2 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
-	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
