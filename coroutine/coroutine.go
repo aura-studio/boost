@@ -69,8 +69,8 @@ func Start(v any) error {
 // Create wraps starts a coroutine up.
 func Create(v any) (*Coroutine, error) {
 	c := &Coroutine{
-		inputCh:  make(chan []any, 1),
-		outputCh: make(chan []any, 1),
+		inputCh:  make(chan []any, 0),
+		outputCh: make(chan []any, 0),
 	}
 
 	switch v := v.(type) {
