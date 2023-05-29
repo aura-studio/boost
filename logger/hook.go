@@ -9,6 +9,7 @@ import (
 
 	"github.com/containrrr/shoutrrr"
 	"github.com/containrrr/shoutrrr/pkg/router"
+	sls "github.com/innopals/sls-logrus-hook"
 	"github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/writer"
@@ -255,4 +256,35 @@ func (*HookGenerator) Telegram(s string) (logrus.Hook, error) {
 	}
 
 	return &TelegramHook{router, NewLogLevels(s), NewFormatOptions(s)}, nil
+}
+
+type SlsHook struct {
+	Hook          *sls.SlsLogrusHook
+	logLevels     *LogLevels
+	formatOptions *FormatOptions
+}
+
+func (h *SlsHook) Fire(entry *logrus.Entry) error {
+	return nil
+}
+
+func (h *SlsHook) Levels() []logrus.Level {
+	return h.logLevels.ToLogrus()
+}
+
+func (*HookGenerator) Sls(s string) (logrus.Hook, error) {
+	slsLogrusHook, err := sls.NewSlsLogrusHook(
+		fmt.Sprintf("%s.%s.log.aliyuncs.com",
+			gjson.Get(s, "project").String(),
+			gjson.Get(s, "region").String(),
+		),
+		gjson.Get(s, "accesskey").String(),
+		gjson.Get(s, "accesssecret").String(),
+		gjson.Get(s, "logstore").String(),
+		gjson.Get(s, "topic").String(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &SlsHook{slsLogrusHook, NewLogLevels(s), NewFormatOptions(s)}, nil
 }
