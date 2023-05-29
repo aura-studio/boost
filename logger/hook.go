@@ -265,7 +265,25 @@ type SlsHook struct {
 }
 
 func (h *SlsHook) Fire(entry *logrus.Entry) error {
-	return nil
+	var (
+		line []byte
+		err  error
+	)
+
+	if entry.Context == nil {
+		entry.Context = context.WithValue(context.Background(), ContextFormatOptions, h.formatOptions)
+	} else {
+		entry.Context = context.WithValue(entry.Context, ContextFormatOptions, h.formatOptions)
+	}
+
+	line, err = entry.Bytes()
+	if err != nil {
+		return err
+	}
+
+	entry.Message = string(line)
+
+	return h.Hook.Fire(entry)
 }
 
 func (h *SlsHook) Levels() []logrus.Level {
@@ -273,6 +291,14 @@ func (h *SlsHook) Levels() []logrus.Level {
 }
 
 func (*HookGenerator) Sls(s string) (logrus.Hook, error) {
+	fmt.Println(fmt.Sprintf("%s.%s.log.aliyuncs.com",
+		gjson.Get(s, "project").String(),
+		gjson.Get(s, "region").String(),
+	),
+		gjson.Get(s, "accesskey").String(),
+		gjson.Get(s, "accesssecret").String(),
+		gjson.Get(s, "logstore").String(),
+		gjson.Get(s, "topic").String())
 	slsLogrusHook, err := sls.NewSlsLogrusHook(
 		fmt.Sprintf("%s.%s.log.aliyuncs.com",
 			gjson.Get(s, "project").String(),
