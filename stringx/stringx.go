@@ -65,10 +65,10 @@ func Mod(s string, n int) int {
 // CompareVersion compares two version strings
 func CompareVersion(alpha string, beta string) int {
 	if alpha == "" {
-		alpha = cast.ToString(math.MaxInt64)
+		alpha = cast.ToString(math.MinInt64)
 	}
 	if beta == "" {
-		beta = cast.ToString(math.MaxInt64)
+		beta = cast.ToString(math.MinInt64)
 	}
 	alphaStrs := strings.Split(alpha, ".")
 	betaStrs := strings.Split(beta, ".")
@@ -86,12 +86,12 @@ func CompareVersion(alpha string, beta string) int {
 		if i < len(alphaStrs) {
 			alphaInts[i] = cast.ToInt(alphaStrs[i])
 		} else {
-			alphaInts[i] = math.MaxInt64
+			alphaInts[i] = math.MinInt64
 		}
 		if i < len(betaStrs) {
 			betaInts[i] = cast.ToInt(betaStrs[i])
 		} else {
-			betaInts[i] = math.MaxInt64
+			betaInts[i] = math.MinInt64
 		}
 	}
 
