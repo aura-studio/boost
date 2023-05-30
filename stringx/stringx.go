@@ -1,6 +1,11 @@
 package stringx
 
-import "strings"
+import (
+	"math"
+	"strings"
+
+	"github.com/aura-studio/boost/cast"
+)
 
 // Merge joins all strings
 func Merge(ss ...string) string {
@@ -55,4 +60,48 @@ func Mod(s string, n int) int {
 		sum += int(b)
 	}
 	return sum % n
+}
+
+// CompareVersion compares two version strings
+func CompareVersion(alpha string, beta string) int {
+	if alpha == "" {
+		alpha = cast.ToString(math.MaxInt64)
+	}
+	if beta == "" {
+		beta = cast.ToString(math.MaxInt64)
+	}
+	alphaStrs := strings.Split(alpha, ".")
+	betaStrs := strings.Split(beta, ".")
+
+	var size int
+	if len(alphaStrs) > len(betaStrs) {
+		size = len(alphaStrs)
+	} else {
+		size = len(betaStrs)
+	}
+
+	alphaInts := make([]int, size)
+	betaInts := make([]int, size)
+	for i := 0; i < size; i++ {
+		if i < len(alphaStrs) {
+			alphaInts[i] = cast.ToInt(alphaStrs[i])
+		} else {
+			alphaInts[i] = math.MaxInt64
+		}
+		if i < len(betaStrs) {
+			betaInts[i] = cast.ToInt(betaStrs[i])
+		} else {
+			betaInts[i] = math.MaxInt64
+		}
+	}
+
+	for i := 0; i < size; i++ {
+		if alphaInts[i] > betaInts[i] {
+			return 1
+		} else if alphaInts[i] < betaInts[i] {
+			return -1
+		}
+	}
+
+	return 0
 }

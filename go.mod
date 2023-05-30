@@ -9,11 +9,13 @@ require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/gocarina/gocsv v0.0.0-20221105105431-c8ef78125b99
 	github.com/golang/snappy v0.0.4
+	github.com/innopals/sls-logrus-hook v0.0.0-20190808032145-2fe1d6f7ce00
 	github.com/mattn/go-colorable v0.1.12
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 	github.com/shopspring/decimal v1.3.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.14.0
+	github.com/stretchr/testify v1.8.1
 	github.com/tidwall/gjson v1.14.3
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
@@ -23,6 +25,7 @@ require (
 require (
 	github.com/bytedance/sonic v1.8.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -34,7 +37,6 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/innopals/sls-logrus-hook v0.0.0-20190808032145-2fe1d6f7ce00 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
@@ -48,6 +50,7 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
