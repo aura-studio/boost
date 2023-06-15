@@ -61,3 +61,36 @@ func (r *VectorRecorder) Record(n int) []int64 {
 	}
 	return r.Vector
 }
+
+type LcgVectorPlayer struct {
+	Index  int
+	Vector []int64
+	Lcg64  *Lcg64
+}
+
+var _ rand.Source = (*LcgVectorPlayer)(nil)
+
+func NewLcgVectorPlayer(v []int64, index int) *LcgVectorPlayer {
+	lcgRandx := NewLcg64(uint64(v[0]))
+	for i := 0; i < index; i++ {
+		lcgRandx.Int63()
+	}
+	return &LcgVectorPlayer{
+		Vector: v,
+		Index:  index,
+		Lcg64:  lcgRandx,
+	}
+}
+
+func (p *LcgVectorPlayer) Int63() int64 {
+	p.Index++
+	return p.Lcg64.Int63()
+}
+
+func (p *LcgVectorPlayer) Seed(seed int64) {
+	p.Index = 0
+}
+
+func (p *LcgVectorPlayer) Shorten() {
+
+}
