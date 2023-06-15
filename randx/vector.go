@@ -89,6 +89,7 @@ func (p *LcgVectorPlayer) Int63() int64 {
 
 func (p *LcgVectorPlayer) Seed(seed int64) {
 	p.Index = 0
+	p.Lcg64 = NewLcg64(uint64(seed))
 }
 
 func (p *LcgVectorPlayer) Shorten() {
