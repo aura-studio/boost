@@ -54,16 +54,6 @@ func (f *Int) SafeSet(value int) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *Int) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Int) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // Int8 is a wrapper for int8.
 type Int8 struct {
 	_root  *Root
@@ -103,16 +93,6 @@ func (f *Int8) SafeSet(value int8) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *Int8) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Int8) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // Int16 is a wrapper for int16.
@@ -156,16 +136,6 @@ func (f *Int16) SafeSet(value int16) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *Int16) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Int16) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // Int32 is a wrapper for int32.
 type Int32 struct {
 	_root  *Root
@@ -205,16 +175,6 @@ func (f *Int32) SafeSet(value int32) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *Int32) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Int32) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // Int64 is a wrapper for int64.
@@ -258,16 +218,6 @@ func (f *Int64) SafeSet(value int64) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *Int64) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Int64) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // Uint is a wrapper for uint.
 type Uint struct {
 	_root  *Root
@@ -307,16 +257,6 @@ func (f *Uint) SafeSet(value uint) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *Uint) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Uint) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // Uint8 is a wrapper for uint8.
@@ -360,16 +300,6 @@ func (f *Uint8) SafeSet(value uint8) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *Uint8) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Uint8) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // Uint16 is a wrapper for uint16.
 type Uint16 struct {
 	_root  *Root
@@ -409,16 +339,6 @@ func (f *Uint16) SafeSet(value uint16) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *Uint16) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Uint16) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // Uint32 is a wrapper for int8.
@@ -462,16 +382,6 @@ func (f *Uint32) SafeSet(value uint32) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *Uint32) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Uint32) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // Uint64 is a wrapper for uint64.
 type Uint64 struct {
 	_root  *Root
@@ -511,16 +421,6 @@ func (f *Uint64) SafeSet(value uint64) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *Uint64) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Uint64) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // Float32 is a wrapper for float32.
@@ -564,16 +464,6 @@ func (f *Float32) SafeSet(value float32) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *Float32) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Float32) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // Float64 is a wrapper for float64.
 type Float64 struct {
 	_root  *Root
@@ -613,16 +503,6 @@ func (f *Float64) SafeSet(value float64) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *Float64) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Float64) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // BigInt is a wrapper for big.Int
@@ -719,16 +599,6 @@ func (f *BigInt) SafeSetBig(n *big.Int) {
 	defer f._root.rw.Unlock()
 
 	f.SetBig(n)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *BigInt) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f BigInt) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // BigRat is a wrapper for big.Rat
@@ -829,16 +699,6 @@ func (f *BigRat) SafeSetBig(n *big.Rat) {
 	f.SetBig(n)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *BigRat) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f BigRat) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // BigFloat is a wrapper for big.Float
 type BigFloat struct {
 	_root  *Root
@@ -936,16 +796,6 @@ func (f *BigFloat) SafeSetBig(n *big.Float) {
 	f.SetBig(n)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *BigFloat) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f BigFloat) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // Bool is a wrapper for bool.
 type Bool struct {
 	_root  *Root
@@ -987,16 +837,6 @@ func (f *Bool) SafeSet(value bool) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *Bool) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Bool) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // String is a wrapper for bool.
 type String struct {
 	_root  *Root
@@ -1036,16 +876,6 @@ func (f *String) SafeSet(value string) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *String) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f String) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // Time is a wrapper for Unix time
@@ -1094,16 +924,6 @@ func (f *Time) SafeSet(value int64) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *Time) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f Time) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // JSON is a wrapper for json
@@ -1216,21 +1036,6 @@ func (f *JSON) SafeSetBytes(value []byte) {
 	f.SetBytes(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *JSON) UnmarshalJSON(data []byte) error {
-	var s string
-	defer func() {
-		f._value = Compress(s)
-	}()
-	return json.Unmarshal(data, &s)
-}
-
-// MarshalJSON implements json.Marshal
-func (f JSON) MarshalJSON() ([]byte, error) {
-	s := Decompress(f._value)
-	return json.Marshal(&s)
-}
-
 // Proto is a wrapper for json
 type Proto struct {
 	_root  *Root
@@ -1341,16 +1146,6 @@ func (f *Proto) SafeSetBytes(value []byte) {
 	f.SetBytes(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *Proto) UnmarshalJSON(data []byte) error {
-	return nil
-}
-
-// MarshalJSON implements json.Marshal
-func (f Proto) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("%d bytes binary", len(f._value))), nil
-}
-
 // SliceInt is a wrapper for []int.
 type SliceInt struct {
 	_root  *Root
@@ -1393,16 +1188,6 @@ func (f *SliceInt) SafeSet(value []int) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceInt) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceInt) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // SliceInt8 is a wrapper for []int8.
@@ -1449,16 +1234,6 @@ func (f *SliceInt8) SafeSet(value []int8) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceInt8) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceInt8) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceInt16 is a wrapper for []int16.
 type SliceInt16 struct {
 	_root  *Root
@@ -1501,16 +1276,6 @@ func (f *SliceInt16) SafeSet(value []int16) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceInt16) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceInt16) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // SliceInt32 is a wrapper for []int32.
@@ -1557,16 +1322,6 @@ func (f *SliceInt32) SafeSet(value []int32) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceInt32) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceInt32) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceInt64 is a wrapper for []int64.
 type SliceInt64 struct {
 	_root  *Root
@@ -1609,16 +1364,6 @@ func (f *SliceInt64) SafeSet(value []int64) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceInt64) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceInt64) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // SliceUint is a wrapper for []uint.
@@ -1665,16 +1410,6 @@ func (f *SliceUint) SafeSet(value []uint) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceUint) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceUint) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceUint is a wrapper for []uint8.
 type SliceUint8 struct {
 	_root  *Root
@@ -1717,16 +1452,6 @@ func (f *SliceUint8) SafeSet(value []uint8) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceUint8) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceUint8) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // SliceUint16 is a wrapper for []uint16.
@@ -1773,16 +1498,6 @@ func (f *SliceUint16) SafeSet(value []uint16) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceUint16) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceUint16) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceUint32 is a wrapper for []uint32.
 type SliceUint32 struct {
 	_root  *Root
@@ -1825,16 +1540,6 @@ func (f *SliceUint32) SafeSet(value []uint32) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceUint32) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceUint32) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // SliceUint64 is a wrapper for []int64.
@@ -1881,16 +1586,6 @@ func (f *SliceUint64) SafeSet(value []uint64) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceUint64) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceUint64) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceFloat32 is a wrapper for []float32.
 type SliceFloat32 struct {
 	_root  *Root
@@ -1935,16 +1630,6 @@ func (f *SliceFloat32) SafeSet(value []float32) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceFloat32) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceFloat32) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceFloat64 is a wrapper for []float64.
 type SliceFloat64 struct {
 	_root  *Root
@@ -1987,16 +1672,6 @@ func (f *SliceFloat64) SafeSet(value []float64) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceFloat64) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceFloat64) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // SliceBigInt is a wrapper for []big.Int.
@@ -2049,16 +1724,6 @@ func (f *SliceBigInt) SafeSet(value []*big.Int) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceBigInt) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceBigInt) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceBigRat is a wrapper for []big.Rat.
 type SliceBigRat struct {
 	_root  *Root
@@ -2109,16 +1774,6 @@ func (f *SliceBigRat) SafeSet(value []*big.Rat) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceBigRat) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceBigRat) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceBigFloat is a wrapper for []big.Int.
 type SliceBigFloat struct {
 	_root  *Root
@@ -2167,16 +1822,6 @@ func (f *SliceBigFloat) SafeSet(value []*big.Float) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceBigFloat) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceBigFloat) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
 
 // SliceTime is a wrapper for []Unix time
@@ -2237,16 +1882,6 @@ func (f *SliceTime) SafeSet(ns []int64) {
 	f.Set(ns)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceTime) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceTime) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceBool is a wrapper for []bool
 type SliceBool struct {
 	_root  *Root
@@ -2291,16 +1926,6 @@ func (f *SliceBool) SafeSet(value []bool) {
 	f.Set(value)
 }
 
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceBool) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceBool) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
-}
-
 // SliceString is a wrapper for []string
 type SliceString struct {
 	_root  *Root
@@ -2343,14 +1968,4 @@ func (f *SliceString) SafeSet(value []string) {
 	defer f._root.rw.Unlock()
 
 	f.Set(value)
-}
-
-// UnmarshalJSON implements json.Unmarshal
-func (f *SliceString) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &(f._value))
-}
-
-// MarshalJSON implements json.Marshal
-func (f SliceString) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&(f._value))
 }
