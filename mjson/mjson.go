@@ -4,32 +4,32 @@ import (
 	"encoding/json"
 )
 
-// Merge merges two deep nested JSON objects and returns the merged result.
-func Merge(jsonStr1, jsonStr2 string) (string, error) {
-	// Parse the first JSON string into a map structure
+// Merge merges two deep nested JSON objects and returns the merged result as a byte slice.
+func Merge(jsonData1, jsonData2 []byte) ([]byte, error) {
+	// Parse the first JSON data into a map structure
 	var map1 map[string]interface{}
-	err := json.Unmarshal([]byte(jsonStr1), &map1)
+	err := json.Unmarshal(jsonData1, &map1)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	// Parse the second JSON string into a map structure
+	// Parse the second JSON data into a map structure
 	var map2 map[string]interface{}
-	err = json.Unmarshal([]byte(jsonStr2), &map2)
+	err = json.Unmarshal(jsonData2, &map2)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// Merge the two map structures
 	mergedMap := mergeMaps(map1, map2)
 
-	// Convert the merged map structure back to JSON string
+	// Convert the merged map structure back to JSON
 	mergedJSON, err := json.Marshal(mergedMap)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(mergedJSON), nil
+	return mergedJSON, nil
 }
 
 // mergeMaps merges two map structures recursively
