@@ -70,20 +70,20 @@ func TestMergeMapStructure(t *testing.T) {
 				"b": []interface{}{3, 4},
 			},
 			m2: map[string]interface{}{
-				"a": []interface{}{5, 6},
-				"b": []interface{}{7, 8},
+				"a": []interface{}{5},
+				"b": []interface{}{7},
 			},
 			mergeType: "replace_by_index_prefer_right",
 			wantResult: map[string]interface{}{
-				"a": []interface{}{5, 6},
-				"b": []interface{}{7, 8},
+				"a": []interface{}{5},
+				"b": []interface{}{7},
 			},
 		},
 		{
 			name: "Test ReplaceByIndexPreferLeft",
 			m1: map[string]interface{}{
-				"a": []interface{}{1, 2},
-				"b": []interface{}{3, 4},
+				"a": []interface{}{1},
+				"b": []interface{}{3},
 			},
 			m2: map[string]interface{}{
 				"a": []interface{}{5, 6},
@@ -91,8 +91,8 @@ func TestMergeMapStructure(t *testing.T) {
 			},
 			mergeType: "replace_by_index_prefer_left",
 			wantResult: map[string]interface{}{
-				"a": []interface{}{1, 2},
-				"b": []interface{}{3, 4},
+				"a": []interface{}{5},
+				"b": []interface{}{7},
 			},
 		},
 		{
@@ -102,13 +102,13 @@ func TestMergeMapStructure(t *testing.T) {
 				"b": []interface{}{3, 4},
 			},
 			m2: map[string]interface{}{
-				"a": []interface{}{5, 6},
-				"b": []interface{}{7, 8},
+				"a": []interface{}{5},
+				"b": []interface{}{7},
 			},
 			mergeType: "replace_by_index_prefer_max",
 			wantResult: map[string]interface{}{
-				"a": []interface{}{5, 6},
-				"b": []interface{}{7, 8},
+				"a": []interface{}{5, 2},
+				"b": []interface{}{7, 4},
 			},
 		},
 		{
@@ -116,20 +116,43 @@ func TestMergeMapStructure(t *testing.T) {
 			m1: map[string]interface{}{
 				"a": []interface{}{1, 2},
 				"b": map[string]interface{}{
-					"c": []interface{}{3, 4},
+					"c": []map[string]interface{}{
+						{"d": "hello"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key1": {"value1"}},
 				},
 			},
 			m2: map[string]interface{}{
 				"a": []interface{}{5, 6},
 				"b": map[string]interface{}{
-					"c": []interface{}{7, 8},
+					"c": []map[string]interface{}{
+						{"e": "world"},
+						{"f": "foo"},
+						{"g": "bar"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key2": {"value2"}},
+					{"key3": {"value3"}, "key4": {"value4"}},
+					{"key5": {"value5"}},
 				},
 			},
 			mergeType: "replace_by_index_prefer_right_rec",
 			wantResult: map[string]interface{}{
 				"a": []interface{}{5, 6},
 				"b": map[string]interface{}{
-					"c": []interface{}{7, 8},
+					"c": []map[string]interface{}{
+						{"e": "world"},
+						{"f": "foo"},
+						{"g": "bar"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key2": {"value2"}},
+					{"key3": {"value3"}, "key4": {"value4"}},
+					{"key5": {"value5"}},
 				},
 			},
 		},
@@ -138,20 +161,41 @@ func TestMergeMapStructure(t *testing.T) {
 			m1: map[string]interface{}{
 				"a": []interface{}{1, 2},
 				"b": map[string]interface{}{
-					"c": []interface{}{3, 4},
+					"c": []map[string]interface{}{
+						{"d": "hello"},
+						{"e": "world"},
+						{"g": "bar"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key1": {"value1"}},
 				},
 			},
 			m2: map[string]interface{}{
 				"a": []interface{}{5, 6},
 				"b": map[string]interface{}{
-					"c": []interface{}{7, 8},
+					"c": []map[string]interface{}{
+						{"f": "foo"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key2": {"value2"}},
+					{"key3": {"value3"}, "key4": {"value4"}},
+					{"key5": {"value5"}},
 				},
 			},
 			mergeType: "replace_by_index_prefer_left_rec",
 			wantResult: map[string]interface{}{
 				"a": []interface{}{1, 2},
 				"b": map[string]interface{}{
-					"c": []interface{}{3, 4},
+					"c": []map[string]interface{}{
+						{"d": "hello"},
+						{"e": "world"},
+						{"g": "bar"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key1": {"value1"}},
 				},
 			},
 		},
@@ -160,20 +204,45 @@ func TestMergeMapStructure(t *testing.T) {
 			m1: map[string]interface{}{
 				"a": []interface{}{1, 2},
 				"b": map[string]interface{}{
-					"c": []interface{}{3, 4},
+					"c": []map[string]interface{}{
+						{"d": "hello"},
+						{"e": "world"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key1": {"value1"}},
 				},
 			},
 			m2: map[string]interface{}{
 				"a": []interface{}{5, 6},
 				"b": map[string]interface{}{
-					"c": []interface{}{7, 8},
+					"c": []map[string]interface{}{
+						{"f": "foo"},
+						{"g": "bar"},
+						{"h": "baz"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key2": {"value2"}},
+					{"key3": {"value3"}, "key4": {"value4"}},
+					{"key5": {"value5"}},
 				},
 			},
 			mergeType: "replace_by_index_prefer_max_rec",
 			wantResult: map[string]interface{}{
 				"a": []interface{}{5, 6},
 				"b": map[string]interface{}{
-					"c": []interface{}{7, 8},
+					"c": []map[string]interface{}{
+						{"d": "hello"},
+						{"e": "world"},
+						{"g": "bar"},
+						{"h": "baz"},
+					},
+				},
+				"d": []map[string][]string{
+					{"key2": {"value2"}},
+					{"key3": {"value3"}, "key4": {"value4"}},
+					{"key5": {"value5"}},
 				},
 			},
 		},

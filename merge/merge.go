@@ -16,7 +16,6 @@ const (
 	ReplaceByIndexPreferMaxRec   = "replace_by_index_prefer_max_rec"
 )
 
-// MergeMapStructure 合并两个map[string]interface{}
 func MergeMapStructure(m1, m2 map[string]interface{}, mergeType string) map[string]interface{} {
 	result := make(map[string]interface{})
 
@@ -28,7 +27,7 @@ func MergeMapStructure(m1, m2 map[string]interface{}, mergeType string) map[stri
 		switch mergeType {
 		case ReplaceByIndexPreferRightRec, ReplaceByIndexPreferLeftRec, ReplaceByIndexPreferMaxRec:
 			if reflect.TypeOf(v).Kind() == reflect.Slice && reflect.TypeOf(result[k]).Kind() == reflect.Slice {
-				result[k] = mergeSlice(result[k].([]interface{}), v.([]interface{}), mergeType)
+				result[k] = mergeSlice(result[k], v, mergeType)
 			} else if reflect.TypeOf(v).Kind() == reflect.Map && reflect.TypeOf(result[k]).Kind() == reflect.Map {
 				result[k] = MergeMapStructure(result[k].(map[string]interface{}), v.(map[string]interface{}), mergeType)
 			} else {
@@ -43,9 +42,11 @@ func MergeMapStructure(m1, m2 map[string]interface{}, mergeType string) map[stri
 				result[k] = MergeMapStructure(result[k].(map[string]interface{}), v.(map[string]interface{}), mergeType)
 			case reflect.Slice:
 				if reflect.TypeOf(result[k]).Kind() != reflect.Slice {
-					result[k] = make([]interface{}, 0)
+					// 创建一个类型为v的slice
+					sliceType := reflect.SliceOf(reflect.TypeOf(v).Elem())
+					result[k] = reflect.MakeSlice(sliceType, 0, 0).Interface()
 				}
-				result[k] = mergeSlice(result[k].([]interface{}), v.([]interface{}), mergeType)
+				result[k] = mergeSlice(result[k], v, mergeType)
 			default:
 				result[k] = v
 			}
@@ -55,26 +56,58 @@ func MergeMapStructure(m1, m2 map[string]interface{}, mergeType string) map[stri
 	return result
 }
 
+// removeDuplicates 去重
+func removeDuplicates(s1, s2 interface{}) []interface{} {
+	// 将s1和s2转换为reflect.Value类型
+	s1Value := reflect.ValueOf(s1)
+	s2Value := reflect.ValueOf(s2)
+
+	// 创建一个map来记录已经出现过的元素
+	seen := make(map[interface{}]bool)
+	result := make([]interface{}, 0)
+
+	// 遍历s1中的元素，并添加到result中（如果未出现过）
+	for i := 0; i < s1Value.Len(); i++ {
+		v := s1Value.Index(i).Interface()
+		if !seen[v] {
+			result = append(result, v)
+			seen[v] = true
+		}
+	}
+
+	// 遍历s2中的元素，并添加到result中（如果未出现过）
+	for i := 0; i < s2Value.Len(); i++ {
+		v := s2Value.Index(i).Interface()
+		if !seen[v] {
+			result = append(result, v)
+			seen[v] = true
+		}
+	}
+
+	return result
+}
+
 // mergeSlice 合并两个Slice
-func mergeSlice(s1, s2 []interface{}, mergeType string) []interface{} {
-	var result []interface{}
+func mergeSlice(s1, s2 interface{}, mergeType string) interface{} {
+	var result interface{}
 
 	switch mergeType {
 	case Concatenate:
-		result = append(result, s1...)
-		result = append(result, s2...)
+		// 使用反射将s1和s2连接在一起
+		result = reflect.AppendSlice(reflect.ValueOf(s1), reflect.ValueOf(s2)).Interface()
 	case RemoveDuplicates:
+		// 使用反射去重
 		result = removeDuplicates(s1, s2)
 	case Overwrite:
 		result = s2
 	case ReplaceByIndexPreferRight, ReplaceByIndexPreferRightRec:
-		result = replaceByIndex(s1, s2, len(s2))
+		result = replaceByIndex(s1, s2, reflect.ValueOf(s2).Len())
 	case ReplaceByIndexPreferLeft, ReplaceByIndexPreferLeftRec:
-		result = replaceByIndex(s1, s2, len(s1))
+		result = replaceByIndex(s1, s2, reflect.ValueOf(s1).Len())
 	case ReplaceByIndexPreferMax, ReplaceByIndexPreferMaxRec:
-		maxLen := len(s1)
-		if len(s2) > maxLen {
-			maxLen = len(s2)
+		maxLen := reflect.ValueOf(s1).Len()
+		if reflect.ValueOf(s2).Len() > maxLen {
+			maxLen = reflect.ValueOf(s2).Len()
 		}
 		result = replaceByIndex(s1, s2, maxLen)
 	}
@@ -82,34 +115,15 @@ func mergeSlice(s1, s2 []interface{}, mergeType string) []interface{} {
 	return result
 }
 
-// removeDuplicates 去重
-func removeDuplicates(s1, s2 []interface{}) []interface{} {
-	result := make([]interface{}, 0)
-	seen := make(map[interface{}]bool)
-
-	for _, v := range s1 {
-		if !seen[v] {
-			result = append(result, v)
-			seen[v] = true
-		}
-	}
-
-	for _, v := range s2 {
-		if !seen[v] {
-			result = append(result, v)
-			seen[v] = true
-		}
-	}
-
-	return result
-}
-
 // replaceByIndex 按索引位替换Slice元素
-func replaceByIndex(s1, s2 []interface{}, length int) []interface{} {
-	result := make([]interface{}, length)
+func replaceByIndex(s1, s2 interface{}, length int) interface{} {
+	// 创建一个类型为s1的slice
+	sliceType := reflect.TypeOf(s1)
+	result := reflect.MakeSlice(sliceType, length, length).Interface()
 
-	copy(result, s1)
-	copy(result, s2)
+	// 复制s1和s2到result
+	reflect.Copy(reflect.ValueOf(result), reflect.ValueOf(s1))
+	reflect.Copy(reflect.ValueOf(result), reflect.ValueOf(s2))
 
 	return result
 }

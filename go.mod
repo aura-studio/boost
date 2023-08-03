@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/containrrr/shoutrrr v0.6.1
+	github.com/davidminor/uint128 v0.0.0-20141227063632-5745f1bf8041
 	github.com/disiqueira/gotree v1.0.0
 	github.com/frankban/quicktest v1.14.4
 	github.com/gin-gonic/gin v1.9.0
@@ -26,7 +27,6 @@ require (
 	github.com/bytedance/sonic v1.8.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/davidminor/uint128 v0.0.0-20141227063632-5745f1bf8041 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
