@@ -7,7 +7,6 @@ import (
 	"github.com/aura-studio/boost/cast"
 )
 
-// Merge joins all strings
 func Merge(ss ...string) string {
 	var b strings.Builder
 	b.Grow(64)
@@ -17,7 +16,6 @@ func Merge(ss ...string) string {
 	return b.String()
 }
 
-// PickLast splits s with sep, and get last piece
 func PickLast(s string, sep string) string {
 	lastIndex := strings.LastIndex(s, sep)
 	if lastIndex < 0 {
@@ -26,7 +24,6 @@ func PickLast(s string, sep string) string {
 	return s[lastIndex+len(sep):]
 }
 
-// PruneLast splits s with sep, and get all pieces except the last
 func PruneLast(s string, sep string) string {
 	lastIndex := strings.LastIndex(s, sep)
 	if lastIndex < 0 {
@@ -35,7 +32,6 @@ func PruneLast(s string, sep string) string {
 	return s[:lastIndex]
 }
 
-// PickFirst splits s with sep, and get first piece
 func PickFirst(s string, sep string) string {
 	firstIndex := strings.Index(s, sep)
 	if firstIndex < 0 {
@@ -44,7 +40,6 @@ func PickFirst(s string, sep string) string {
 	return s[:firstIndex]
 }
 
-// PruneFirst splits s with sep, and get all pieces except the first
 func PruneFirst(s string, sep string) string {
 	firstIndex := strings.Index(s, sep)
 	if firstIndex < 0 {
@@ -53,7 +48,36 @@ func PruneFirst(s string, sep string) string {
 	return s[firstIndex+len(sep):]
 }
 
-// Mod returns the remainder of s divided by n
+func ContainsAny(s string, v ...any) bool {
+	size := len(v)
+	if size == 0 {
+		return false
+	}
+
+	if size > 1 {
+		for _, item := range v {
+			if strings.Contains(s, item.(string)) {
+				return true
+			}
+		}
+		return false
+	}
+
+	switch val := v[0].(type) {
+	case string:
+		return strings.ContainsAny(s, val)
+	case []string:
+		for _, item := range val {
+			if strings.Contains(s, item) {
+				return true
+			}
+		}
+		return false
+	default:
+		return false
+	}
+}
+
 func Mod(s string, n int) int {
 	var sum int
 	for _, b := range []byte(s) {
@@ -62,7 +86,6 @@ func Mod(s string, n int) int {
 	return sum % n
 }
 
-// CompareVersion compares two version strings
 func CompareVersion(alpha string, beta string) int {
 	if alpha == "" {
 		alpha = cast.ToString(math.MinInt64)
