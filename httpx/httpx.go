@@ -6,23 +6,26 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 type DoFunc func(*http.Client) (*http.Response, error)
 
 type ClientConfig struct {
-	Proxy string
-	Retry int64
+	Proxy   string
+	Retry   int64
+	Timeout time.Duration
 }
 
 type Client struct {
-	ClientConfig
-	client *http.Client
+	Config ClientConfig
+	*http.Client
 }
 
 var DefaultClientConfig = ClientConfig{
-	Proxy: "",
-	Retry: 1,
+	Proxy:   "",
+	Retry:   1,
+	Timeout: 0,
 }
 
 func Default() *Client {
@@ -31,21 +34,22 @@ func Default() *Client {
 
 func NewClient(config ClientConfig) *Client {
 	c := &Client{
-		ClientConfig: config,
+		Config: config,
+		Client: &http.Client{},
 	}
 
-	if c.Proxy == "" {
-		c.client = &http.Client{}
-	} else {
-		proxyURL, err := url.Parse(c.Proxy)
+	if c.Config.Proxy != "" {
+		proxyURL, err := url.Parse(c.Config.Proxy)
 		if err != nil {
 			log.Panicln(err)
 		}
 
-		c.client = &http.Client{Transport: &http.Transport{
+		c.Client.Transport = &http.Transport{
 			Proxy: http.ProxyURL(proxyURL),
-		}}
+		}
 	}
+
+	c.Client.Timeout = c.Config.Timeout
 
 	return c
 }
@@ -56,7 +60,7 @@ func Request(doFunc DoFunc) ([]byte, error) {
 
 func (c *Client) Request(doFunc DoFunc) (data []byte, err error) {
 	var request = func() (data []byte, err error) {
-		resp, err := doFunc(c.client)
+		resp, err := doFunc(c.Client)
 		defer func() {
 			if resp != nil {
 				resp.Body.Close()
@@ -72,7 +76,7 @@ func (c *Client) Request(doFunc DoFunc) (data []byte, err error) {
 	}
 
 	var times int64
-	for times < c.Retry {
+	for times < c.Config.Retry {
 		times++
 		data, err = request()
 		if err != nil {
