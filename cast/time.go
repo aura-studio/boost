@@ -21,6 +21,10 @@ func ToDurationE(a any) (time.Duration, error) {
 	switch v := a.(type) {
 	case string:
 		return stringToDurationE(v)
+	case int:
+		return time.Duration(v), nil
+	case int8:
+		
 	default:
 		return 0, fmt.Errorf("invalid duration type: %T", a)
 	}
@@ -221,31 +225,6 @@ func stringUTCToDurationE(name string) (time.Duration, error) {
 		return 0, fmt.Errorf("invalid time zone name `%s`", name)
 	}
 }
-
-// func ParseTimeZone(s string) int64 {
-// 	// Check first char is + or -, or is digit
-// 	if s[0] == '+' || s[0] == '-' || (s[0] >= '0' && s[0] <= '9') {
-// 		duration := ParseDuration(s, time.Now())
-// 		return ToInt64(duration.Seconds())
-// 	} else {
-// 		// Check timezone is valid
-// 		if loc, err := time.LoadLocation(s); err != nil {
-// 			panic(err)
-// 		} else {
-// 			// get time zone offset
-// 			_, offset := time.Now().In(loc).Zone()
-// 			return ToInt64(offset)
-// 		}
-// 	}
-// }
-
-// TODO support time & duration
-
-// // ToTime casts an interface to a time.Time type.
-// func ToTime(a any, args ...any) time.Time {
-// 	t, _ := ToTimeE(a)
-// 	return t
-// }
 
 // // ToTimeE casts an interface to a time.Time type.
 // func ToTimeE(a any, args ...any) (time.Time, error) {
