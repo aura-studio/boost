@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"strconv"
+	"time"
 
 	"github.com/shopspring/decimal"
 )
@@ -62,6 +63,12 @@ func ToStringE(a any) (string, error) {
 		return fmt.Sprintf("(%v+%vi)", real(v), imag(v)), nil
 	case bool:
 		return strconv.FormatBool(v), nil
+	case time.Duration:
+		return v.String(), nil
+	case time.Location:
+		return v.String(), nil
+	case *time.Location:
+		return v.String(), nil
 	case string:
 		return v, nil
 	case []byte:
@@ -130,6 +137,12 @@ func ToBytesE(a any) ([]byte, error) {
 		return []byte(fmt.Sprintf("(%v+%vi)", real(v), imag(v))), nil
 	case bool:
 		return []byte(strconv.FormatBool(v)), nil
+	case time.Duration:
+		return []byte(v.String()), nil
+	case time.Location:
+		return []byte(v.String()), nil
+	case *time.Location:
+		return []byte(v.String()), nil
 	case string:
 		return []byte(v), nil
 	case []byte:
@@ -198,6 +211,10 @@ func ToStringerE(a any) (fmt.Stringer, error) {
 		return stringer{fmt.Sprintf("(%v+%vi)", real(v), imag(v))}, nil
 	case bool:
 		return stringer{strconv.FormatBool(v)}, nil
+	case time.Duration:
+		return stringer{v.String()}, nil
+	case time.Location:
+		return stringer{v.String()}, nil
 	case string:
 		return stringer{v}, nil
 	case []byte:
@@ -266,6 +283,12 @@ func ToErrorE(a any) (error, error) {
 		return fmt.Errorf(fmt.Sprintf("(%v+%vi)", real(v), imag(v))), nil
 	case bool:
 		return errors.New(strconv.FormatBool(v)), nil
+	case time.Duration:
+		return errors.New(v.String()), nil
+	case time.Location:
+		return errors.New(v.String()), nil
+	case *time.Location:
+		return errors.New(v.String()), nil
 	case string:
 		return errors.New(v), nil
 	case []byte:

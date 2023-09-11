@@ -74,10 +74,10 @@ func ToIntE(a any) (int, error) {
 		return int(v), nil
 	case time.Location:
 		_, offset := time.Now().In(&v).Zone()
-		return int(offset), nil
+		return offset, nil
 	case *time.Location:
 		_, offset := time.Now().In(v).Zone()
-		return int(offset), nil
+		return offset, nil
 	case string:
 		n, err := dec.ToInt(v)
 		if err == nil {

@@ -1,6 +1,16 @@
 package cast_test
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+	"time"
+
+	"github.com/aura-studio/boost/cast"
+)
+
+func TestStringToDuration(t *testing.T) {
+	fmt.Println(cast.ToDuration(fmt.Sprintf("1M %s", time.Now().Format(time.RFC3339))))
+}
 
 func TestToDurationE(t *testing.T) {
 	t.Error("Not implemented")
