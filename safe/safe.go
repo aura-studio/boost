@@ -3,6 +3,7 @@ package safe
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 func Do(a any) (err error) {
 	defer func() {
 		if v := recover(); v != nil {
-			err = fmt.Errorf("panic: %w", cast.ToError(v))
+			err = fmt.Errorf("panic: %w\n%s", cast.ToError(v), string(debug.Stack()))
 		}
 	}()
 
@@ -39,7 +40,7 @@ func DoWithContext(ctx context.Context, a any) (err error) {
 		errCh <- func() (err error) {
 			defer func() {
 				if v := recover(); v != nil {
-					err = fmt.Errorf("panic: %w", cast.ToError(v))
+					err = fmt.Errorf("panic: %w\n%s", cast.ToError(v), string(debug.Stack()))
 				}
 			}()
 
