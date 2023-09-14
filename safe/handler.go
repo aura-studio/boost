@@ -37,3 +37,21 @@ func (*Handler) DoWithTimeout(d time.Duration, a any) {
 		defaultHandler.Func(err)
 	}
 }
+
+func (h *Handler) Wrap(a any) func() {
+	return func() {
+		h.Do(a)
+	}
+}
+
+func (h *Handler) WrapWithContext(ctx context.Context, a any) func() {
+	return func() {
+		h.DoWithContext(ctx, a)
+	}
+}
+
+func (h *Handler) WrapWithTimeout(d time.Duration, a any) func() {
+	return func() {
+		h.DoWithTimeout(d, a)
+	}
+}
