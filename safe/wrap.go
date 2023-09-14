@@ -38,15 +38,33 @@ func (*Handler) DoWithTimeout(d time.Duration, a any) {
 	}
 }
 
+func Wrap() func(a any) {
+	return func(a any) {
+		defaultHandler.Do(a)
+	}
+}
+
 func (h *Handler) Wrap(a any) func() {
 	return func() {
 		h.Do(a)
 	}
 }
 
+func WrapWithContext(ctx context.Context, a any) func() {
+	return func() {
+		defaultHandler.DoWithContext(ctx, a)
+	}
+}
+
 func (h *Handler) WrapWithContext(ctx context.Context, a any) func() {
 	return func() {
 		h.DoWithContext(ctx, a)
+	}
+}
+
+func WrapWithTimeout(d time.Duration, a any) func() {
+	return func() {
+		defaultHandler.DoWithTimeout(d, a)
 	}
 }
 
