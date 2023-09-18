@@ -429,14 +429,18 @@ var (
 	}
 )
 
-func timeStringToTime(s string) (d time.Time, e error) {
+func timeStringToTime(s string) (d time.Time, err error) {
 	var (
 		location    = time.Local
 		timeFormats = defaultTimeFormats
 	)
 
+	if n, err := dec.ToInt(s); err == nil {
+		return time.Unix(n, 0), nil
+	}
+
 	for _, timeFormat := range timeFormats {
-		if d, e = time.Parse(timeFormat.Format, s); e == nil {
+		if d, err = time.Parse(timeFormat.Format, s); err == nil {
 			// Some time formats have a zone name, but no offset, so it gets
 			// put in that zone name (not the default one passed in to us), but
 			// without that zone's offset. So set the location manually.

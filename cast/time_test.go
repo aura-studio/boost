@@ -10,6 +10,7 @@ import (
 
 func TestStringToDuration(t *testing.T) {
 	fmt.Println(cast.ToDuration(fmt.Sprintf("1M %s", time.Now().Format(time.RFC3339))))
+	fmt.Println(cast.ToDuration(fmt.Sprintf("1M %d", time.Now().Unix())))
 }
 
 func TestToDurationE(t *testing.T) {
