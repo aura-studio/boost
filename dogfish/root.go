@@ -91,6 +91,15 @@ func (r *Root) Field(fields ...string) unsafe.Pointer {
 	return getValuePtr(value)
 }
 
+func (r *Root) FieldString(fields ...string) (string, error) {
+	nodeValue := reflect.Indirect(reflect.ValueOf(r._node))
+	value, ok := getValueByPath(nodeValue, fields)
+	if !ok {
+		return "", fmt.Errorf("field %s is not valid", strings.Join(fields, "."))
+	}
+	return leafToString(value.Interface())
+}
+
 // SafeField is a thread-safe version of Field
 func (r *Root) SafeField(fields ...string) unsafe.Pointer {
 	r.rw.RLock()

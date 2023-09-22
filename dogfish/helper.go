@@ -593,3 +593,86 @@ func stringToValue(s string, v reflect.Value) error {
 	}
 	return nil
 }
+
+func leafToString(v interface{}) (string, error) {
+	switch v := v.(type) {
+	case Int:
+		return interfaceToString(v._value)
+	case Int8:
+		return interfaceToString(v._value)
+	case Int16:
+		return interfaceToString(v._value)
+	case Int32:
+		return interfaceToString(v._value)
+	case Int64:
+		return interfaceToString(v._value)
+	case Uint:
+		return interfaceToString(v._value)
+	case Uint8:
+		return interfaceToString(v._value)
+	case Uint16:
+		return interfaceToString(v._value)
+	case Uint32:
+		return interfaceToString(v._value)
+	case Uint64:
+		return interfaceToString(v._value)
+	case Float32:
+		return interfaceToString(v._value)
+	case Float64:
+		return interfaceToString(v._value)
+	case BigFloat:
+		return interfaceToString(v._value)
+	case BigInt:
+		return interfaceToString(v._value)
+	case BigRat:
+		return interfaceToString(v._value)
+	case Bool:
+		return interfaceToString(v._value)
+	case String:
+		return interfaceToString(v._value)
+	case Time:
+		return interfaceToString(v._value)
+	case JSON:
+		return interfaceToString(v._value)
+	case Proto:
+		return interfaceToString(v._value)
+	case SliceInt:
+		return interfaceToString(v._value)
+	case SliceInt8:
+		return interfaceToString(v._value)
+	case SliceInt16:
+		return interfaceToString(v._value)
+	case SliceInt32:
+		return interfaceToString(v._value)
+	case SliceInt64:
+		return interfaceToString(v._value)
+	case SliceUint:
+		return interfaceToString(v._value)
+	case SliceUint8:
+		return interfaceToString(v._value)
+	case SliceUint16:
+		return interfaceToString(v._value)
+	case SliceUint32:
+		return interfaceToString(v._value)
+	case SliceUint64:
+		return interfaceToString(v._value)
+	case SliceFloat32:
+		return interfaceToString(v._value)
+	case SliceFloat64:
+		return interfaceToString(v._value)
+	case SliceBigFloat:
+		return interfaceToString(v._value)
+	case SliceBigInt:
+		return interfaceToString(v._value)
+	case SliceBigRat:
+		return interfaceToString(v._value)
+	case SliceTime:
+		return interfaceToString(v._value)
+	case SliceBool:
+		return interfaceToString(v._value)
+	case SliceString:
+		return interfaceToString(v._value)
+	default:
+		return "", fmt.Errorf("invalid type to string:%+v, %+v", v, reflect.TypeOf(v))
+	}
+}
