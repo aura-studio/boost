@@ -7,6 +7,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/aura-studio/boost/lumberjack"
 	"github.com/containrrr/shoutrrr"
 	"github.com/containrrr/shoutrrr/pkg/router"
 	sls "github.com/innopals/sls-logrus-hook"
@@ -14,7 +15,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/writer"
 	"github.com/tidwall/gjson"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 type HookContextKey string
