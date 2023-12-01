@@ -10,7 +10,7 @@ type Regexp struct {
 	sync.Map
 }
 
-func NewRegexp() *Regexp {
+func New() *Regexp {
 	return &Regexp{}
 }
 
