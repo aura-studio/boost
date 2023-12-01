@@ -10,6 +10,7 @@ import (
 	"github.com/aura-studio/boost/cast"
 )
 
+
 func Do(a any) (err error) {
 	defer func() {
 		if v := recover(); v != nil {
