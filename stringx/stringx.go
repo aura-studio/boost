@@ -147,6 +147,16 @@ const (
 	IPv6
 )
 
+var ipTypeStringMap = map[IPType]string{
+	IPNil: "nil",
+	IPv4:  "ipv4",
+	IPv6:  "ipv6",
+}
+
+func (t IPType) String() string {
+	return ipTypeStringMap[t]
+}
+
 func ParseRemoteAddr(addr string) (string, uint, IPType) {
 	match, _ := reIPv4Port.FindStringMatch(addr)
 	if match != nil {
