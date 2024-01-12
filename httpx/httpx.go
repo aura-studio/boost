@@ -207,8 +207,8 @@ func (c *Client) doFuncWithDump(f RequestFunc, dumpData *DumpData) ([]byte, erro
 
 	// Dump request body
 	reqBodyBytes, err := io.ReadAll(req.Body)
-	dumpData.RequestBodyError = cast.ToString(err)
 	dumpData.RequestBody = string(reqBodyBytes)
+	dumpData.RequestBodyError = cast.ToString(err)
 
 	// Reset request body
 	_, _ = io.Copy(io.Discard, req.Body)
