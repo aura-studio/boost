@@ -1,6 +1,7 @@
 package httpx
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"log"
@@ -13,7 +14,8 @@ import (
 	"github.com/aura-studio/boost/cast"
 )
 
-type DoFunc func(*http.Client) (*http.Response, error)
+type ResponseFunc = func(*http.Client) (*http.Response, error)
+type RequestFunc = func(*http.Client) (*http.Request, error)
 
 type ClientConfig struct {
 	Retry   int64
@@ -39,14 +41,20 @@ type Client struct {
 }
 
 type DumpData struct {
-	Request               string
-	DumpRequestError      string
-	RequestBody           string
-	DumpRequestBodyError  string
-	Response              string
-	DumpResponseError     string
-	ResponseBody          string
-	DumpResponseBodyError string
+	// Request
+	RequestHead      string
+	RequestHeadError string
+	RequestBody      string
+	RequestBodyError string
+
+	// Do
+	DoError string
+
+	// Response
+	ResponseHead      string
+	ResponseHeadError string
+	ResponseBody      string
+	ResponseBodyError string
 }
 
 var DefaultClientConfig = ClientConfig{
@@ -107,15 +115,15 @@ func NewClient(config ClientConfig) *Client {
 	return c
 }
 
-func Request(doFunc DoFunc) ([]byte, error) {
-	return Default().Request(doFunc)
+func Request(f any) ([]byte, error) {
+	return Default().Request(f)
 }
 
-func (c *Client) Request(doFunc DoFunc) (data []byte, err error) {
+func (c *Client) Request(f any) (data []byte, err error) {
 	var times int64
 	for times < c.Config.Retry {
 		times++
-		data, err = c.do(doFunc)
+		data, err = c.doFunc(f)
 		if err == nil {
 			return
 		}
@@ -124,16 +132,59 @@ func (c *Client) Request(doFunc DoFunc) (data []byte, err error) {
 	return
 }
 
-func RequestWithDump(doFunc DoFunc) ([]byte, *DumpData, error) {
-	return Default().RequestWithDump(doFunc)
+func (c *Client) doFunc(f any) (respBody []byte, err error) {
+	var resp *http.Response
+
+	switch f := f.(type) {
+	case RequestFunc:
+		var req *http.Request
+		req, err = f(c.Client)
+		if err != nil {
+			return
+		}
+
+		resp, err = c.Client.Do(req)
+		if err != nil {
+			return
+		}
+	case ResponseFunc:
+		resp, err = f(c.Client)
+		if err != nil {
+			return
+		}
+	default:
+		err = fmt.Errorf("unknown type %T", f)
+		return
+	}
+
+	defer func() {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		resp.Body.Close()
+	}()
+
+	respBody, err = io.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		err = fmt.Errorf("http server returns status code %d", resp.StatusCode)
+		return
+	}
+
+	return
 }
 
-func (c *Client) RequestWithDump(doFunc DoFunc) (data []byte, dumpData *DumpData, err error) {
+func RequestWithDump(f RequestFunc) ([]byte, *DumpData, error) {
+	return Default().RequestWithDump(f)
+}
+
+func (c *Client) RequestWithDump(f RequestFunc) (data []byte, dumpData *DumpData, err error) {
 	dumpData = new(DumpData)
 	var times int64
 	for times < c.Config.Retry {
 		times++
-		data, dumpData, err = c.doDump(doFunc)
+		data, err = c.doFuncWithDump(f, dumpData)
 		if err == nil {
 			return
 		}
@@ -142,98 +193,55 @@ func (c *Client) RequestWithDump(doFunc DoFunc) (data []byte, dumpData *DumpData
 	return
 }
 
-func (c *Client) do(doFunc DoFunc) (responseBody []byte, err error) {
-	response, doFuncErr := doFunc(c.Client)
-	defer func() {
-		if response != nil {
-			response.Body.Close()
-		}
-	}()
-
-	if response != nil {
-		var readAllErr error
-		responseBody, readAllErr = io.ReadAll(response.Body)
-		if readAllErr != nil {
-			err = readAllErr
-			return nil, err
-		}
+func (c *Client) doFuncWithDump(f RequestFunc, dumpData *DumpData) ([]byte, error) {
+	// Get request
+	req, err := f(c.Client)
+	if err != nil {
+		return nil, err
 	}
-
-	if doFuncErr != nil {
-		err = doFuncErr
-		return
-	}
-
-	if response.StatusCode != 200 {
-		err = fmt.Errorf("status code of http response is %d instead of 200", response.StatusCode)
-		return
-	}
-
-	return
-}
-
-func (c *Client) doDump(doFunc DoFunc) (responseBody []byte, dumpData *DumpData, err error) {
-	response, doFuncErr := doFunc(c.Client)
-	dumpData = c.dump(response)
-	responseBody = []byte(dumpData.ResponseBody)
-
-	if doFuncErr != nil {
-		err = doFuncErr
-		return
-	}
-
-	if response.StatusCode != 200 {
-		err = fmt.Errorf("status code of http response is %d instead of 200", response.StatusCode)
-		return
-	}
-
-	return
-}
-
-func (c *Client) dump(response *http.Response) *DumpData {
-	dumpData := new(DumpData)
-
-	if response == nil {
-		return dumpData
-	}
-
-	request := response.Request
 
 	// Dump request
-	dumpRequest, err := httputil.DumpRequest(request, false)
-	dumpData.Request = string(dumpRequest)
-	dumpData.DumpRequestError = cast.ToString(err)
+	dumpRequest, err := httputil.DumpRequest(req, false)
+	dumpData.RequestHead = string(dumpRequest)
+	dumpData.RequestHeadError = cast.ToString(err)
 
 	// Dump request body
-	requestBody, err := request.GetBody()
-	defer func() {
-		if requestBody != nil {
-			requestBody.Close()
-		}
-	}()
+	reqBodyBytes, err := io.ReadAll(req.Body)
+	dumpData.RequestBodyError = cast.ToString(err)
+	dumpData.RequestBody = string(reqBodyBytes)
+
+	// Reset request body
+	_, _ = io.Copy(io.Discard, req.Body)
+	req.Body.Close()
+	req.Body = io.NopCloser(bytes.NewBuffer(reqBodyBytes))
+
+	// Do
+	resp, err := c.Client.Do(req)
 	if err != nil {
-		dumpData.DumpRequestBodyError = cast.ToString(err)
-	} else {
-		requestBodyBytes, err := io.ReadAll(requestBody)
-		dumpData.RequestBody = string(requestBodyBytes)
-		dumpData.DumpRequestBodyError = cast.ToString(err)
+		// Dump do
+		dumpData.DoError = cast.ToString(err)
+		return nil, err
 	}
 
 	// Dump response
-	dumpResponse, err := httputil.DumpResponse(response, false)
-	dumpData.Response = string(dumpResponse)
-	dumpData.DumpResponseError = cast.ToString(err)
+	dumpResponse, err := httputil.DumpResponse(resp, false)
+	dumpData.ResponseHead = string(dumpResponse)
+	dumpData.ResponseHeadError = cast.ToString(err)
 
 	// Dump response body
-	responseBody := response.Body
-	defer func() {
-		if responseBody != nil {
-			responseBody.Close()
-		}
-	}()
-	responseBodyBytes, err := io.ReadAll(responseBody)
-	dumpData.ResponseBody = string(responseBodyBytes)
-	dumpData.DumpResponseBodyError = cast.ToString(err)
+	respBodyBytes, err := io.ReadAll(resp.Body)
+	dumpData.ResponseBody = string(respBodyBytes)
+	dumpData.ResponseBodyError = cast.ToString(err)
 
-	return dumpData
+	// Reset response body
+	_, _ = io.Copy(io.Discard, resp.Body)
+	resp.Body.Close()
+	resp.Body = io.NopCloser(bytes.NewBuffer(respBodyBytes))
+
+	// Check status code
+	if resp.StatusCode != http.StatusOK {
+		return respBodyBytes, fmt.Errorf("http server (%s) returns status code %d", resp.Request.URL.Host, resp.StatusCode)
+	}
+
+	return respBodyBytes, nil
 }
