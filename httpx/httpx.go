@@ -9,6 +9,8 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"time"
+
+	"github.com/aura-studio/boost/cast"
 )
 
 type DoFunc func(*http.Client) (*http.Response, error)
@@ -200,7 +202,7 @@ func (c *Client) dump(response *http.Response) *DumpData {
 	// Dump request
 	dumpRequest, err := httputil.DumpRequest(request, false)
 	dumpData.Request = string(dumpRequest)
-	dumpData.DumpRequestError = err.Error()
+	dumpData.DumpRequestError = cast.ToString(err)
 
 	// Dump request body
 	requestBody, err := request.GetBody()
@@ -210,17 +212,17 @@ func (c *Client) dump(response *http.Response) *DumpData {
 		}
 	}()
 	if err != nil {
-		dumpData.DumpRequestBodyError = err.Error()
+		dumpData.DumpRequestBodyError = cast.ToString(err)
 	} else {
 		requestBodyBytes, err := io.ReadAll(requestBody)
 		dumpData.RequestBody = string(requestBodyBytes)
-		dumpData.DumpRequestBodyError = err.Error()
+		dumpData.DumpRequestBodyError = cast.ToString(err)
 	}
 
 	// Dump response
 	dumpResponse, err := httputil.DumpResponse(response, false)
 	dumpData.Response = string(dumpResponse)
-	dumpData.DumpResponseError = err.Error()
+	dumpData.DumpResponseError = cast.ToString(err)
 
 	// Dump response body
 	responseBody := response.Body
@@ -231,7 +233,7 @@ func (c *Client) dump(response *http.Response) *DumpData {
 	}()
 	responseBodyBytes, err := io.ReadAll(responseBody)
 	dumpData.ResponseBody = string(responseBodyBytes)
-	dumpData.DumpResponseBodyError = err.Error()
+	dumpData.DumpResponseBodyError = cast.ToString(err)
 
 	return dumpData
 }
