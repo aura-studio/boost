@@ -200,7 +200,7 @@ func (c *Client) doFuncWithDump(f RequestFunc, dumpData *DumpData) ([]byte, erro
 		return nil, err
 	}
 
-	// Dump request
+	// Dump request head
 	dumpRequest, err := httputil.DumpRequest(req, false)
 	dumpData.RequestHead = string(dumpRequest)
 	dumpData.RequestHeadError = cast.ToString(err)
@@ -223,7 +223,7 @@ func (c *Client) doFuncWithDump(f RequestFunc, dumpData *DumpData) ([]byte, erro
 		return nil, err
 	}
 
-	// Dump response
+	// Dump response head
 	dumpResponse, err := httputil.DumpResponse(resp, false)
 	dumpData.ResponseHead = string(dumpResponse)
 	dumpData.ResponseHeadError = cast.ToString(err)
