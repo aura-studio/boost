@@ -131,6 +131,13 @@ func CompareVersion(alpha string, beta string) int {
 	return 0
 }
 
+func Shorten(s string, max int) string {
+	if len(s) <= max {
+		return s
+	}
+	return s[:max]
+}
+
 var (
 	reIPv4        = regexp2.MustCompile(`^(?P<ip>(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$`, regexp2.RE2)
 	reIPv4Port    = regexp2.MustCompile(`^(?P<ip>(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)):(?P<port>([0-9]{1,5}))$`, regexp2.RE2)
