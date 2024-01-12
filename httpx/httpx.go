@@ -236,7 +236,6 @@ func (c *Client) doFuncWithDump(f RequestFunc, dumpData *DumpData) ([]byte, erro
 	// Reset response body
 	_, _ = io.Copy(io.Discard, resp.Body)
 	resp.Body.Close()
-	resp.Body = io.NopCloser(bytes.NewBuffer(respBodyBytes))
 
 	// Check status code
 	if resp.StatusCode != http.StatusOK {
