@@ -127,6 +127,7 @@ func RequestWithDump(doFunc DoFunc) ([]byte, *DumpData, error) {
 }
 
 func (c *Client) RequestWithDump(doFunc DoFunc) (data []byte, dumpData *DumpData, err error) {
+	dumpData = new(DumpData)
 	var times int64
 	for times < c.Config.Retry {
 		times++
