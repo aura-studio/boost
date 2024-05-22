@@ -7,12 +7,14 @@ require (
 	github.com/davidminor/uint128 v0.0.0-20141227063632-5745f1bf8041
 	github.com/disiqueira/gotree v1.0.0
 	github.com/dlclark/regexp2 v1.10.0
+	github.com/fatih/structs v1.1.0
 	github.com/frankban/quicktest v1.14.6
 	github.com/gin-gonic/gin v1.9.0
 	github.com/gocarina/gocsv v0.0.0-20221105105431-c8ef78125b99
 	github.com/golang/snappy v0.0.4
 	github.com/innopals/sls-logrus-hook v0.0.0-20190808032145-2fe1d6f7ce00
 	github.com/mattn/go-colorable v0.1.13
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826
 	github.com/shopspring/decimal v1.3.1
 	github.com/sirupsen/logrus v1.9.0
@@ -45,7 +47,6 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
-	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
