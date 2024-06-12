@@ -142,9 +142,11 @@ func (ra RemoteAddr) Format() (string, error) {
 	return "", fmt.Errorf("%w: %s", ErrInvalidIPType, ra.IPType)
 }
 
-type RemoteAddrAnalyzer struct{}
+type remoteAddrAnalyzer struct{}
 
-func (RemoteAddrAnalyzer) Parse(addr string) (*RemoteAddr, error) {
+var RemoteAddrAnalyzer = remoteAddrAnalyzer{}
+
+func (remoteAddrAnalyzer) Parse(addr string) (*RemoteAddr, error) {
 	ra := &RemoteAddr{}
 	if err := ra.Parse(addr); err != nil {
 		return nil, err
@@ -152,7 +154,7 @@ func (RemoteAddrAnalyzer) Parse(addr string) (*RemoteAddr, error) {
 	return ra, nil
 }
 
-func (RemoteAddrAnalyzer) Format(addr string) (string, error) {
+func (remoteAddrAnalyzer) Format(addr string) (string, error) {
 	ra := &RemoteAddr{}
 	if err := ra.Parse(addr); err != nil {
 		return "", err
