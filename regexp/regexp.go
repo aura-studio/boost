@@ -131,6 +131,14 @@ func (ra *RemoteAddr) Parse(addr string) error {
 	return fmt.Errorf("%w: %s", ErrInvalidRemoteAddr, addr)
 }
 
+func (ra *RemoteAddr) MustParse(addr string) *RemoteAddr {
+	if err := ra.Parse(addr); err != nil {
+		panic(err)
+	}
+
+	return ra
+}
+
 func (ra RemoteAddr) Format() (string, error) {
 	switch ra.IPType {
 	case IPv4:
@@ -140,6 +148,20 @@ func (ra RemoteAddr) Format() (string, error) {
 	}
 
 	return "", fmt.Errorf("%w: %s", ErrInvalidIPType, ra.IPType)
+}
+
+func (ra RemoteAddr) MustFormat() string {
+	s, err := ra.Format()
+	if err != nil {
+		panic(err)
+	}
+
+	return s
+}
+
+func (ra RemoteAddr) String() string {
+	s, _ := ra.Format()
+	return s
 }
 
 type remoteAddrAnalyzer struct{}
@@ -154,6 +176,11 @@ func (remoteAddrAnalyzer) Parse(addr string) (*RemoteAddr, error) {
 	return ra, nil
 }
 
+func (remoteAddrAnalyzer) MustParse(addr string) *RemoteAddr {
+	ra := &RemoteAddr{}
+	return ra.MustParse(addr)
+}
+
 func (remoteAddrAnalyzer) Format(addr string) (string, error) {
 	ra := &RemoteAddr{}
 	if err := ra.Parse(addr); err != nil {
@@ -161,4 +188,9 @@ func (remoteAddrAnalyzer) Format(addr string) (string, error) {
 	}
 
 	return ra.Format()
+}
+
+func (remoteAddrAnalyzer) MustFormat(addr string) string {
+	ra := &RemoteAddr{}
+	return ra.MustParse(addr).MustFormat()
 }
