@@ -9,6 +9,20 @@ import (
 	"github.com/dlclark/regexp2"
 )
 
+func Unique(ss []string) []string {
+	m := make(map[string]struct{})
+	for _, s := range ss {
+		m[s] = struct{}{}
+	}
+
+	unique := make([]string, 0, len(m))
+	for s := range m {
+		unique = append(unique, s)
+	}
+
+	return unique
+}
+
 func Merge(ss ...string) string {
 	var b strings.Builder
 	b.Grow(64)
