@@ -1,12 +1,10 @@
 package stringx
 
 import (
-	"fmt"
 	"math"
 	"strings"
 
 	"github.com/aura-studio/boost/cast"
-	"github.com/dlclark/regexp2"
 )
 
 func Unique(ss []string) []string {
@@ -150,77 +148,4 @@ func Shorten(s string, max int) string {
 		return s
 	}
 	return s[:max]
-}
-
-var (
-	reIPv4            = regexp2.MustCompile(`^(?P<ip>(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))$`, regexp2.RE2)
-	reIPv4Port        = regexp2.MustCompile(`^(?P<ip>(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)):(?P<port>([0-9]{1,5}))$`, regexp2.RE2)
-	reIPv6            = regexp2.MustCompile(`^(?P<ip>([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$`, regexp2.RE2)
-	reIPv6Port        = regexp2.MustCompile(`^(?P<ip>([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])):(?P<port>[0-9]{1,5})$`, regexp2.RE2)
-	reIPv6Bracket     = regexp2.MustCompile(`^\[(?P<ip>([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\]$`, regexp2.RE2)
-	reIPv6BracektPort = regexp2.MustCompile(`^\[(?P<ip>([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\]:(?P<port>[0-9]{1,5})$`, regexp2.RE2)
-)
-
-type IPType int
-
-const (
-	IPNil = iota
-	IPv4
-	IPv6
-)
-
-var ipTypeStringMap = map[IPType]string{
-	IPNil: "nil",
-	IPv4:  "ipv4",
-	IPv6:  "ipv6",
-}
-
-func (t IPType) String() string {
-	return ipTypeStringMap[t]
-}
-
-func ParseRemoteAddr(addr string) (string, uint, IPType) {
-	match, _ := reIPv4.FindStringMatch(addr)
-	if match != nil {
-		return match.GroupByName("ip").String(), 0, IPv4
-	}
-
-	match, _ = reIPv4Port.FindStringMatch(addr)
-	if match != nil {
-		return match.GroupByName("ip").String(), cast.ToUint(match.GroupByName("port").String()), IPv4
-	}
-
-	match, _ = reIPv6.FindStringMatch(addr)
-	if match != nil {
-		return match.GroupByName("ip").String(), 0, IPv6
-	}
-
-	match, _ = reIPv6Port.FindStringMatch(addr)
-	if match != nil {
-		return match.GroupByName("ip").String(), cast.ToUint(match.GroupByName("port").String()), IPv6
-	}
-
-	match, _ = reIPv6Bracket.FindStringMatch(addr)
-	if match != nil {
-		return match.GroupByName("ip").String(), 0, IPv6
-	}
-
-	match, _ = reIPv6BracektPort.FindStringMatch(addr)
-	if match != nil {
-		return match.GroupByName("ip").String(), cast.ToUint(match.GroupByName("port").String()), IPv6
-	}
-
-	return "", 0, IPNil
-}
-
-func FormatRemoteAddr(addr string) string {
-	ip, port, typ := ParseRemoteAddr(addr)
-	switch typ {
-	case IPv4:
-		return fmt.Sprintf("%s:%d", ip, port)
-	case IPv6:
-		return fmt.Sprintf("[%s]:%d", ip, port)
-	}
-
-	return addr
 }
