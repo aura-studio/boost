@@ -2,7 +2,7 @@ package message
 
 import (
 	"github.com/aura-studio/boost/encoding"
-	"github.com/aura-studio/boost/route"
+	"github.com/aura-studio/boost/service/route"
 )
 
 type Message struct {

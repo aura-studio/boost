@@ -6,7 +6,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/aura-studio/boost/message"
+	"github.com/aura-studio/boost/service/message"
 )
 
 var (

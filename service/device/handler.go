@@ -6,7 +6,7 @@ import (
 
 	"github.com/aura-studio/boost/encoding"
 	"github.com/aura-studio/boost/magic"
-	"github.com/aura-studio/boost/message"
+	"github.com/aura-studio/boost/service/message"
 )
 
 type Handler struct {

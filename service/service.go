@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aura-studio/boost/device"
 	"github.com/aura-studio/boost/encoding"
 	"github.com/aura-studio/boost/magic"
-	"github.com/aura-studio/boost/message"
-	"github.com/aura-studio/boost/route"
 	"github.com/aura-studio/boost/safe"
+	"github.com/aura-studio/boost/service/device"
+	"github.com/aura-studio/boost/service/message"
+	"github.com/aura-studio/boost/service/route"
 	"github.com/aura-studio/boost/style"
 )
 

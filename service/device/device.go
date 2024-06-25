@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aura-studio/boost/message"
+	"github.com/aura-studio/boost/service/message"
 
 	"github.com/disiqueira/gotree"
 )

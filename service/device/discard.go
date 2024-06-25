@@ -3,7 +3,7 @@ package device
 import (
 	"context"
 
-	"github.com/aura-studio/boost/message"
+	"github.com/aura-studio/boost/service/message"
 )
 
 type discard struct {
