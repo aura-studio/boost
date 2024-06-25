@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/aura-studio/boost/magic"
-	"github.com/aura-studio/boost/route"
+	"github.com/aura-studio/boost/service/route"
 	"github.com/aura-studio/boost/style"
 )
 
