@@ -167,7 +167,7 @@ func (c *Client) doFunc(f any) (respBody []byte, err error) {
 		return
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		err = fmt.Errorf("http server returns status code %d", resp.StatusCode)
 		return
 	}
@@ -238,7 +238,7 @@ func (c *Client) doFuncWithDump(f RequestFunc, dumpData *DumpData) ([]byte, erro
 	resp.Body.Close()
 
 	// Check status code
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		return respBodyBytes, fmt.Errorf("http server (%s) returns status code %d", resp.Request.URL.Host, resp.StatusCode)
 	}
 
