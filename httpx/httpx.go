@@ -206,6 +206,9 @@ func (c *Client) doFuncWithDump(f RequestFunc, dumpData *DumpData) ([]byte, erro
 	dumpData.RequestHeadError = cast.ToString(err)
 
 	// Dump request body
+	if req.Body == nil {
+		req.Body = http.NoBody
+	}
 	reqBodyBytes, err := io.ReadAll(req.Body)
 	dumpData.RequestBody = string(reqBodyBytes)
 	dumpData.RequestBodyError = cast.ToString(err)
@@ -229,6 +232,9 @@ func (c *Client) doFuncWithDump(f RequestFunc, dumpData *DumpData) ([]byte, erro
 	dumpData.ResponseHeadError = cast.ToString(err)
 
 	// Dump response body
+	if resp.Body == nil {
+		resp.Body = http.NoBody
+	}
 	respBodyBytes, err := io.ReadAll(resp.Body)
 	dumpData.ResponseBody = string(respBodyBytes)
 	dumpData.ResponseBodyError = cast.ToString(err)
