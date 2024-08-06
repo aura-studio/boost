@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/aura-studio/boost/cast"
+	"golang.org/x/net/proxy"
 )
 
 type ResponseFunc = func(*http.Client) (*http.Response, error)
@@ -107,7 +108,20 @@ func NewClient(config ClientConfig) *Client {
 			log.Panicln(err)
 		}
 
-		c.Client.Transport.(*http.Transport).Proxy = http.ProxyURL(proxyURL)
+		if proxyURL.Scheme == "socks5" {
+			auth := proxy.Auth{}
+			if proxyURL.User != nil {
+				auth.User = proxyURL.User.Username()
+				auth.Password, _ = proxyURL.User.Password()
+			}
+			dialer, err := proxy.SOCKS5("tcp", proxyURL.Host, &auth, proxy.Direct)
+			if err != nil {
+				log.Panicln(err)
+			}
+			c.Client.Transport.(*http.Transport).DialContext = dialer.(proxy.ContextDialer).DialContext
+		} else {
+			c.Client.Transport.(*http.Transport).Proxy = http.ProxyURL(proxyURL)
+		}
 	}
 
 	c.Client.Timeout = c.Config.Timeout
