@@ -126,3 +126,7 @@ func Unmarshal(rawVal interface{}, args ...string) error {
 func Sub(args ...string) *viper.Viper {
 	return c.Sub(strings.Join(args, "."))
 }
+
+func Set(key string, value interface{}) {
+	c.Set(key, value)
+}
