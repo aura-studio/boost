@@ -67,7 +67,7 @@ func (nicknameWithBlankAnalyzer) Format(name string) (string, error) {
 
 func (nicknameWithBlankAnalyzer) MustFormat(name string) string {
 	n := &NicknameWithBlank{}
-	return n.MustFormat()
+	return n.MustParse(name).MustFormat()
 }
 
 type NicknameWithoutBlank struct {
@@ -135,5 +135,5 @@ func (nicknameWithoutBlankAnalyzer) Format(name string) (string, error) {
 
 func (nicknameWithoutBlankAnalyzer) MustFormat(name string) string {
 	n := &NicknameWithoutBlank{}
-	return n.MustFormat()
+	return n.MustParse(name).MustFormat()
 }
