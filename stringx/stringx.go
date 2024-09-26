@@ -149,3 +149,10 @@ func Shorten(s string, max int) string {
 	}
 	return s[:max]
 }
+
+func Capital(s string) string {
+	if s == "" {
+		return ""
+	}
+	return strings.ToUpper(s[:1]) + s[1:]
+}

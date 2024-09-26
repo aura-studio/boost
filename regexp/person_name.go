@@ -3,6 +3,7 @@ package regexp
 import (
 	"strings"
 
+	"github.com/aura-studio/boost/stringx"
 	"github.com/dlclark/regexp2"
 )
 
@@ -25,7 +26,7 @@ func (pn *PersonName) Parse(name string) error {
 			continue
 		}
 
-		names = append(names, strings.ToTitle(part))
+		names = append(names, stringx.Capital(part))
 	}
 
 	pn.names = names
