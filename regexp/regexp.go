@@ -1,15 +1,9 @@
 package regexp
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/dlclark/regexp2"
-)
-
-var (
-	ErrInvalidRemoteAddr = errors.New("invalid remote address")
-	ErrInvalidIPType     = errors.New("invalid ip type")
 )
 
 type Regexp struct {

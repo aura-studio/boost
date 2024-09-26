@@ -1,10 +1,16 @@
 package regexp
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/aura-studio/boost/cast"
 	"github.com/dlclark/regexp2"
+)
+
+var (
+	ErrInvalidRemoteAddr = errors.New("invalid remote address")
+	ErrInvalidIPType     = errors.New("invalid ip type")
 )
 
 var (
