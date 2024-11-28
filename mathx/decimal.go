@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"time"
 
 	"github.com/shopspring/decimal"
 )
@@ -21,6 +22,8 @@ func toDecimal[T Number](value T) (decimal.Decimal, error) {
 		return decimal.New(int64(v), 0), nil
 	case int64:
 		return decimal.New(v, 0), nil
+	case time.Duration:
+		return decimal.New(int64(v), 0), nil
 	case uint:
 		return decimal.New(int64(v), 0), nil
 	case uint8:
