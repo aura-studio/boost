@@ -1,6 +1,7 @@
 package radix
 
 import (
+	"errors"
 	"math"
 	"math/big"
 )
@@ -31,7 +32,7 @@ func (r *Radix) EncodeBytes(data []byte) string {
 	return string(r.EncodeBigInt(n))
 }
 
-func (r *Radix) DecodeBytes(dataString string) []byte {
+func (r *Radix) DecodeBytes(dataString string) ([]byte, error) {
 	data := []byte(dataString)
 	if r.endian == BigEndian {
 		var copyData = make([]byte, len(data))
@@ -43,6 +44,12 @@ func (r *Radix) DecodeBytes(dataString string) []byte {
 	var n big.Int
 	for i := len(data) - 1; i >= 0; i-- {
 		n.Mul(&n, big.NewInt(int64(r.base)))
+
+		// check if the character is valid
+		if _, ok := r.charsetMap[data[i]]; !ok {
+			return nil, errors.New("invalid character")
+		}
+
 		n.Add(&n, big.NewInt(int64(r.charsetMap[data[i]])))
 	}
 
@@ -54,7 +61,7 @@ func (r *Radix) DecodeBytes(dataString string) []byte {
 	}
 
 	r.reverseEndian(decodeData)
-	return decodeData
+	return decodeData, nil
 }
 
 func (r *Radix) EncodeBigInt(n *big.Int) []byte {

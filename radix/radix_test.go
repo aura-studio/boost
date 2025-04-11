@@ -50,14 +50,24 @@ func TestRadixBytes(t *testing.T) {
 	data := []byte(generateRandomString(256))
 	t.Log(r.EncodeBytes(data))
 
-	if !slices.Equal(r.DecodeBytes(r.EncodeBytes(data)), data) {
+	decodedBytes, err := r.DecodeBytes(r.EncodeBytes(data))
+	if err != nil {
+		t.Error("radix decode error")
+	}
+
+	if !slices.Equal(decodedBytes, data) {
 		t.Error("radix decode error")
 	}
 
 	r2 := radix.New(radix.LittleEndian, -1, c)
 	t.Log(r2.EncodeBytes(data))
 
-	if !slices.Equal(r2.DecodeBytes(r2.EncodeBytes(data)), data) {
+	decodedBytes, err = r2.DecodeBytes(r2.EncodeBytes(data))
+	if err != nil {
+		t.Error("radix decode error")
+	}
+
+	if !slices.Equal(decodedBytes, data) {
 		t.Error("radix decode error")
 	}
 }
