@@ -1,6 +1,8 @@
 package timex
 
 import (
+	"time"
+
 	"github.com/aura-studio/boost/cast"
 	"github.com/tidwall/gjson"
 )
@@ -85,7 +87,7 @@ func (*Options) parseFakeTime(s string) int64 {
 }
 
 func WithDeltaTime(s string) {
-	timex.Delta = options.parseDeltaTime(s)
+	timex.Delta = options.parseDeltaTime(s) / time.Second.Nanoseconds()
 }
 
 func (*Options) parseDeltaTime(s string) int64 {
