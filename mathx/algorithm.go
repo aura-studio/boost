@@ -122,3 +122,73 @@ func MaxContinuousCount[T comparable](v T, s []T) (int, int, int) {
 	}
 	return maxCount, start, end
 }
+
+// IntersectAny returns true if slice a and b share at least one common element.
+// Time complexity: O(m+n), Space: O(min(m,n)).
+func IntersectAny[T comparable](a, b []T) bool {
+	if len(a) == 0 || len(b) == 0 {
+		return false
+	}
+	// Always build the map from the smaller slice.
+	if len(a) > len(b) {
+		a, b = b, a
+	}
+	m := make(map[T]struct{}, len(a))
+	for _, v := range a {
+		m[v] = struct{}{}
+	}
+	for _, v := range b {
+		if _, ok := m[v]; ok {
+			return true
+		}
+	}
+	return false
+}
+
+// IntersectCount returns the number of distinct common elements between a and b.
+// Time complexity: O(m+n), Space: O(min(m,n)).
+func IntersectCount[T comparable](a, b []T) int {
+	if len(a) == 0 || len(b) == 0 {
+		return 0
+	}
+	if len(a) > len(b) {
+		a, b = b, a
+	}
+	m := make(map[T]uint8, len(a))
+	for _, v := range a {
+		m[v] = 1 // mark presence in a
+	}
+	c := 0
+	for _, v := range b {
+		if m[v] == 1 { // first time seen in b
+			c++
+			m[v] = 2 // prevent double counting
+		}
+	}
+	return c
+}
+
+// Intersect returns distinct intersection elements of a and b preserving
+// the order they appear in b (first occurrence). If you need multiplicities,
+// build a frequency map instead. Time: O(m+n), Space: O(min(m,n)).
+func Intersect[T comparable](a, b []T) []T {
+	if len(a) == 0 || len(b) == 0 {
+		return nil
+	}
+	// Build from smaller slice for space efficiency.
+	if len(a) > len(b) {
+		a, b = b, a
+	}
+	seen := make(map[T]uint8, len(a))
+	for _, v := range a {
+		seen[v] = 1 // present in a
+	}
+	out := make([]T, 0)
+	for _, v := range b {
+		if seen[v] == 1 { // first time matched
+			out = append(out, v)
+			seen[v] = 2 // mark consumed to ensure distinctness
+		}
+	}
+	return out
+}
