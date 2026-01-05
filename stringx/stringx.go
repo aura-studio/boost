@@ -79,7 +79,7 @@ func ContainsAny(s string, v ...any) bool {
 
 	switch val := v[0].(type) {
 	case string:
-		return strings.ContainsAny(s, val)
+		return strings.Contains(s, val)
 	case []string:
 		for _, item := range val {
 			if strings.Contains(s, item) {
