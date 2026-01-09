@@ -2,8 +2,10 @@ package redowl
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -622,4 +624,147 @@ func TestQueue_SeparateClients_VisibilityRedelivery(t *testing.T) {
 	require.Equal(t, id, m2.ID)
 	require.GreaterOrEqual(t, m2.ReceiveCount, int64(2))
 	require.NoError(t, consumer2.Ack(ctx, m2.ReceiptHandle))
+}
+
+func TestQueue_ProducerA_ConsumerB_MultiGame_OrderedPerGame_ConcurrentAcrossGames(t *testing.T) {
+	// Process A: producerClient
+	// Process B: consumerClient
+	s := miniredis.RunT(t)
+	producerClient := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	consumerClient := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	t.Cleanup(func() {
+		_ = producerClient.Close()
+		_ = consumerClient.Close()
+		s.Close()
+	})
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	// A->Game1: A1..A5, A->Game2: B1..B5, ... A->Game14: N1..N5
+	const (
+		gameCount   = 14
+		perGameMsgs = 5
+	)
+
+	producerQueues := make([]*Queue, 0, gameCount)
+	consumerQueues := make([]*Queue, 0, gameCount)
+	for i := 0; i < gameCount; i++ {
+		qName := fmt.Sprintf("Game%d", i+1)
+		pq, err := New(producerClient, qName, WithVisibilityTimeout(200*time.Millisecond))
+		require.NoError(t, err)
+		cq, err := New(consumerClient, qName, WithVisibilityTimeout(200*time.Millisecond))
+		require.NoError(t, err)
+		producerQueues = append(producerQueues, pq)
+		consumerQueues = append(consumerQueues, cq)
+	}
+
+	// Process A produces.
+	for i := 0; i < gameCount; i++ {
+		prefix := byte('A' + i)
+		for j := 1; j <= perGameMsgs; j++ {
+			payload := fmt.Sprintf("%c%d", prefix, j)
+			_, err := producerQueues[i].Send(ctx, []byte(payload), map[string]string{"game": strconv.Itoa(i + 1)})
+			require.NoError(t, err)
+		}
+	}
+
+	// Process B consumes all games.
+	var (
+		mu          sync.Mutex
+		gotByGame   = make(map[string][]string, gameCount)
+		inflight    int64
+		maxInflight int64
+	)
+
+	processDelay := 30 * time.Millisecond
+
+	updateMax := func(v int64) {
+		for {
+			cur := atomic.LoadInt64(&maxInflight)
+			if v <= cur {
+				return
+			}
+			if atomic.CompareAndSwapInt64(&maxInflight, cur, v) {
+				return
+			}
+		}
+	}
+
+	var wg sync.WaitGroup
+	for i := 0; i < gameCount; i++ {
+		q := consumerQueues[i]
+		wg.Add(1)
+		go func(q *Queue) {
+			defer wg.Done()
+			for k := 0; k < perGameMsgs; k++ {
+				msg, err := q.ReceiveWithWait(ctx, 2*time.Second)
+				require.NoError(t, err)
+				require.NotNil(t, msg)
+
+				// Each message handling runs in its own goroutine,
+				// but we wait for completion to guarantee per-queue ordering.
+				done := make(chan struct{})
+				go func(m *Message) {
+					cur := atomic.AddInt64(&inflight, 1)
+					updateMax(cur)
+					defer atomic.AddInt64(&inflight, -1)
+
+					// simulate work
+					time.Sleep(processDelay)
+
+					mu.Lock()
+					gotByGame[q.Name()] = append(gotByGame[q.Name()], string(m.Body))
+					mu.Unlock()
+
+					require.NoError(t, q.Ack(ctx, m.ReceiptHandle))
+					close(done)
+				}(msg)
+
+				select {
+				case <-done:
+				case <-ctx.Done():
+					t.Fatal("timeout waiting for message handler")
+				}
+			}
+		}(q)
+	}
+
+	wg.Wait()
+
+	// Verify ordering per game.
+	for i := 0; i < gameCount; i++ {
+		game := fmt.Sprintf("Game%d", i+1)
+		prefix := byte('A' + i)
+		expect := make([]string, 0, perGameMsgs)
+		for j := 1; j <= perGameMsgs; j++ {
+			expect = append(expect, fmt.Sprintf("%c%d", prefix, j))
+		}
+
+		mu.Lock()
+		got := append([]string(nil), gotByGame[game]...)
+		mu.Unlock()
+
+		require.Equal(t, expect, got, "messages should be consumed in-order per game")
+	}
+
+	// Verify different games can overlap (at least 2 handlers in flight at some point).
+	require.Greater(t, atomic.LoadInt64(&maxInflight), int64(1))
+
+	// Best-effort: queues should be drained.
+	for i := 0; i < gameCount; i++ {
+		q := consumerQueues[i]
+		ll, err := consumerClient.LLen(ctx, q.readyKey()).Result()
+		require.NoError(t, err)
+		require.EqualValues(t, 0, ll)
+		dlq, err := consumerClient.LLen(ctx, q.dlqKey()).Result()
+		require.NoError(t, err)
+		require.EqualValues(t, 0, dlq)
+		z, err := consumerClient.ZCard(ctx, q.inflightKey()).Result()
+		require.NoError(t, err)
+		require.EqualValues(t, 0, z)
+		h, err := consumerClient.HLen(ctx, q.receiptMapKey()).Result()
+		require.NoError(t, err)
+		require.EqualValues(t, 0, h)
+	}
 }

@@ -72,13 +72,19 @@ func (q *Queue) msgKey(id string) string {
 func (q *Queue) receiptMapKey() string { return q.opt.Prefix + ":" + q.name + ":receipt" }
 func (q *Queue) inflightKey() string   { return q.opt.Prefix + ":" + q.name + ":inflight" } // zset: receipt -> visibleAtUnixMs
 func (q *Queue) eventChannel() string  { return q.opt.Prefix + ":" + q.name + ":events" }
+func (q *Queue) namespaceEventChannel() string {
+	return q.opt.Prefix + ":events"
+}
 
 func (q *Queue) publish(ctx context.Context, ev Event) {
 	if q.opt.TriggerClient == nil {
 		return
 	}
 	b, _ := json.Marshal(ev)
+	// Publish to both a per-queue channel and a prefix-level namespace channel.
+	// This allows consumers to discover queues dynamically without relying on PSUBSCRIBE.
 	_ = q.opt.TriggerClient.Publish(ctx, q.eventChannel(), b).Err()
+	_ = q.opt.TriggerClient.Publish(ctx, q.namespaceEventChannel(), b).Err()
 }
 
 func randomHex(nBytes int) (string, error) {

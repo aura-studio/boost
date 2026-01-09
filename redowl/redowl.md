@@ -34,6 +34,10 @@
 - 事件 Channel（PubSub）：`{Prefix}:{name}:events`
 	- payload：JSON `redowl.Event`
 	- 事件类型：`sent / received / requeued / to_dlq / dlq_received / dlq_redriven / acked`
+	- 说明：除了 per-queue channel 外，redowl 还会同时向 namespace channel 发布相同事件，便于消费者“先订阅再动态发现队列”
+- 事件 Channel（PubSub, namespace）：`{Prefix}:events`
+	- payload：JSON `redowl.Event`（包含 `Queue` 字段）
+	- 用途：消费者无需预先知道队列名/数量，通过订阅该 channel 动态发现 `Queue` 并启动对应消费逻辑
 
 ## 最小用例（含事件订阅）
 
@@ -152,6 +156,112 @@ func main() {
 }
 ```
 
+### 多队列并发消费示例（Game*）：队列内顺序、队列间并发、每条消息独立 goroutine
+
+下面演示：
+
+- A 进程：分别向多个队列（`Game1..GameN`）按序生产
+- B 进程：同时监听所有 `Game*` 队列
+	- 每个队列内严格顺序消费（上一条处理完成后再取下一条）
+	- 不同队列之间并发消费
+	- 每条消息处理都在独立 goroutine 中执行
+
+#### producer_games.go
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/aura-studio/boost/redowl"
+	"github.com/redis/go-redis/v9"
+)
+
+func main() {
+	ctx := context.Background()
+	rdb := redis.NewClient(&redis.Options{Addr: "127.0.0.1:6379"})
+
+	const (
+		gameCount   = 14
+		perGameMsgs = 5
+	)
+
+	for i := 0; i < gameCount; i++ {
+		qName := fmt.Sprintf("Game%d", i+1)
+		q, _ := redowl.New(rdb, qName, redowl.WithVisibilityTimeout(30*time.Second))
+
+		prefix := byte('A' + i)
+		for j := 1; j <= perGameMsgs; j++ {
+			payload := fmt.Sprintf("%c%d", prefix, j)
+			_, _ = q.Send(ctx, []byte(payload), map[string]string{"game": fmt.Sprint(i + 1)})
+		}
+	}
+}
+```
+
+#### consumer_games.go
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"sync"
+	"time"
+
+	"github.com/aura-studio/boost/redowl"
+	"github.com/redis/go-redis/v9"
+)
+
+func main() {
+	ctx := context.Background()
+	rdb := redis.NewClient(&redis.Options{Addr: "127.0.0.1:6379"})
+
+	const (
+		gameCount   = 14
+		perGameMsgs = 5
+	)
+
+	// 每个队列一个 worker：保证队列内顺序；不同 worker 之间天然并发。
+	var wg sync.WaitGroup
+	for i := 0; i < gameCount; i++ {
+		qName := fmt.Sprintf("Game%d", i+1)
+		q, _ := redowl.New(rdb, qName, redowl.WithVisibilityTimeout(30*time.Second))
+
+		wg.Add(1)
+		go func(q *redowl.Queue) {
+			defer wg.Done()
+			for k := 0; k < perGameMsgs; k++ {
+				msg, err := q.ReceiveWithWait(ctx, 5*time.Second)
+				if err != nil {
+					panic(err)
+				}
+				if msg == nil {
+					k--
+					continue
+				}
+
+				done := make(chan struct{})
+				go func(m *redowl.Message) {
+					// 业务处理逻辑...
+					time.Sleep(30 * time.Millisecond)
+					_ = q.Ack(ctx, m.ReceiptHandle)
+					close(done)
+				}(msg)
+
+				<-done // 等待本队列的本条消息处理完成，再取下一条
+			}
+		}(q)
+	}
+
+	wg.Wait()
+}
+```
+
 ### 关于“消费者崩溃”和可见性超时
 
 - 如果消费者在处理过程中崩溃/未 Ack，消息会在 `VisibilityTimeout` 到期后变为可再次投递。
@@ -211,6 +321,51 @@ unsub, err := q.Subscribe(ctx, func(e redowl.Event) {
 })
 defer func() { _ = unsub() }()
 ```
+
+### Redis Cluster Client 用法
+
+`redowl.New` 的第一个参数是 `redis.Cmdable`，因此可以直接传入 `*redis.ClusterClient`：
+
+```go
+cluster := redis.NewClusterClient(&redis.ClusterOptions{Addrs: []string{"127.0.0.1:7000", "127.0.0.1:7001", "127.0.0.1:7002"}})
+q, _ := redowl.New(cluster, "orders")
+```
+
+说明：本仓库的单元测试使用 `miniredis`，它不支持完整 Redis Cluster 协议；因此 Cluster 场景的测试以 build tag 的“外部集成测试”形式提供（需要真实 Redis Cluster）。
+
+#### Cluster case（对应 multi-Game 并发/顺序用例）的集成测试
+
+仓库中提供了一个 ClusterClient 版本的集成测试（需要真实 Redis Cluster）：
+
+- 测试文件：`redowl/integration_test.go`
+- build tag：`rediscluster`
+- 环境变量：`REDIS_CLUSTER_ADDRS`（逗号分隔的节点地址）
+
+该用例的消费者侧会先订阅 namespace channel：`{Prefix}:events`，从事件里的 `Queue` 字段动态发现队列并启动 per-queue worker（保证队列内顺序、队列间并发）。
+
+运行方式示例（Windows PowerShell）：
+
+```powershell
+$env:REDIS_CLUSTER_ADDRS = "127.0.0.1:7000,127.0.0.1:7001,127.0.0.1:7002"
+go test -tags=rediscluster ./redowl -run ClusterClient
+```
+
+运行方式示例（bash）：
+
+```bash
+REDIS_CLUSTER_ADDRS=127.0.0.1:7000,127.0.0.1:7001,127.0.0.1:7002 \
+  go test -tags=rediscluster ./redowl -run ClusterClient
+```
+
+该测试复用了与本文档“多队列并发消费示例（Game*）”一致的语义验证：
+
+- A 进程（producer）向 `Game1..Game14` 分别按序生产 `A1..A5` 到 `N1..N5`
+- B 进程（consumer）同时监听所有 `Game*` 队列
+	- 每个队列内严格顺序消费（上一条处理完成后再取下一条）
+	- 不同队列之间并发消费
+	- 每条消息处理在独立 goroutine 中执行
+
+为避免在共享 Cluster 环境中相互影响，测试会为每次运行生成唯一的 `Prefix` 来隔离 keys。
 
 ### 死信队列（DLQ）
 
