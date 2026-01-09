@@ -3,79 +3,86 @@ package redowl
 import (
 	"context"
 	"fmt"
+	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/alicebob/miniredis/v2"
 	"github.com/redis/go-redis/v9"
+	"github.com/stretchr/testify/require"
 )
 
 func TestWorkerPool(t *testing.T) {
-	client := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-	})
-	defer client.Close()
+	s, client := newTestRedis(t)
+	_ = s
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	prefix := fmt.Sprintf("test_pool_%d", time.Now().UnixNano())
 
-	// 创建 worker 池：10 个 worker 处理无限多个队列
+	var processed int64
+	const (
+		queueCount = 10
+		msgsPerQ   = 3
+	)
+
+	// 创建 worker 池：少量 worker 处理多个队列
 	pool := NewWorkerPool(
 		client,
 		prefix,
 		func(ctx context.Context, queueName string, msg *Message) error {
-			fmt.Printf("[%s] Processing: %s\n", queueName, string(msg.Body))
-			time.Sleep(10 * time.Millisecond)
+			atomic.AddInt64(&processed, 1)
 			return nil
 		},
-		WithWorkerCount(10),
-		WithIdleTimeout(2*time.Minute),
-		WithPollInterval(500*time.Millisecond),
+		WithMinWorkers(0),
+		WithWorkerCount(5),
+		WithWorkerIdleTimeout(200*time.Millisecond),
+		WithIdleTimeout(800*time.Millisecond),
+		WithPollInterval(50*time.Millisecond),
 	)
 
-	if err := pool.Start(ctx); err != nil {
-		t.Fatalf("start pool: %v", err)
-	}
+	require.NoError(t, pool.Start(ctx))
 	defer pool.Stop()
 
-	// 模拟 100 个队列发送消息
-	for i := 0; i < 100; i++ {
+	// 模拟多个队列发送消息
+	for i := 0; i < queueCount; i++ {
 		queueName := fmt.Sprintf("queue_%d", i)
 		q, err := New(client, queueName,
 			WithPrefix(prefix),
-			WithVisibilityTimeout(30*time.Second),
+			WithVisibilityTimeout(2*time.Second),
 		)
-		if err != nil {
-			t.Fatalf("create queue: %v", err)
-		}
+		require.NoError(t, err)
 
-		for j := 0; j < 5; j++ {
+		for j := 0; j < msgsPerQ; j++ {
 			_, err := q.Send(ctx, []byte(fmt.Sprintf("msg_%d", j)), nil)
-			if err != nil {
-				t.Fatalf("send: %v", err)
-			}
+			require.NoError(t, err)
 		}
 	}
 
 	// 等待处理完成
-	time.Sleep(10 * time.Second)
-
-	// 查看统计
-	stats := pool.Stats()
-	fmt.Printf("Processed messages by queue:\n")
-	for name, count := range stats {
-		fmt.Printf("  %s: %d\n", name, count)
+	want := int64(queueCount * msgsPerQ)
+	deadline := time.Now().Add(5 * time.Second)
+	for time.Now().Before(deadline) {
+		if atomic.LoadInt64(&processed) >= want {
+			break
+		}
+		time.Sleep(20 * time.Millisecond)
 	}
+	require.Equal(t, want, atomic.LoadInt64(&processed))
 }
 
 func ExampleWorkerPool() {
-	client := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-	})
-	defer client.Close()
+	s, err := miniredis.Run()
+	if err != nil {
+		panic(err)
+	}
+	defer s.Close()
+	client := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	defer func() { _ = client.Close() }()
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 
 	// 10 个 worker 处理所有队列
 	pool := NewWorkerPool(
@@ -85,20 +92,22 @@ func ExampleWorkerPool() {
 			fmt.Printf("Queue %s: %s\n", queueName, string(msg.Body))
 			return nil
 		},
-		WithWorkerCount(10),
-		WithIdleTimeout(5*time.Minute),
+		WithWorkerCount(2),
+		WithWorkerIdleTimeout(200*time.Millisecond),
+		WithIdleTimeout(800*time.Millisecond),
+		WithPollInterval(50*time.Millisecond),
 	)
-
-	pool.Start(ctx)
+	_ = pool.Start(ctx)
 	defer pool.Stop()
 
 	// 动态创建队列并发送消息
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 5; i++ {
 		q, _ := New(client, fmt.Sprintf("game_%d", i),
 			WithPrefix("myapp"),
 		)
 		q.Send(ctx, []byte("player_joined"), nil)
 	}
 
-	// 10 个 worker 会自动处理所有 1000 个队列的消息
+	// 2 个 worker 会自动处理所有队列的消息
+	time.Sleep(200 * time.Millisecond)
 }

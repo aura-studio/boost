@@ -12,33 +12,55 @@ import (
 type WorkerPool struct {
 	client       redis.UniversalClient
 	prefix       string
-	workerCount  int
+	minWorkers   int
+	maxWorkers   int
 	handler      func(context.Context, string, *Message) error
-	idleTimeout  time.Duration
+	queueIdle    time.Duration
+	workerIdle   time.Duration
 	pollInterval time.Duration
+	runCtx       context.Context
 
-	mu      sync.RWMutex
-	queues  map[string]*queueState
-	workCh  chan string
-	stopCh  chan struct{}
-	wg      sync.WaitGroup
-	pubsub  *redis.PubSub
+	mu       sync.RWMutex
+	queues   map[string]*queueState
+	workCh   chan string
+	stopCh   chan struct{}
+	stopOnce sync.Once
+	wg       sync.WaitGroup
+	pubsub   *redis.PubSub
+
+	workersMu    sync.Mutex
+	workersLive  int
+	nextWorkerID int
 }
 
 type queueState struct {
 	name       string
 	lastActive time.Time
 	msgCount   int64
+	active     bool
+	pending    bool
 }
 
 type PoolOption func(*WorkerPool)
 
 func WithWorkerCount(n int) PoolOption {
-	return func(p *WorkerPool) { p.workerCount = n }
+	// Backward-compatible: treat as max worker count.
+	return func(p *WorkerPool) { p.maxWorkers = n }
+}
+
+func WithMinWorkers(n int) PoolOption {
+	return func(p *WorkerPool) { p.minWorkers = n }
 }
 
 func WithIdleTimeout(d time.Duration) PoolOption {
-	return func(p *WorkerPool) { p.idleTimeout = d }
+	// Backward-compatible: treat as per-queue idle timeout.
+	return func(p *WorkerPool) { p.queueIdle = d }
+}
+
+// WithWorkerIdleTimeout controls how long a worker goroutine waits for new work
+// before exiting (down to MinWorkers).
+func WithWorkerIdleTimeout(d time.Duration) PoolOption {
+	return func(p *WorkerPool) { p.workerIdle = d }
 }
 
 func WithPollInterval(d time.Duration) PoolOption {
@@ -54,9 +76,11 @@ func NewWorkerPool(
 	p := &WorkerPool{
 		client:       client,
 		prefix:       prefix,
-		workerCount:  10,
+		minWorkers:   0,
+		maxWorkers:   10,
 		handler:      handler,
-		idleTimeout:  5 * time.Minute,
+		queueIdle:    5 * time.Minute,
+		workerIdle:   30 * time.Second,
 		pollInterval: 500 * time.Millisecond,
 		queues:       make(map[string]*queueState),
 		workCh:       make(chan string, 1000),
@@ -71,6 +95,7 @@ func NewWorkerPool(
 }
 
 func (p *WorkerPool) Start(ctx context.Context) error {
+	p.runCtx = ctx
 	p.pubsub = p.client.Subscribe(ctx, p.prefix+":events")
 	if _, err := p.pubsub.Receive(ctx); err != nil {
 		return err
@@ -80,10 +105,18 @@ func (p *WorkerPool) Start(ctx context.Context) error {
 	p.wg.Add(1)
 	go p.eventListener(ctx)
 
-	// 启动 worker 池
-	for i := 0; i < p.workerCount; i++ {
-		p.wg.Add(1)
-		go p.worker(ctx, i)
+	// 启动最小 worker 数
+	if p.minWorkers < 0 {
+		p.minWorkers = 0
+	}
+	if p.maxWorkers < 1 {
+		p.maxWorkers = 1
+	}
+	if p.minWorkers > p.maxWorkers {
+		p.minWorkers = p.maxWorkers
+	}
+	for i := 0; i < p.minWorkers; i++ {
+		p.spawnWorker()
 	}
 
 	// 启动空闲队列清理器
@@ -94,10 +127,12 @@ func (p *WorkerPool) Start(ctx context.Context) error {
 }
 
 func (p *WorkerPool) Stop() {
-	close(p.stopCh)
-	if p.pubsub != nil {
-		_ = p.pubsub.Close()
-	}
+	p.stopOnce.Do(func() {
+		close(p.stopCh)
+		if p.pubsub != nil {
+			_ = p.pubsub.Close()
+		}
+	})
 	p.wg.Wait()
 }
 
@@ -128,25 +163,80 @@ func (p *WorkerPool) eventListener(ctx context.Context) {
 }
 
 func (p *WorkerPool) addQueue(name string) {
+	now := time.Now()
+	shouldEnqueue := false
+
 	p.mu.Lock()
-	if _, exists := p.queues[name]; !exists {
-		p.queues[name] = &queueState{
-			name:       name,
-			lastActive: time.Now(),
-		}
+	qs, exists := p.queues[name]
+	if !exists {
+		qs = &queueState{name: name, lastActive: now}
+		p.queues[name] = qs
+	}
+	qs.lastActive = now
+	if !qs.active {
+		qs.active = true
+		shouldEnqueue = true
+	} else {
+		qs.pending = true
 	}
 	p.mu.Unlock()
 
-	// 非阻塞地通知 worker
-	select {
-	case p.workCh <- name:
-	default:
-		// channel 满了，说明已经有足够的任务在等待
+	if shouldEnqueue {
+		select {
+		case p.workCh <- name:
+		default:
+		}
+		p.maybeSpawnWorker()
 	}
+}
+
+func (p *WorkerPool) maybeSpawnWorker() {
+	// Spawn at most one worker per call if we have pending work and have capacity.
+	if len(p.workCh) == 0 {
+		return
+	}
+	if p.workerIdle <= 0 {
+		p.workerIdle = 30 * time.Second
+	}
+
+	p.workersMu.Lock()
+	canSpawn := p.workersLive < p.maxWorkers
+	p.workersMu.Unlock()
+	if canSpawn {
+		p.spawnWorker()
+	}
+}
+
+func (p *WorkerPool) spawnWorker() {
+	p.workersMu.Lock()
+	if p.workersLive >= p.maxWorkers {
+		p.workersMu.Unlock()
+		return
+	}
+	id := p.nextWorkerID
+	p.nextWorkerID++
+	p.workersLive++
+	p.workersMu.Unlock()
+
+	p.wg.Add(1)
+	ctx := p.runCtx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	go p.worker(ctx, id)
 }
 
 func (p *WorkerPool) worker(ctx context.Context, id int) {
 	defer p.wg.Done()
+	defer func() {
+		p.workersMu.Lock()
+		p.workersLive--
+		p.workersMu.Unlock()
+	}()
+
+	if p.workerIdle <= 0 {
+		p.workerIdle = 30 * time.Second
+	}
 
 	for {
 		select {
@@ -156,7 +246,43 @@ func (p *WorkerPool) worker(ctx context.Context, id int) {
 			return
 		case queueName := <-p.workCh:
 			p.processQueue(ctx, queueName)
+			p.finishQueue(queueName)
+		case <-time.After(p.workerIdle):
+			p.workersMu.Lock()
+			tooMany := p.workersLive > p.minWorkers
+			p.workersMu.Unlock()
+			if tooMany {
+				return
+			}
 		}
+	}
+}
+
+func (p *WorkerPool) finishQueue(queueName string) {
+	// Mark queue inactive, and if new work arrived during processing, re-enqueue.
+	shouldRequeue := false
+	p.mu.Lock()
+	if qs, ok := p.queues[queueName]; ok {
+		if qs.pending {
+			qs.pending = false
+			shouldRequeue = true
+		} else {
+			qs.active = false
+		}
+		// If pending, keep active=true and re-enqueue.
+		if shouldRequeue {
+			qs.active = true
+			qs.lastActive = time.Now()
+		}
+	}
+	p.mu.Unlock()
+
+	if shouldRequeue {
+		select {
+		case p.workCh <- queueName:
+		default:
+		}
+		p.maybeSpawnWorker()
 	}
 }
 
@@ -170,8 +296,10 @@ func (p *WorkerPool) processQueue(ctx context.Context, queueName string) {
 	}
 	defer q.StopReaper()
 
-	idleCount := 0
-	const maxIdle = 3 // 连续 3 次空闲则释放
+	if p.queueIdle <= 0 {
+		p.queueIdle = 5 * time.Minute
+	}
+	lastMsgAt := time.Now()
 
 	for {
 		select {
@@ -188,16 +316,13 @@ func (p *WorkerPool) processQueue(ctx context.Context, queueName string) {
 		}
 
 		if msg == nil {
-			idleCount++
-			if idleCount >= maxIdle {
-				// 连续空闲，释放 worker
+			if time.Since(lastMsgAt) >= p.queueIdle {
 				return
 			}
 			continue
 		}
 
-		// 有消息，重置空闲计数
-		idleCount = 0
+		lastMsgAt = time.Now()
 		p.updateQueueActivity(queueName)
 
 		if err := p.handler(ctx, queueName, msg); err == nil {
@@ -237,7 +362,7 @@ func (p *WorkerPool) cleanIdleQueues() {
 	now := time.Now()
 	p.mu.Lock()
 	for name, qs := range p.queues {
-		if now.Sub(qs.lastActive) > p.idleTimeout {
+		if !qs.active && now.Sub(qs.lastActive) > p.queueIdle {
 			delete(p.queues, name)
 		}
 	}

@@ -72,6 +72,7 @@ func (q *Queue) msgKey(id string) string {
 func (q *Queue) receiptMapKey() string { return q.opt.Prefix + ":" + q.name + ":receipt" }
 func (q *Queue) inflightKey() string   { return q.opt.Prefix + ":" + q.name + ":inflight" } // zset: receipt -> visibleAtUnixMs
 func (q *Queue) eventChannel() string  { return q.opt.Prefix + ":" + q.name + ":events" }
+
 func (q *Queue) namespaceEventChannel() string {
 	return q.opt.Prefix + ":events"
 }
@@ -298,7 +299,8 @@ func (q *Queue) RedriveDLQ(ctx context.Context, n int64) (int, error) {
 	return moved, nil
 }
 
-// ReceiveWithWait uses BLPOP when wait > 0.
+// ReceiveWithWait uses BLPOP when wait >= 1s (Redis BLPOP is seconds-resolution).
+// For sub-second waits, it polls with LPOP + small sleeps up to the deadline.
 func (q *Queue) ReceiveWithWait(ctx context.Context, wait time.Duration) (*Message, error) {
 	// Best-effort cleanup of expired in-flight receipts.
 	_, _ = q.RequeueExpiredOnce(ctx, 100)
@@ -311,15 +313,46 @@ func (q *Queue) ReceiveWithWait(ctx context.Context, wait time.Duration) (*Messa
 		var id string
 		if wait > 0 && first {
 			first = false
-			res, err := q.cmd.BLPop(ctx, wait, q.readyKey()).Result()
-			if err != nil {
-				if err == redis.Nil {
-					return nil, nil
+			if wait >= time.Second {
+				// BLPOP takes integer seconds. Round up to avoid truncation warnings.
+				waitSec := ((wait + time.Second - 1) / time.Second) * time.Second
+				res, err := q.cmd.BLPop(ctx, waitSec, q.readyKey()).Result()
+				if err != nil {
+					if err == redis.Nil {
+						return nil, nil
+					}
+					return nil, err
 				}
-				return nil, err
-			}
-			if len(res) == 2 {
-				id = res[1]
+				if len(res) == 2 {
+					id = res[1]
+				}
+			} else {
+				deadline := time.Now().Add(wait)
+				for {
+					s, err := q.cmd.LPop(ctx, q.readyKey()).Result()
+					if err == nil {
+						id = s
+						break
+					}
+					if err != redis.Nil {
+						return nil, err
+					}
+					if time.Now().After(deadline) {
+						return nil, nil
+					}
+
+					// Sleep a bit to avoid hot-looping.
+					remaining := time.Until(deadline)
+					sleep := 10 * time.Millisecond
+					if remaining < sleep {
+						sleep = remaining
+					}
+					select {
+					case <-ctx.Done():
+						return nil, ctx.Err()
+					case <-time.After(sleep):
+					}
+				}
 			}
 		} else {
 			s, err := q.cmd.LPop(ctx, q.readyKey()).Result()
