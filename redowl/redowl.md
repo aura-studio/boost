@@ -85,6 +85,80 @@ func main() {
 }
 ```
 
+## 跨进程示例（生产者 / 消费者）
+
+下面演示“生产者”和“消费者”分别在两个独立进程中运行的典型用法：
+
+### producer.go
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/aura-studio/boost/redowl"
+	"github.com/redis/go-redis/v9"
+)
+
+func main() {
+	ctx := context.Background()
+	rdb := redis.NewClient(&redis.Options{Addr: "127.0.0.1:6379"})
+
+	q, _ := redowl.New(rdb, "orders", redowl.WithVisibilityTimeout(30*time.Second))
+
+	for i := 0; i < 10; i++ {
+		_, _ = q.Send(ctx, []byte("hello"), map[string]string{"i": fmt.Sprint(i)})
+	}
+}
+```
+
+### consumer.go
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/aura-studio/boost/redowl"
+	"github.com/redis/go-redis/v9"
+)
+
+func main() {
+	ctx := context.Background()
+	rdb := redis.NewClient(&redis.Options{Addr: "127.0.0.1:6379"})
+
+	q, _ := redowl.New(rdb, "orders", redowl.WithVisibilityTimeout(30*time.Second))
+
+	for {
+		msg, err := q.ReceiveWithWait(ctx, 5*time.Second)
+		if err != nil {
+			panic(err)
+		}
+		if msg == nil {
+			continue
+		}
+
+		fmt.Println("got:", msg.ID, string(msg.Body), msg.ReceiveCount)
+
+		// 业务处理成功后 Ack
+		_ = q.Ack(ctx, msg.ReceiptHandle)
+	}
+}
+```
+
+### 关于“消费者崩溃”和可见性超时
+
+- 如果消费者在处理过程中崩溃/未 Ack，消息会在 `VisibilityTimeout` 到期后变为可再次投递。
+- 你可以：
+  - 让消费者周期性调用 `RequeueExpiredOnce`（或开启 `WithReaperInterval`），以便及时回收超时 in-flight 消息；
+  - 或者依赖下一次 `Receive/ReceiveWithWait` 的 best-effort 回收（内部会尝试回收一批超时消息）。
+
 ## 快速开始
 
 ### 基本用法：发送 / 接收 / Ack

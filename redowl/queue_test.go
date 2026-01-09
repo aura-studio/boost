@@ -2,6 +2,7 @@ package redowl
 
 import (
 	"context"
+	"strconv"
 	"sync"
 	"testing"
 	"time"
@@ -404,7 +405,7 @@ func TestQueue_ChangeVisibility_InvalidReceipt(t *testing.T) {
 	q, err := New(c, "q_cv_invalid")
 	require.NoError(t, err)
 
-	require.ErrorIs(t, q.ChangeVisibility(ctx, "" , 10*time.Millisecond), ErrInvalidReceiptHandle)
+	require.ErrorIs(t, q.ChangeVisibility(ctx, "", 10*time.Millisecond), ErrInvalidReceiptHandle)
 	require.ErrorIs(t, q.ChangeVisibility(ctx, "nope", 10*time.Millisecond), ErrInvalidReceiptHandle)
 }
 
@@ -542,4 +543,83 @@ func TestQueue_RedriveDLQ_SkipsOrphanedMessageID(t *testing.T) {
 	readyIDs, err := c.LRange(ctx, q.readyKey(), 0, -1).Result()
 	require.NoError(t, err)
 	require.NotContains(t, readyIDs, "missing_msg")
+}
+
+func TestQueue_ProducerConsumer_SeparateClients(t *testing.T) {
+	s := miniredis.RunT(t)
+	producerClient := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	consumerClient := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	t.Cleanup(func() {
+		_ = producerClient.Close()
+		_ = consumerClient.Close()
+		s.Close()
+	})
+
+	ctx := context.Background()
+	producer, err := New(producerClient, "q_pc")
+	require.NoError(t, err)
+	consumer, err := New(consumerClient, "q_pc")
+	require.NoError(t, err)
+
+	const n = 20
+	for i := 0; i < n; i++ {
+		_, err := producer.Send(ctx, []byte("m"), map[string]string{"i": strconv.Itoa(i)})
+		require.NoError(t, err)
+	}
+
+	received := 0
+	for received < n {
+		m, err := consumer.ReceiveWithWait(ctx, 500*time.Millisecond)
+		require.NoError(t, err)
+		require.NotNil(t, m)
+		require.NoError(t, consumer.Ack(ctx, m.ReceiptHandle))
+		received++
+	}
+
+	// Queue should be empty.
+	m, err := consumer.Receive(ctx)
+	require.NoError(t, err)
+	require.Nil(t, m)
+}
+
+func TestQueue_SeparateClients_VisibilityRedelivery(t *testing.T) {
+	s := miniredis.RunT(t)
+	producerClient := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	consumer1Client := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	consumer2Client := redis.NewClient(&redis.Options{Addr: s.Addr()})
+	t.Cleanup(func() {
+		_ = producerClient.Close()
+		_ = consumer1Client.Close()
+		_ = consumer2Client.Close()
+		s.Close()
+	})
+
+	ctx := context.Background()
+	producer, err := New(producerClient, "q_pc_vis", WithVisibilityTimeout(30*time.Millisecond))
+	require.NoError(t, err)
+	consumer1, err := New(consumer1Client, "q_pc_vis", WithVisibilityTimeout(30*time.Millisecond))
+	require.NoError(t, err)
+	consumer2, err := New(consumer2Client, "q_pc_vis", WithVisibilityTimeout(30*time.Millisecond))
+	require.NoError(t, err)
+
+	id, err := producer.Send(ctx, []byte("x"), nil)
+	require.NoError(t, err)
+
+	// Consumer1 receives but does NOT ack (simulating crash).
+	m1, err := consumer1.Receive(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, m1)
+	require.Equal(t, id, m1.ID)
+
+	// After visibility timeout, it should be re-deliverable.
+	time.Sleep(50 * time.Millisecond)
+	_, err = consumer2.RequeueExpiredOnce(ctx, 100)
+	require.NoError(t, err)
+
+	m2, err := consumer2.Receive(ctx)
+	require.NoError(t, err)
+	require.NotNil(t, m2)
+	require.Equal(t, id, m2.ID)
+	require.GreaterOrEqual(t, m2.ReceiveCount, int64(2))
+	require.NoError(t, consumer2.Ack(ctx, m2.ReceiptHandle))
 }
