@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/aura-studio/boost/lumberjack"
+	"github.com/aura-studio/boost/logger/lumberjack"
 	"github.com/containrrr/shoutrrr"
 	"github.com/containrrr/shoutrrr/pkg/router"
 	sls "github.com/innopals/sls-logrus-hook"

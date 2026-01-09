@@ -275,7 +275,7 @@ func TestMaxBackups(t *testing.T) {
 	newFakeTime()
 
 	// this will use the new fake time
-	//fourthFilename := backupFile(dir)
+	// fourthFilename := backupFile(dir)
 
 	// Create a log file that is/was being compressed - this should
 	// not be counted since both the compressed and the uncompressed
@@ -592,7 +592,7 @@ func TestCompressOnRotate(t *testing.T) {
 	n, err := l.Write(b)
 	isNil(err, t)
 	equals(len(b), n, t)
-	
+
 	firstFilename := backupFile(dir)
 	existsWithContent(firstFilename, b, t)
 	fileCount(dir, 1, t)
@@ -766,7 +766,7 @@ func showDir(dir string) {
 		return
 	}
 	fmt.Println("ShowDir", dir)
-	for _,f := range files {
+	for _, f := range files {
 		fmt.Println("file", f.Name(), f.IsDir())
 	}
 }
