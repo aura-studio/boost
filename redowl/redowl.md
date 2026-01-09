@@ -392,3 +392,186 @@ _ = moved
 _ = err
 ```
 
+
+## Worker 池：高效处理大量队列
+
+当队列数量无限扩展时，为每个队列创建一个 worker 会造成资源浪费。Worker 池可以用**少量 worker 处理大量队列**。
+
+### 问题场景
+
+```go
+// ❌ 不推荐：1000 个队列 = 1000 个 goroutine
+for i := 0; i < 1000; i++ {
+    q, _ := redowl.New(client, fmt.Sprintf("queue_%d", i))
+    go func(q *Queue) {
+        for {
+            msg, _ := q.ReceiveWithWait(ctx, 5*time.Second)
+            // 大部分时间在等待，浪费资源
+        }
+    }(q)
+}
+```
+
+### 解决方案：Worker 池
+
+```go
+// ✅ 推荐：10 个 worker 处理 1000 个队列
+pool := redowl.NewWorkerPool(
+    client,
+    "myapp",
+    func(ctx context.Context, queueName string, msg *redowl.Message) error {
+        fmt.Printf("[%s] %s\n", queueName, string(msg.Body))
+        return nil // 返回 nil 自动 Ack
+    },
+    redowl.WithWorkerCount(10),           // 只用 10 个 worker
+    redowl.WithIdleTimeout(5*time.Minute), // 5 分钟无消息自动清理队列
+    redowl.WithPollInterval(500*time.Millisecond),
+)
+
+pool.Start(ctx)
+defer pool.Stop()
+
+// 动态创建 1000 个队列
+for i := 0; i < 1000; i++ {
+    q, _ := redowl.New(client, fmt.Sprintf("queue_%d", i),
+        redowl.WithPrefix("myapp"))
+    q.Send(ctx, []byte("message"), nil)
+}
+
+// Worker 池会自动：
+// 1. 监听 "myapp:events" 发现新队列
+// 2. 动态分配 worker 处理消息
+// 3. 空闲队列自动回收，释放资源
+```
+
+### Worker 池特性
+
+1. **动态队列发现**
+   - 自动订阅 `{prefix}:events` 频道
+   - 收到 `EventSent` 时自动处理该队列
+
+2. **资源高效 + 动态释放**
+   - 固定数量的 worker goroutine
+   - **按需分配**：worker 只在处理消息时占用队列
+   - **主动释放**：连续 3 次空闲后自动释放，可处理其他队列
+   - 空闲队列元数据自动清理（可配置超时时间）
+
+3. **负载均衡**
+   - Worker 通过 channel 竞争获取队列
+   - 有消息的队列优先处理
+   - Worker 动态切换队列，适应滚动负载
+
+4. **统计信息**
+   ```go
+   stats := pool.Stats()
+   // map[string]int64{"queue_1": 100, "queue_2": 50, ...}
+   ```
+
+### 完整示例
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "time"
+
+    "github.com/aura-studio/boost/redowl"
+    "github.com/redis/go-redis/v9"
+)
+
+func main() {
+    client := redis.NewClient(&redis.Options{
+        Addr: "localhost:6379",
+    })
+    defer client.Close()
+
+    ctx := context.Background()
+
+    // 创建 worker 池
+    pool := redowl.NewWorkerPool(
+        client,
+        "game",
+        func(ctx context.Context, queueName string, msg *redowl.Message) error {
+            // 处理消息
+            fmt.Printf("[%s] Player: %s\n", queueName, string(msg.Body))
+            time.Sleep(10 * time.Millisecond) // 模拟处理
+            return nil // 返回 nil 自动 Ack，返回 error 不 Ack
+        },
+        redowl.WithWorkerCount(10),
+        redowl.WithIdleTimeout(5*time.Minute),
+    )
+
+    if err := pool.Start(ctx); err != nil {
+        panic(err)
+    }
+    defer pool.Stop()
+
+    // 模拟 100 个游戏房间，每个房间是一个队列
+    for i := 0; i < 100; i++ {
+        roomQueue, _ := redowl.New(client, fmt.Sprintf("room_%d", i),
+            redowl.WithPrefix("game"),
+            redowl.WithVisibilityTimeout(30*time.Second),
+        )
+
+        // 玩家加入房间
+        roomQueue.Send(ctx, []byte("player_joined"), nil)
+    }
+
+    // 等待处理完成
+    time.Sleep(5 * time.Second)
+
+    // 查看统计
+    stats := pool.Stats()
+    fmt.Printf("Processed %d queues\n", len(stats))
+}
+```
+
+### 性能对比
+
+| 方案 | 队列数 | Goroutine 数 | 内存占用 | 适用场景 |
+|------|--------|--------------|----------|----------|
+| 每队列一个 Worker | 1000 | 1000+ | 高 | 队列数固定且少 |
+| Worker 池 | 1000 | 10-50 | 低 | 队列数动态扩展 |
+
+### 配置选项
+
+```go
+redowl.WithWorkerCount(n int)           // Worker 数量（默认 10）
+redowl.WithIdleTimeout(d time.Duration) // 空闲队列清理时间（默认 5 分钟）
+redowl.WithPollInterval(d time.Duration) // 轮询间隔（默认 500ms）
+```
+
+### 注意事项
+
+1. **队列内顺序保证**：同一队列的消息按顺序处理（worker 处理完一条再取下一条）
+2. **队列间并发**：不同队列的消息可以并发处理
+3. **自动 Ack**：handler 返回 `nil` 时自动 Ack，返回 `error` 时不 Ack
+4. **动态释放机制**：
+   - Worker 级别：连续 3 次空闲后释放队列，可处理其他队列
+   - 元数据级别：超过 `IdleTimeout` 的队列统计信息被清理
+
+### 动态释放工作原理
+
+```
+时间线：
+t0: Queue1 有消息 → Worker1 处理 Queue1
+t1: Queue1 空闲 (1/3)
+t2: Queue1 空闲 (2/3)  
+t3: Queue1 空闲 (3/3) → Worker1 释放，可处理其他队列
+t4: Queue2 有消息 → Worker1 处理 Queue2
+```
+
+**优势**：
+- 10 个 worker 可以处理 1000+ 个滚动队列
+- Worker 不会被空闲队列占用
+- 自动适应负载变化
+
+### 何时使用 Worker 池
+
+- ✅ 队列数量动态变化（如游戏房间、用户会话）
+- ✅ 大部分队列消息量较少
+- ✅ 需要节省资源（内存、goroutine）
+- ❌ 队列数量固定且少（< 10 个）
+- ❌ 每个队列都需要独立的状态管理
