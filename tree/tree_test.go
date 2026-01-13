@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/aura-studio/boost/encoding"
+	"github.com/aura-studio/boost/encodingx"
 	"github.com/aura-studio/boost/style"
 	"github.com/aura-studio/boost/tree"
 )
@@ -26,7 +26,7 @@ type Animal struct {
 }
 
 func TestMapTree(t *testing.T) {
-	var zoo = Zoo{
+	zoo := Zoo{
 		Name: "Beasts & Monsters",
 		Keepers: []Keeper{
 			{

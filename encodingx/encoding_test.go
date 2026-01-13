@@ -1,10 +1,9 @@
-package encoding_test
+package encodingx_test
 
 import (
 	"reflect"
 	"testing"
 
-	"github.com/aura-studio/boost/encoding"
 	"github.com/aura-studio/boost/style"
 )
 
@@ -23,20 +22,20 @@ func TestChain(t *testing.T) {
 		Slice:   []byte("this is slice"),
 	}
 	t.Logf("ts1: %+v", ts1)
-	e1 := encoding.NewChainEncoding(style.GoogleChain("json.base64.lazy"), style.GoogleChain("lazy.base64.xml"))
+	e1 := encodingxNewChainEncoding(style.GoogleChain("json.base64.lazy"), style.GoogleChain("lazy.base64.xml"))
 	t.Logf("e1: %v", e1)
 
 	e2 := e1.Reverse()
 	t.Logf("e2: %v", e2)
 
-	data1, err := encoding.Marshal(e1, ts1)
+	data1, err := encodingxMarshal(e1, ts1)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Logf("data1: %s", string(data1))
 
 	ts2 := &TestStruct{}
-	err = encoding.Unmarshal(e2, data1, ts2)
+	err = encodingxUnmarshal(e2, data1, ts2)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,14 +44,14 @@ func TestChain(t *testing.T) {
 	}
 	t.Logf("ts2: %+v", ts2)
 
-	data2, err := encoding.Marshal(e2, ts2)
+	data2, err := encodingxMarshal(e2, ts2)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Logf("data2: %s", string(data2))
 
 	ts3 := &TestStruct{}
-	err = encoding.Unmarshal(e1, data2, ts3)
+	err = encodingxUnmarshal(e1, data2, ts3)
 	if err != nil {
 		t.Fatal(err)
 	}
