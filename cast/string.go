@@ -280,7 +280,7 @@ func ToErrorE(a any) (error, error) {
 	case complex64:
 		return fmt.Errorf("(%v+%vi)", real(v), imag(v)), nil
 	case complex128:
-		return fmt.Errorf(fmt.Sprintf("(%v+%vi)", real(v), imag(v))), nil
+		return errors.New(fmt.Sprintf("(%v+%vi)", real(v), imag(v))), nil
 	case bool:
 		return errors.New(strconv.FormatBool(v)), nil
 	case time.Duration:

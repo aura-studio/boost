@@ -27,7 +27,6 @@ func runDecimalTest(c *C, tests []testStep, tove func(any) (any, error), tov fun
 		if t.Implements(reflect.TypeOf((*fmt.Stringer)(nil)).Elem()) {
 			c.Assert(v.(fmt.Stringer).String(), Equals, test.expect.(fmt.Stringer).String(), errmsg)
 		} else {
-			fmt.Println(v, test.expect)
 			c.Assert(v, Equals, test.expect, errmsg)
 		}
 

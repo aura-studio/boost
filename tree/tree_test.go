@@ -50,7 +50,7 @@ func TestMapTree(t *testing.T) {
 		},
 	}
 
-	json := encoding.NewJSON()
+	json := encodingx.NewJSON()
 	zooJSON, err := json.Marshal(zoo)
 	if err != nil {
 		t.Fatal(err)
@@ -143,7 +143,7 @@ func TestMapTree(t *testing.T) {
 		t.Fatalf("expected name `Universe World`, but got %s", zoo.Name)
 	}
 
-	hash, err := encoding.NewHash().Marshal(tree1)
+	hash, err := encodingx.NewHash().Marshal(tree1)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -151,7 +151,7 @@ func TestMapTree(t *testing.T) {
 	t.Log(string(hash))
 
 	tree3 := tree.NewTree()
-	if err := encoding.NewHash().Unmarshal(hash, tree3); err != nil {
+	if err := encodingx.NewHash().Unmarshal(hash, tree3); err != nil {
 		t.Fatal(err)
 	}
 
